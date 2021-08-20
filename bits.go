@@ -4,6 +4,7 @@ type bits struct {
 	storage  storage
 	zeroNode uint
 	oneNode  uint
+	codes *codes
 }
 
 func newBits(storage storage) *bits {

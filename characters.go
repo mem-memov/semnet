@@ -3,11 +3,13 @@ package semnet
 import "fmt"
 
 type characters struct {
+	storage storage
 	codes *codes
 }
 
-func newCharacters(codes *codes) *characters {
+func newCharacters(storage storage, codes *codes) *characters {
 	return &characters{
+		storage: storage,
 		codes: codes,
 	}
 }

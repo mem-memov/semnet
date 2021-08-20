@@ -13,10 +13,10 @@ type Graph struct {
 
 func NewGraph(storage storage) *Graph {
 	bits := newBits(storage)
-	codes := newCodes(bits)
-	characters := newCharacters(codes)
-	words := newWords(characters)
-	actions := newActions(words)
+	codes := newCodes(storage, bits)
+	characters := newCharacters(storage, codes)
+	words := newWords(storage, characters)
+	actions := newActions(storage, words)
 
 	return &Graph{
 		storage:  storage,

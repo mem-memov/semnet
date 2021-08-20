@@ -16,5 +16,5 @@ func newBit(node uint, bits bits, codes codes) Bit {
 
 func ToCode() (Code, error) {
 
-	return newCode()
+	return newCode(), nil
 }

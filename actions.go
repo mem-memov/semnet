@@ -3,11 +3,13 @@ package semnet
 import "strings"
 
 type actions struct {
+	storage storage
 	words *words
 }
 
-func newActions(words *words) *actions {
+func newActions(storage storage, words *words) *actions {
 	return &actions{
+		storage: storage,
 		words: words,
 	}
 }
