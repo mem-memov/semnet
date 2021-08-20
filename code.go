@@ -1,25 +1,25 @@
 package semnet
 
-type Code struct {
+type code struct {
 	bit  bit
 	bits  bits
 	codes codes
 }
 
-func newCode(bit  bit) Code {
-	return Code{
+func newCode(bit  bit) code {
+	return code{
 		bit: bit,
 	}
 }
 
-func (c Code) NextZero() (Code, error) {
+func (c code) NextZero() (code, error) {
 
 }
 
-func (c Code) NextOne() (Code, error) {
+func (c code) NextOne() (code, error) {
 
 }
 
-func (c Code) ToCharacter() (Character, error) {
+func (c code) ToCharacter() (Character, error) {
 
 }

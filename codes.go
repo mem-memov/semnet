@@ -12,14 +12,14 @@ func newCodes(storage storage, bits *bits) *codes {
 	}
 }
 
-func (c *codes) createZero() (Code, error) {
+func (c *codes) createZero() (code, error) {
 	bit, err := c.bits.getZero()
 	if err != nil {
-		return Code{}, err
+		return code{}, err
 	}
 	return newCode(bit), nil
 }
 
-func (c *codes) createOne() (Code, error) {
+func (c *codes) createOne() (code, error) {
 
 }

@@ -1,16 +1,16 @@
 package semnet
 
 type Character struct {
-	node uint
+	code code
 }
 
-func newCharacter(node uint) Character {
+func newCharacter(code code) Character {
 	return Character{
-		node: node,
+		code: code,
 	}
 }
 
-func (c Character) NextCode(code rune) (Code, error) {
+func (c Character) NextCode(code rune) (code, error) {
 
 }
 
