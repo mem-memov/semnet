@@ -1,11 +1,11 @@
 package semnet
 
 type codes struct {
-	numbers *numbers
+	bits *bits
 }
 
-func newCodes(numbers *numbers) *codes {
+func newCodes(bits *bits) *codes {
 	return &codes{
-		numbers: numbers,
+		bits: bits,
 	}
 }

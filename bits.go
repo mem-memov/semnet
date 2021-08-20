@@ -13,3 +13,13 @@ func newBits(storage storage) *bits {
 		oneNode:  uint(2),
 	}
 }
+
+func (b *bits) GetZero() (Bit, error) {
+
+	return newBit(b.zeroNode, b.storage), nil
+}
+
+func (b *bits) GetOne() (Bit, error) {
+
+	return newBit(b.oneNode, b.storage), nil
+}

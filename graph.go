@@ -2,20 +2,27 @@ package semnet
 
 import (
 	"fmt"
-	"strings"
 )
 
 type Graph struct {
 	storage  storage
 	zeroNode uint
 	oneNode  uint
+	actions *actions
 }
 
 func NewGraph(storage storage) *Graph {
+	bits := newBits(storage)
+	codes := newCodes(bits)
+	characters := newCharacters(codes)
+	words := newWords(characters)
+	actions := newActions(words)
+
 	return &Graph{
 		storage:  storage,
 		zeroNode: uint(1),
 		oneNode:  uint(2),
+		actions: actions,
 	}
 }
 
@@ -56,16 +63,6 @@ func (g *Graph) InitializeBits() error {
 	return nil
 }
 
-func (g *Graph) GetZero() (Bit, error) {
-
-	return newBit(g.zeroNode, g.storage), nil
-}
-
-func (g *Graph) GetOne() (Bit, error) {
-
-	return newBit(g.oneNode, g.storage), nil
-}
-
 func (g *Graph) addAction(name string) (Action, error) {
-	words := strings.Split(name, " ")
+	return g.actions.create(name)
 }
