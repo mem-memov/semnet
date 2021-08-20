@@ -1,20 +1,13 @@
 package semnet
 
 type bit struct {
-	node  uint
-	bits  bits
-	codes codes
+	node    uint
+	storage storage
 }
 
-func newBit(node uint, bits bits, codes codes) bit {
+func newBit(node uint, storage storage) bit {
 	return bit{
-		node:  node,
-		bits:  bits,
-		codes: codes,
+		node:    node,
+		storage: storage,
 	}
-}
-
-func ToCode() (code, error) {
-
-	return newCode(), nil
 }

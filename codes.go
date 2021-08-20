@@ -21,5 +21,9 @@ func (c *codes) createZero() (code, error) {
 }
 
 func (c *codes) createOne() (code, error) {
-
+	bit, err := c.bits.getOne()
+	if err != nil {
+		return code{}, err
+	}
+	return newCode(bit), nil
 }
