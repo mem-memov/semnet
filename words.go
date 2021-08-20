@@ -1,13 +1,13 @@
 package semnet
 
 type words struct {
-	storage storage
+	storage    storage
 	characters *characters
 }
 
 func newWords(storage storage, characters *characters) *words {
 	return &words{
-		storage: storage,
+		storage:    storage,
 		characters: characters,
 	}
 }

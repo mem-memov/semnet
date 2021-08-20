@@ -4,13 +4,13 @@ import "fmt"
 
 type characters struct {
 	storage storage
-	codes *codes
+	codes   *codes
 }
 
 func newCharacters(storage storage, codes *codes) *characters {
 	return &characters{
 		storage: storage,
-		codes: codes,
+		codes:   codes,
 	}
 }
 

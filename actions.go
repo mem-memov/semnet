@@ -4,13 +4,13 @@ import "strings"
 
 type actions struct {
 	storage storage
-	words *words
+	words   *words
 }
 
 func newActions(storage storage, words *words) *actions {
 	return &actions{
 		storage: storage,
-		words: words,
+		words:   words,
 	}
 }
 

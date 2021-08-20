@@ -8,7 +8,7 @@ type Graph struct {
 	storage  storage
 	zeroNode uint
 	oneNode  uint
-	actions *actions
+	actions  *actions
 }
 
 func NewGraph(storage storage) *Graph {
@@ -22,7 +22,7 @@ func NewGraph(storage storage) *Graph {
 		storage:  storage,
 		zeroNode: uint(1),
 		oneNode:  uint(2),
-		actions: actions,
+		actions:  actions,
 	}
 }
 

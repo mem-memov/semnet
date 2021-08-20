@@ -1,12 +1,12 @@
 package semnet
 
 type code struct {
-	bit  bit
+	bit   bit
 	bits  bits
 	codes codes
 }
 
-func newCode(bit  bit) code {
+func newCode(bit bit) code {
 	return code{
 		bit: bit,
 	}
