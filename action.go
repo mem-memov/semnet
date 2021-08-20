@@ -7,6 +7,6 @@ func newAction() Action {
 	return Action{}
 }
 
-func (a Action) addDetail(name []rune) (Detail, error) {
+func (a Action) addDetail(name string) (Detail, error) {
 
 }

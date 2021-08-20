@@ -22,6 +22,6 @@ func (g *Graph) InitializeBits() error {
 	return g.bits.initialize()
 }
 
-func (g *Graph) addAction(name string) (Action, error) {
+func (g *Graph) AddAction(name string) (Action, error) {
 	return g.actions.create(name)
 }
