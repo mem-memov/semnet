@@ -4,7 +4,6 @@ type bits struct {
 	storage  storage
 	zeroNode uint
 	oneNode  uint
-	codes *codes
 }
 
 func newBits(storage storage) *bits {
@@ -15,12 +14,12 @@ func newBits(storage storage) *bits {
 	}
 }
 
-func (b *bits) GetZero() (Bit, error) {
+func (b *bits) getZero() (bit, error) {
 
 	return newBit(b.zeroNode, b.storage), nil
 }
 
-func (b *bits) GetOne() (Bit, error) {
+func (b *bits) getOne() (bit, error) {
 
 	return newBit(b.oneNode, b.storage), nil
 }

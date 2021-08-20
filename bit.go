@@ -1,13 +1,13 @@
 package semnet
 
-type Bit struct {
+type bit struct {
 	node  uint
 	bits  bits
 	codes codes
 }
 
-func newBit(node uint, bits bits, codes codes) Bit {
-	return Bit{
+func newBit(node uint, bits bits, codes codes) bit {
+	return bit{
 		node:  node,
 		bits:  bits,
 		codes: codes,

@@ -15,10 +15,13 @@ func newCharacters(storage storage, codes *codes) *characters {
 }
 
 func (c *characters) create(r rune) (Character, error) {
-	for _, bitName := range fmt.Sprintf("%b", r) {
+
+	for i, bitName := range fmt.Sprintf("%b", r) {
 		switch bitName {
 		case '0':
-
+			if i == 0 {
+				zero :=
+			}
 		case '1':
 
 		default:
