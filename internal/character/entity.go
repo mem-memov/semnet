@@ -1,24 +1,19 @@
 package character
 
 import (
-	code2 "github.com/mem-memov/semnet/internal/code"
-	"github.com/mem-memov/semnet/internal/word"
+	"github.com/mem-memov/semnet/internal/character/node"
 )
 
 type Entity struct {
-	code code2.code
+	codeNode      node.Code
+	characterNode node.Character
+	wordNode      node.Word
 }
 
-func newCharacter(code code2.code) Entity {
+func newEntity(codeNode node.Code, characterNode node.Character, wordNode node.Word) Entity {
 	return Entity{
-		code: code,
+		codeNode:      codeNode,
+		characterNode: characterNode,
+		wordNode:      wordNode,
 	}
-}
-
-func (c Entity) NextCode(code rune) (code2.code, error) {
-
-}
-
-func (c Entity) ToWord() (word.Word, error) {
-
 }

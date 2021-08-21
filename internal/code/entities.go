@@ -6,16 +6,16 @@ import (
 )
 
 type entities struct {
-	bits          *node.Bits
-	codes         *node.Codes
-	characters    *node.Characters
+	bits       *node.Bits
+	codes      *node.Codes
+	characters *node.Characters
 }
 
 func newEntities(storage storage, bitRepository *bit.Repository) *entities {
 	return &entities{
-		bits:          node.NewBits(storage, bitRepository),
-		codes:         node.NewCodes(storage),
-		characters:    node.NewCharacters(storage),
+		bits:       node.NewBits(storage, bitRepository),
+		codes:      node.NewCodes(storage),
+		characters: node.NewCharacters(storage),
 	}
 }
 

@@ -4,7 +4,7 @@ import (
 	"fmt"
 )
 
-type paths struct {}
+type paths struct{}
 
 func newPaths() *paths {
 	return &paths{}

@@ -18,7 +18,7 @@ func NewRepository(storage storage, codeRepository *code.Repository) *Repository
 	}
 }
 
-func (c *Repository) create(rune rune) (Entity, error) {
+func (r *Repository) create(rune rune) (Entity, error) {
 
 	code, err := c.codes.create(int32(rune))
 	if err != nil {
