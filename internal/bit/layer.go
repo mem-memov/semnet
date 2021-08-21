@@ -2,31 +2,31 @@ package bit
 
 import "fmt"
 
-type graph struct {
-	storage storage
+type layer struct {
+	storage       storage
 	isInitialized bool
 }
 
-func newGraph(storage storage) *graph {
-	return &graph{
-		storage: storage,
+func newLayer(storage storage) *layer {
+	return &layer{
+		storage:       storage,
 		isInitialized: false,
 	}
 }
 
-func (g *graph) initialize() error {
+func (l *layer) initialize() error {
 
-	if g.isInitialized {
+	if l.isInitialized {
 		return nil
 	}
 
-	hasZero, err := g.storage.Has(bitZeroNode)
+	hasZero, err := l.storage.Has(bitZeroNode)
 	if err != nil {
 		return err
 	}
 
 	if !hasZero {
-		zeroNode, err := g.storage.Create()
+		zeroNode, err := l.storage.Create()
 		if err != nil {
 			return err
 		}
@@ -36,13 +36,13 @@ func (g *graph) initialize() error {
 		}
 	}
 
-	hasOne, err := g.storage.Has(bitOneNode)
+	hasOne, err := l.storage.Has(bitOneNode)
 	if err != nil {
 		return err
 	}
 
 	if !hasOne {
-		oneNode, err := g.storage.Create()
+		oneNode, err := l.storage.Create()
 		if err != nil {
 			return err
 		}
@@ -52,7 +52,7 @@ func (g *graph) initialize() error {
 		}
 	}
 
-	g.isInitialized = true
+	l.isInitialized = true
 
 	return nil
 }

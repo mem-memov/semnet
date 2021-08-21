@@ -11,4 +11,3 @@ type storage interface {
 	Disconnect(source uint, target uint) error
 	Delete(source uint) error
 }
-

@@ -1,20 +1,20 @@
 package bit
 
 type Repository struct {
-	storage  storage
-	graph *graph
+	storage storage
+	layer   *layer
 }
 
 func NewRepository(storage storage) *Repository {
 	return &Repository{
-		storage:  storage,
-		graph: newGraph(storage),
+		storage: storage,
+		layer:   newLayer(storage),
 	}
 }
 
-func (r *Repository) create(value bool) (Entity, error) {
+func (r *Repository) Create(value bool) (Entity, error) {
 
-	err := r.graph.initialize()
+	err := r.layer.initialize()
 	if err != nil {
 		return Entity{}, err
 	}
