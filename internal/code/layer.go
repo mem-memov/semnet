@@ -1,5 +1,7 @@
 package code
 
+import "github.com/mem-memov/semnet/internal/code/node"
+
 type layer struct {
 	storage storage
 }
@@ -10,40 +12,16 @@ func newLayer(storage storage) *layer {
 	}
 }
 
-func (l *layer) createEntity(bitNode uint) (Entity, error) {
+func (l *layer) createEntity(bitNode node.Bit) (Entity, error) {
 
-	codeNode, err := l.storage.GetReference(bitNode)
+	codeNode, err := bitNode.CreateCode(l.storage)
 	if err != nil {
 		return Entity{}, err
 	}
 
-	if codeNode == 0 {
-		codeNode, err = l.storage.Create()
-		if err != nil {
-			return Entity{}, err
-		}
-
-		err = l.storage.SetReference(bitNode, codeNode)
-		if err != nil {
-			return Entity{}, err
-		}
-	}
-
-	characterNode, err := l.storage.GetReference(codeNode)
+	characterNode, err := codeNode.CreateCharacter(l.storage)
 	if err != nil {
 		return Entity{}, err
-	}
-
-	if characterNode == 0 {
-		characterNode, err = l.storage.Create()
-		if err != nil {
-			return Entity{}, err
-		}
-
-		err = l.storage.SetReference(codeNode, characterNode)
-		if err != nil {
-			return Entity{}, err
-		}
 	}
 
 	return newEntity(bitNode, codeNode, characterNode), nil

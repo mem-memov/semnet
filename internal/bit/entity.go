@@ -16,7 +16,7 @@ func newEntity(node uint, storage storage) Entity {
 	}
 }
 
-func (e Entity) GetSingleTarget() (uint, error) {
+func (e Entity) CreateSingleTarget() (uint, error) {
 
 	targets, err := e.storage.ReadTargets(e.node)
 	if err != nil {
