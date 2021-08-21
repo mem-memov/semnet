@@ -1,9 +1,13 @@
 package code
 
-import "github.com/mem-memov/semnet/internal/code/node"
+import (
+	"fmt"
+	"github.com/mem-memov/semnet/internal/bit"
+)
 
 type layer struct {
-	storage storage
+	storage  storage
+	entities entities
 }
 
 func newLayer(storage storage) *layer {
@@ -12,17 +16,59 @@ func newLayer(storage storage) *layer {
 	}
 }
 
-func (l *layer) createEntity(bitNode node.Bit) (Entity, error) {
+func (l *layer) provideRoot(bitEntity bit.Entity) (Entity, error) {
 
-	codeNode, err := bitNode.CreateCode(l.storage)
+	bitIdentifier, err := bitEntity.ProvideSingleTarget()
 	if err != nil {
 		return Entity{}, err
 	}
 
-	characterNode, err := codeNode.CreateCharacter(l.storage)
+	bitTargets, err := l.storage.ReadTargets(bitIdentifier)
 	if err != nil {
 		return Entity{}, err
 	}
 
-	return newEntity(bitNode, codeNode, characterNode), nil
+	var codeIdentifier uint
+	var characterIdentifier uint
+
+	switch len(bitTargets) {
+	case 0:
+		codeIdentifier, err = l.storage.Create()
+		if err != nil {
+			return Entity{}, err
+		}
+
+		err = l.storage.SetReference(bitIdentifier, codeIdentifier)
+		if err != nil {
+			return Entity{}, err
+		}
+
+		characterIdentifier, err = l.storage.Create()
+		if err != nil {
+			return Entity{}, err
+		}
+
+		err = l.storage.SetReference(codeIdentifier, characterIdentifier)
+		if err != nil {
+			return Entity{}, err
+		}
+	case 1:
+		if bitTargets[0] != bitEntity.Identifier() {
+			return Entity{}, fmt.Errorf("wrong target %d in code layer at bit %d", bitTargets[0], bitIdentifier)
+		}
+
+		_, codeIdentifier, err = l.storage.GetReference(bitIdentifier)
+		if err != nil {
+			return Entity{}, err
+		}
+
+		_, characterIdentifier, err = l.storage.GetReference(codeIdentifier)
+		if err != nil {
+			return Entity{}, err
+		}
+	default:
+		return Entity{}, fmt.Errorf("wrong number of targets %d in code layer at bit %d", len(bitTargets), bitIdentifier)
+	}
+
+	return l.entities.create(bitIdentifier, codeIdentifier, characterIdentifier), nil
 }

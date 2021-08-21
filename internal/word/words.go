@@ -18,7 +18,7 @@ func newWords(storage semnet.storage, characters *semnet.characters) *words {
 }
 
 func (w *words) create(name string) (Word, error) {
-	characters := make([]character.Character, len([]rune(name)))
+	characters := make([]character.Entity, len([]rune(name)))
 
 	for i, r := range name {
 		characters[i] = w.characters.create(r)

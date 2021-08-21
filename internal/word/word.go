@@ -11,6 +11,6 @@ func newWord() Word {
 	return Word{}
 }
 
-func (w Word) NextCharacter() (character.Character, error) {
+func (w Word) NextCharacter() (character.Entity, error) {
 
 }

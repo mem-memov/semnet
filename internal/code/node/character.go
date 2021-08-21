@@ -1,15 +1,64 @@
 package node
 
-type Character uint
+import "fmt"
 
-func NewCharacter(integer uint) Character {
-	return Character(integer)
+type Character struct {
+	identifier uint
+	storage    storage
 }
 
-func (c Character) ToInteger() uint {
-	return uint(c)
+func newCharacter(identifier uint, storage storage) Character {
+	return Character{
+		identifier: identifier,
+		storage:    storage,
+	}
 }
 
-func (c Character) IsEmpty() bool {
-	return c == 0
+func (c Character) Identifier() uint {
+	return c.identifier
+}
+
+func (c Character) ProvideSingleTarget() (uint, error) {
+
+	targets, err := c.storage.ReadTargets(c.identifier)
+	if err != nil {
+		return 0, err
+	}
+
+	switch len(targets) {
+
+	case 0:
+		target, err := c.storage.Create()
+		if err != nil {
+			return 0, err
+		}
+
+		err = c.storage.Connect(c.identifier, target)
+		if err != nil {
+			return 0, err
+		}
+
+		return target, nil
+
+	case 1:
+		return targets[0], nil
+
+	default:
+		return 0, fmt.Errorf("entity %d has too many targets: %d", c.identifier, len(targets))
+	}
+}
+
+func (c Character) NewCharacter(code Code) (Character, error) {
+
+	identifier, err := c.storage.Create()
+	if err != nil {
+		return Character{}, nil
+	}
+
+	err = c.storage.SetReference(identifier, code.Identifier())
+	if err != nil {
+		return Character{}, nil
+	}
+
+	return newCharacter(identifier, c.storage), nil
 }

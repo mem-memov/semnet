@@ -1,49 +1,51 @@
 package code
 
 import (
-	"fmt"
 	"github.com/mem-memov/semnet/internal/bit"
-	"github.com/mem-memov/semnet/internal/code/node"
 )
 
 type Repository struct {
+	entities      *entities
 	storage       storage
 	bitRepository *bit.Repository
 	layer         *layer
 	paths         *paths
 }
 
-func newRepository(storage storage, bitRepository *bit.Repository, paths *paths) *Repository {
+func newRepository(storage storage, bitRepository *bit.Repository) *Repository {
 	return &Repository{
+		entities:      newEntities(storage, bitRepository),
 		storage:       storage,
 		bitRepository: bitRepository,
 		layer:         newLayer(storage),
-		paths:         paths,
+		paths:         newPaths(),
 	}
 }
 
-func (r *Repository) create(integer int32) (Entity, error) {
+func (r *Repository) Provide(integer int32) (Entity, error) {
 
 	path, err := r.paths.collect(integer)
 	if err != nil {
 		return Entity{}, err
 	}
 
-	bitEntity := path[0]
-
-	bitTarget, err := bitEntity.CreateSingleTarget()
+	firstBit, err := r.bitRepository.Provide(path[0])
 	if err != nil {
 		return Entity{}, err
 	}
 
-	bitNode := node.NewBit(bitTarget)
-
-	entity, err := r.layer.createEntity(bitNode)
+	entity, err := r.layer.provideRoot(firstBit)
 	if err != nil {
 		return Entity{}, err
 	}
 
-	for i, bitEntity := range path[1:] {
-		entity.createNext()
+	for _, bitValue := range path[1:] {
+
+		entity, err = entity.provideNext(bitValue, r.entities)
+		if err != nil {
+			return Entity{}, err
+		}
 	}
+
+	return entity, nil
 }

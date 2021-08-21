@@ -6,23 +6,23 @@ import (
 	"github.com/mem-memov/semnet/internal/code"
 )
 
-type characters struct {
+type Repository struct {
 	storage semnet.storage
 	codes   *code.codes
 }
 
-func newCharacters(storage semnet.storage, codes *code.codes) *characters {
-	return &characters{
+func NewRepository(storage storage, codeRepository *code.Repository) *Repository {
+	return &Repository{
 		storage: storage,
-		codes:   codes,
+		codes:   codeRepository,
 	}
 }
 
-func (c *characters) create(rune rune) (Character, error) {
+func (c *Repository) create(rune rune) (Entity, error) {
 
 	code, err := c.codes.create(int32(rune))
 	if err != nil {
-		return Character{}, err
+		return Entity{}, err
 	}
 
 	var code code
@@ -35,28 +35,28 @@ func (c *characters) create(rune rune) (Character, error) {
 			if i == 0 {
 				code, err = c.codes.createZero()
 				if err != nil {
-					return Character{}, err
+					return Entity{}, err
 				}
 			} else {
 				code, err = code.NextZero()
 				if err != nil {
-					return Character{}, err
+					return Entity{}, err
 				}
 			}
 		case '1':
 			if i == 0 {
 				code, err = c.codes.createOne()
 				if err != nil {
-					return Character{}, err
+					return Entity{}, err
 				}
 			} else {
 				code, err = code.NextOne()
 				if err != nil {
-					return Character{}, err
+					return Entity{}, err
 				}
 			}
 		default:
-			return Character{}, fmt.Errorf("unexpected bit name: %c", bitName)
+			return Entity{}, fmt.Errorf("unexpected bit name: %c", bitName)
 		}
 	}
 

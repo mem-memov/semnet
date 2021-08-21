@@ -1,27 +1,53 @@
 package node
 
-type Bit uint
+import (
+	"fmt"
+	"github.com/mem-memov/semnet/internal/bit"
+)
 
-func NewBit(integer uint) Bit {
-	return Bit(integer)
+type Bit struct {
+	identifier    uint
+	storage       storage
+	bitRepository *bit.Repository
 }
 
-func (b Bit) ToInteger() uint {
-	return uint(b)
+func newBit(identifier uint, storage storage, bitRepository *bit.Repository) Bit {
+	return Bit{
+		identifier:    identifier,
+		storage:       storage,
+		bitRepository: bitRepository,
+	}
 }
 
-func (b Bit) CreateCode(storage storage) (Code, error) {
-	newInteger, err := storage.Create()
+func (b Bit) Identifier() uint {
+	return b.identifier
+}
+
+func (b Bit) HasBitValue(value bool) (bool, error) {
+
+	targets, err := b.storage.ReadTargets(b.identifier)
 	if err != nil {
-		return NewCode(0), err
+		return false, err
 	}
 
-	codeNode := NewCode(newInteger)
-
-	err = storage.SetReference(b.ToInteger(), codeNode.ToInteger())
-	if err != nil {
-		return NewCode(0), err
+	if len(targets) != 1 {
+		return false, fmt.Errorf("wrong number of targets %d in code layer at bit %d", len(targets), b.identifier)
 	}
 
-	return codeNode, nil
+	bitEntity, err := b.bitRepository.Fetch(targets[0])
+	if err != nil {
+		return false, err
+	}
+
+	return bitEntity.Is(value), nil
+}
+
+func (b Bit) NewBit() (Bit, error) {
+
+	identifier, err := b.storage.Create()
+	if err != nil {
+		return Bit{}, err
+	}
+
+	return newBit(identifier, b.storage, b.bitRepository), nil
 }

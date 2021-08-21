@@ -16,7 +16,19 @@ func newEntity(node uint, storage storage) Entity {
 	}
 }
 
-func (e Entity) CreateSingleTarget() (uint, error) {
+func (e Entity) Identifier() uint {
+	return e.node
+}
+
+func (e Entity) Is(bit bool) bool {
+	if bit {
+		return e.node == bitOneNode
+	} else {
+		return e.node == bitZeroNode
+	}
+}
+
+func (e Entity) ProvideSingleTarget() (uint, error) {
 
 	targets, err := e.storage.ReadTargets(e.node)
 	if err != nil {
