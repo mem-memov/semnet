@@ -1,25 +1,35 @@
-package semnet
+package character
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/mem-memov/semnet"
+	"github.com/mem-memov/semnet/internal/code"
+)
 
 type characters struct {
-	storage storage
-	codes   *codes
+	storage semnet.storage
+	codes   *code.codes
 }
 
-func newCharacters(storage storage, codes *codes) *characters {
+func newCharacters(storage semnet.storage, codes *code.codes) *characters {
 	return &characters{
 		storage: storage,
 		codes:   codes,
 	}
 }
 
-func (c *characters) create(r rune) (Character, error) {
+func (c *characters) create(rune rune) (Character, error) {
+
+	code, err := c.codes.create(int32(rune))
+	if err != nil {
+		return Character{}, err
+	}
 
 	var code code
 	var err error
 
 	for i, bitName := range fmt.Sprintf("%b", r) {
+
 		switch bitName {
 		case '0':
 			if i == 0 {

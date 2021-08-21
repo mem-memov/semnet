@@ -1,4 +1,4 @@
-package semnet
+package detail
 
 type Detail struct {
 }

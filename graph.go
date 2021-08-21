@@ -1,16 +1,25 @@
 package semnet
 
+import (
+	"github.com/mem-memov/semnet/internal"
+	"github.com/mem-memov/semnet/internal/action"
+	"github.com/mem-memov/semnet/internal/bit"
+	"github.com/mem-memov/semnet/internal/character"
+	"github.com/mem-memov/semnet/internal/code"
+	"github.com/mem-memov/semnet/internal/word"
+)
+
 type Graph struct {
-	bits    *bits
-	actions *actions
+	bits    *bit.bits
+	actions *action.actions
 }
 
-func NewGraph(storage storage) *Graph {
-	bits := newBits(storage)
-	codes := newCodes(storage, bits)
-	characters := newCharacters(storage, codes)
-	words := newWords(storage, characters)
-	actions := newActions(storage, words)
+func NewGraph(storage internal.storage) *Graph {
+	bits := bit.newBits(storage)
+	codes := code.newCodes(storage, bits)
+	characters := character.newCharacters(storage, codes)
+	words := word.newWords(storage, characters)
+	actions := action.newActions(storage, words)
 
 	return &Graph{
 		bits:    bits,
@@ -22,6 +31,6 @@ func (g *Graph) InitializeBits() error {
 	return g.bits.initialize()
 }
 
-func (g *Graph) AddAction(name string) (Action, error) {
+func (g *Graph) AddAction(name string) (action.Action, error) {
 	return g.actions.create(name)
 }

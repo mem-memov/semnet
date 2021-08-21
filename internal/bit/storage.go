@@ -1,6 +1,6 @@
-package semnet
+package bit
 
-type Storage interface {
+type storage interface {
 	Has(source uint) (bool, error)
 	Create() (uint, error)
 	ReadSources(target uint) ([]uint, error)
