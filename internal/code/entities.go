@@ -20,6 +20,7 @@ func newEntities(storage storage, bitRepository *bit.Repository) *entities {
 }
 
 func (e *entities) create(bitIdentifier uint, codeIdentifier uint, characterIdentifier uint) Entity {
+
 	return newEntity(
 		e.bits.Create(bitIdentifier),
 		e.codes.Create(codeIdentifier),

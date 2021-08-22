@@ -32,7 +32,7 @@ func (l *layer) initialize() error {
 		}
 
 		if zeroNode != bitZeroNode {
-			return fmt.Errorf("invalid zero node %d", zeroNode)
+			return fmt.Errorf("invalid zero identifier %d", zeroNode)
 		}
 	}
 
@@ -48,7 +48,7 @@ func (l *layer) initialize() error {
 		}
 
 		if oneNode != bitOneNode {
-			return fmt.Errorf("invalid one node %d", oneNode)
+			return fmt.Errorf("invalid one identifier %d", oneNode)
 		}
 	}
 

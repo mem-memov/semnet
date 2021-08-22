@@ -24,7 +24,7 @@ func (p *paths) collect(integer int32) (path, error) {
 		if bitName != '0' && bitName != '1' {
 			return path{}, fmt.Errorf("invalid bit name: %c", bitName)
 		}
-		bitValues[i] = bitName == 1
+		bitValues[i] = bitName == '1'
 	}
 
 	return bitValues, nil

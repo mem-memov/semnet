@@ -20,19 +20,39 @@ func (c Code) Identifier() uint {
 
 func (c Code) ReadTargets() ([]Code, error) {
 
-	targets, err := c.storage.ReadTargets(c.identifier)
+	targetIdentifiers, err := c.storage.ReadTargets(c.identifier)
 	if err != nil {
 		return []Code{}, err
 	}
 
-	if len(targets) > 2 {
+	if len(targetIdentifiers) > 2 {
 		return []Code{}, fmt.Errorf("too many targets in code layer at code %d", c.identifier)
 	}
 
-	codes := make([]Code, len(targets))
+	codes := make([]Code, len(targetIdentifiers))
 
-	for i, target := range targets {
-		codes[i] = newCode(target, c.storage)
+	for i, targetIdentifier := range targetIdentifiers {
+		codes[i] = newCode(targetIdentifier, c.storage)
+	}
+
+	return codes, nil
+}
+
+func (c Code) ReadSources() ([]Code, error) {
+
+	sourceIdentifiers, err := c.storage.ReadSources(c.identifier)
+	if err != nil {
+		return []Code{}, err
+	}
+
+	if len(sourceIdentifiers) > 1 {
+		return []Code{}, fmt.Errorf("too many sources in code layer at code %d", c.identifier)
+	}
+
+	codes := make([]Code, len(sourceIdentifiers))
+
+	for i, targetIdentifier := range sourceIdentifiers {
+		codes[i] = newCode(targetIdentifier, c.storage)
 	}
 
 	return codes, nil
@@ -56,6 +76,11 @@ func (c Code) NewCode(bit Bit) (Code, error) {
 	}
 
 	err = c.storage.SetReference(identifier, bit.Identifier())
+	if err != nil {
+		return Code{}, err
+	}
+
+	err = c.storage.Connect(c.identifier,  identifier)
 	if err != nil {
 		return Code{}, err
 	}

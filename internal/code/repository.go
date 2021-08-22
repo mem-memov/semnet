@@ -13,11 +13,13 @@ type Repository struct {
 }
 
 func newRepository(storage storage, bitRepository *bit.Repository) *Repository {
+	entities := newEntities(storage, bitRepository)
+
 	return &Repository{
-		entities:      newEntities(storage, bitRepository),
+		entities:      entities,
 		storage:       storage,
 		bitRepository: bitRepository,
-		layer:         newLayer(storage),
+		layer:         newLayer(storage, entities),
 		paths:         newPaths(),
 	}
 }
@@ -48,4 +50,40 @@ func (r *Repository) Provide(integer int32) (Entity, error) {
 	}
 
 	return entity, nil
+}
+
+func (r *Repository) Extract(entity Entity) (int32, error) {
+
+	bitValue, err := entity.BitValue()
+	if err != nil {
+		return 0, err
+	}
+
+	var integer int32
+
+	if bitValue {
+		integer = 1
+	}
+
+	for {
+		var isRoot bool
+		entity, isRoot, err = entity.findPrevious(r.entities)
+
+		if isRoot {
+			break
+		}
+
+		bitValue, err = entity.BitValue()
+		if err != nil {
+			return 0, err
+		}
+
+		integer = integer << 1
+
+		if bitValue {
+			integer++
+		}
+	}
+
+	return integer, nil
 }

@@ -1,6 +1,7 @@
 package code
 
 import (
+	"fmt"
 	"github.com/mem-memov/semnet/internal/code/node"
 )
 
@@ -18,7 +19,7 @@ func newEntity(bitNode node.Bit, codeNode node.Code, characterNode node.Characte
 	}
 }
 
-func (e Entity) provideNext(bit bool, entities *entities) (Entity, error) {
+func (e Entity) provideNext(bitValue bool, entities *entities) (Entity, error) {
 
 	targetCodes, err := e.codeNode.ReadTargets()
 	if err != nil {
@@ -34,7 +35,7 @@ func (e Entity) provideNext(bit bool, entities *entities) (Entity, error) {
 
 		entity := entities.create(bitIdentifier, targetCode.Identifier(), characterIdentifier)
 
-		hasBitValue, err := entity.hasBitValue(bit)
+		hasBitValue, err := entity.hasBitValue(bitValue)
 		if err != nil {
 			return Entity{}, nil
 		}
@@ -45,7 +46,7 @@ func (e Entity) provideNext(bit bool, entities *entities) (Entity, error) {
 	}
 
 	// Provide new
-	newBitNode, err := e.bitNode.NewBit()
+	newBitNode, err := e.bitNode.NewBit(bitValue)
 	if err != nil {
 		return Entity{}, nil
 	}
@@ -71,4 +72,33 @@ func (e Entity) hasBitValue(bit bool) (bool, error) {
 	}
 
 	return hasBitValue, nil
+}
+
+func (e Entity) findPrevious(entities *entities) (Entity, bool, error) {
+
+	sourceCodes, err := e.codeNode.ReadSources()
+	if err != nil {
+		return Entity{}, false, nil
+	}
+
+	switch len(sourceCodes) {
+	case 0:
+		return e, true, nil
+	case 1:
+		parentCode := sourceCodes[0]
+
+		bitIdentifier, characterIdentifier, err := parentCode.GetBitAndCharacter()
+		if err != nil {
+			return Entity{}, false, nil
+		}
+
+		return entities.create(bitIdentifier, parentCode.Identifier(), characterIdentifier), false, nil
+	default:
+		return Entity{}, false, fmt.Errorf("too many sources in code layer")
+	}
+}
+
+func (e Entity) BitValue() (bool, error) {
+
+	return e.bitNode.BitValue()
 }

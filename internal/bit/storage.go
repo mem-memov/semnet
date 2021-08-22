@@ -6,7 +6,7 @@ type storage interface {
 	ReadSources(target uint) ([]uint, error)
 	ReadTargets(source uint) ([]uint, error)
 	SetReference(source uint, reference uint) error
-	GetReference(source uint) (uint, error)
+	GetReference(source uint) (uint, uint, error)
 	Connect(source uint, target uint) error
 	Disconnect(source uint, target uint) error
 	Delete(source uint) error

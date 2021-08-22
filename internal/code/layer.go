@@ -7,12 +7,13 @@ import (
 
 type layer struct {
 	storage  storage
-	entities entities
+	entities *entities
 }
 
-func newLayer(storage storage) *layer {
+func newLayer(storage storage, entities *entities) *layer {
 	return &layer{
 		storage: storage,
+		entities: entities,
 	}
 }
 
@@ -33,6 +34,11 @@ func (l *layer) provideRoot(bitEntity bit.Entity) (Entity, error) {
 
 	switch len(bitTargets) {
 	case 0:
+		err = bitEntity.Mark(bitIdentifier)
+		if err != nil {
+			return Entity{}, err
+		}
+
 		codeIdentifier, err = l.storage.Create()
 		if err != nil {
 			return Entity{}, err

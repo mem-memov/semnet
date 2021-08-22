@@ -42,12 +42,41 @@ func (b Bit) HasBitValue(value bool) (bool, error) {
 	return bitEntity.Is(value), nil
 }
 
-func (b Bit) NewBit() (Bit, error) {
+func (b Bit) NewBit(bitValue bool) (Bit, error) {
 
 	identifier, err := b.storage.Create()
 	if err != nil {
 		return Bit{}, err
 	}
 
+	bitEntity, err := b.bitRepository.Provide(bitValue)
+	if err != nil {
+		return Bit{}, err
+	}
+
+	err = bitEntity.Mark(identifier)
+	if err != nil {
+		return Bit{}, err
+	}
+
 	return newBit(identifier, b.storage, b.bitRepository), nil
+}
+
+func (b Bit) BitValue() (bool, error) {
+
+	targets, err := b.storage.ReadTargets(b.identifier)
+	if err != nil {
+		return false, err
+	}
+
+	if len(targets) != 1 {
+		return false, fmt.Errorf("wrong number of targets %d in code layer at bit %d", len(targets), b.identifier)
+	}
+
+	bitEntity, err := b.bitRepository.Fetch(targets[0])
+	if err != nil {
+		return false, err
+	}
+
+	return bitEntity.Bit(), nil
 }
