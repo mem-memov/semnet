@@ -55,10 +55,14 @@ func (c Character) NewCharacter(code Code) (Character, error) {
 		return Character{}, nil
 	}
 
-	err = c.storage.SetReference(identifier, code.Identifier())
+	err = c.storage.SetReference(code.Identifier(), identifier)
 	if err != nil {
 		return Character{}, nil
 	}
 
 	return newCharacter(identifier, c.storage), nil
+}
+
+func (c Character) String() string {
+	return fmt.Sprintf("character %d", c.identifier)
 }

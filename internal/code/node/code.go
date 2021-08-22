@@ -75,7 +75,7 @@ func (c Code) NewCode(bit Bit) (Code, error) {
 		return Code{}, err
 	}
 
-	err = c.storage.SetReference(identifier, bit.Identifier())
+	err = c.storage.SetReference(bit.Identifier(), identifier)
 	if err != nil {
 		return Code{}, err
 	}
@@ -86,4 +86,8 @@ func (c Code) NewCode(bit Bit) (Code, error) {
 	}
 
 	return newCode(identifier, c.storage), nil
+}
+
+func (c Code) String() string {
+	return fmt.Sprintf("code %d", c.identifier)
 }

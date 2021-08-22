@@ -80,3 +80,7 @@ func (b Bit) BitValue() (bool, error) {
 
 	return bitEntity.Bit(), nil
 }
+
+func (b Bit) String() string {
+	return fmt.Sprintf("bit %d", b.identifier)
+}

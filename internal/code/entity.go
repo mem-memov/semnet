@@ -102,3 +102,7 @@ func (e Entity) BitValue() (bool, error) {
 
 	return e.bitNode.BitValue()
 }
+
+func (e Entity) String() string {
+	return fmt.Sprintf("Code: %s %s %s\n", e.bitNode, e.codeNode, e.characterNode)
+}

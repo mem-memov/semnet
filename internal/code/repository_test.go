@@ -17,11 +17,14 @@ func TestRepository(t *testing.T) {
 		{"1", 1, nil, nil},
 		{"10", 2, nil, nil},
 		{"11", 3, nil, nil},
+		{"111", 7, nil, nil},
+		{"1000", 8, nil, nil},
 	}
 
 	for _, d := range data {
 		t.Run(d.name, func(t *testing.T) {
-			storage := clew.NewGraph(clew.NewSliceStorage())
+			slices := clew.NewSliceStorage()
+			storage := clew.NewGraph(slices)
 			bitRepository := bit.NewRepository(storage)
 			r := newRepository(storage, bitRepository)
 
@@ -38,7 +41,7 @@ func TestRepository(t *testing.T) {
 			}
 
 			if integer != d.integer {
-				t.Fail()
+				t.Error(entity, slices)
 			}
 		})
 	}
