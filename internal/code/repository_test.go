@@ -7,12 +7,12 @@ import (
 )
 
 func TestRepository(t *testing.T) {
-	data := []struct{
-		name string
-		integer int32
+	data := []struct {
+		name       string
+		integer    int32
 		provideErr error
 		extractErr error
-	} {
+	}{
 		{"0", 0, nil, nil},
 		{"1", 1, nil, nil},
 		{"10", 2, nil, nil},

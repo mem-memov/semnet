@@ -94,7 +94,7 @@ func (e Entity) findPrevious(entities *entities) (Entity, bool, error) {
 
 		return entities.create(bitIdentifier, parentCode.Identifier(), characterIdentifier), false, nil
 	default:
-		return Entity{}, false, fmt.Errorf("too many sources in code layer")
+		return Entity{}, false, fmt.Errorf("too many sources in code tree")
 	}
 }
 

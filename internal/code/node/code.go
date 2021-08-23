@@ -80,7 +80,7 @@ func (c Code) NewCode(bit Bit) (Code, error) {
 		return Code{}, err
 	}
 
-	err = c.storage.Connect(c.identifier,  identifier)
+	err = c.storage.Connect(c.identifier, identifier)
 	if err != nil {
 		return Code{}, err
 	}

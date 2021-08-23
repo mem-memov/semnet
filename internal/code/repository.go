@@ -6,9 +6,8 @@ import (
 
 type Repository struct {
 	entities      *entities
-	storage       storage
 	bitRepository *bit.Repository
-	layer         *layer
+	tree          *tree
 	paths         *paths
 }
 
@@ -17,9 +16,8 @@ func newRepository(storage storage, bitRepository *bit.Repository) *Repository {
 
 	return &Repository{
 		entities:      entities,
-		storage:       storage,
 		bitRepository: bitRepository,
-		layer:         newLayer(storage, entities),
+		tree:          newLayer(storage, entities),
 		paths:         newPaths(),
 	}
 }
@@ -36,7 +34,7 @@ func (r *Repository) Provide(integer int32) (Entity, error) {
 		return Entity{}, err
 	}
 
-	entity, err := r.layer.provideRoot(firstBit)
+	entity, err := r.tree.provideRoot(firstBit)
 	if err != nil {
 		return Entity{}, err
 	}

@@ -1,17 +1,26 @@
 package character
 
-//
-//type Repository struct {
-//	storage semnet.storage
-//	codes   *code.codes
-//}
-//
-//func NewRepository(storage storage, codeRepository *code.Repository) *Repository {
-//	return &Repository{
-//		storage: storage,
-//		codes:   codeRepository,
-//	}
-//}
+import (
+	"github.com/mem-memov/semnet/internal/code"
+)
+
+type Repository struct {
+	entities       *entities
+	codeRepository *code.Repository
+	tree           *tree
+	paths          *paths
+}
+
+func NewRepository(storage storage, codeRepository *code.Repository) *Repository {
+	entities := newEntities(storage, codeRepository)
+
+	return &Repository{
+		entities:       entities,
+		codeRepository: codeRepository,
+		tree:           newLayer(storage, entities),
+		paths:          newPaths(),
+	}
+}
 
 //func (r *Repository) create(rune rune) (Entity, error) {
 //

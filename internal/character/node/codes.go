@@ -3,13 +3,13 @@ package node
 import "github.com/mem-memov/semnet/internal/code"
 
 type Codes struct {
-	storage storage
+	storage        storage
 	codeRepository *code.Repository
 }
 
 func NewCodes(storage storage, codeRepository *code.Repository) *Codes {
 	return &Codes{
-		storage: storage,
+		storage:        storage,
 		codeRepository: codeRepository,
 	}
 }
