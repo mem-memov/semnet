@@ -54,14 +54,12 @@ func (r *Repository) Provide(integer int32) (Entity, error) {
 
 func (r *Repository) Extract(entity Entity) (int32, error) {
 
-	bitValues := make([]bool, 1)
-
 	bitValue, err := entity.BitValue()
 	if err != nil {
 		return 0, err
 	}
 
-	bitValues[0] = bitValue
+	path := r.paths.create(bitValue)
 
 	for {
 		var isRoot bool
@@ -76,18 +74,12 @@ func (r *Repository) Extract(entity Entity) (int32, error) {
 			return 0, err
 		}
 
-		bitValues = append(bitValues, bitValue)
-	}
-
-	reversedBitValues := make([]bool, len(bitValues))
-
-	for total, i, j := len(bitValues), 0, len(bitValues)-1; i < total; i, j = i+1, j-1 {
-		reversedBitValues[j] = bitValues[i]
+		path = append(path, bitValue)
 	}
 
 	var integer int32
 
-	for _, bitValue := range reversedBitValues {
+	for _, bitValue := range path.reverse() {
 		integer <<= 1
 		if bitValue {
 			integer += 1

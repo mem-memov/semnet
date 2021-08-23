@@ -10,6 +10,14 @@ func newPaths() *paths {
 	return &paths{}
 }
 
+func (p *paths) create(start bool) path {
+
+	newPath := make([]bool, 1)
+	newPath[0] = start
+
+	return newPath
+}
+
 func (p *paths) collect(integer int32) (path, error) {
 
 	bitNames := fmt.Sprintf("%b", integer)
