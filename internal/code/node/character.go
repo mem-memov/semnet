@@ -18,6 +18,10 @@ func (c Character) Identifier() uint {
 	return c.identifier
 }
 
+func (c Character) mark(sourceIdentifier uint) error {
+	return c.storage.Connect(sourceIdentifier, c.identifier)
+}
+
 func (c Character) ProvideSingleTarget() (uint, error) {
 
 	targets, err := c.storage.ReadTargets(c.identifier)

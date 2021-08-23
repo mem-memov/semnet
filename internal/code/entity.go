@@ -19,6 +19,15 @@ func newEntity(bitNode node.Bit, codeNode node.Code, characterNode node.Characte
 	}
 }
 
+func (e Entity) Mark(sourceIdentifier uint) error {
+	return e.characterNode.mark(sourceIdentifier)
+}
+
+func (e Entity) ProvideSingleTarget() (uint, error) {
+
+	return e.characterNode.ProvideSingleTarget()
+}
+
 func (e Entity) provideNext(bitValue bool, entities *entities) (Entity, error) {
 
 	targetCodes, err := e.codeNode.ReadTargets()

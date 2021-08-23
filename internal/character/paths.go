@@ -10,30 +10,21 @@ func newPaths() *paths {
 	return &paths{}
 }
 
-func (p *paths) create(start bool) path {
+func (p *paths) create(start rune) path {
 
-	newPath := make([]bool, 1)
+	newPath := make([]rune, 1)
 	newPath[0] = start
 
 	return newPath
 }
 
-func (p *paths) collect(integer int32) (path, error) {
+func (p *paths) collect(word string) (path, error) {
 
-	bitNames := fmt.Sprintf("%b", integer)
+	path := []rune(word)
 
-	if len(bitNames) < 1 {
-		return path{}, fmt.Errorf("no bits in entity: %d", integer)
+	if len(path) < 1 {
+		return path, fmt.Errorf("no characters in word entity: %s", word)
 	}
 
-	bitValues := path(make([]bool, len(bitNames)))
-
-	for i, bitName := range bitNames {
-		if bitName != '0' && bitName != '1' {
-			return path{}, fmt.Errorf("invalid bit name: %c", bitName)
-		}
-		bitValues[i] = bitName == '1'
-	}
-
-	return bitValues, nil
+	return path, nil
 }

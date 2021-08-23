@@ -22,6 +22,34 @@ func NewRepository(storage storage, codeRepository *code.Repository) *Repository
 	}
 }
 
+func (r *Repository) Provide(word string) (Entity, error) {
+
+	path, err := r.paths.collect(word)
+	if err != nil {
+		return Entity{}, err
+	}
+
+	firstCode, err := r.codeRepository.Provide(path[0])
+	if err != nil {
+		return Entity{}, err
+	}
+
+	entity, err := r.tree.provideRoot(firstCode)
+	if err != nil {
+		return Entity{}, err
+	}
+
+	for _, codeValue := range path[1:] {
+
+		entity, err = entity.provideNext(codeValue, r.entities)
+		if err != nil {
+			return Entity{}, err
+		}
+	}
+
+	return entity, nil
+}
+
 //func (r *Repository) create(rune rune) (Entity, error) {
 //
 //	code, err := c.codes.create(int32(rune))

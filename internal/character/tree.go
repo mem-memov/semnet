@@ -2,7 +2,7 @@ package character
 
 import (
 	"fmt"
-	"github.com/mem-memov/semnet/internal/bit"
+	"github.com/mem-memov/semnet/internal/code"
 )
 
 type tree struct {
@@ -17,9 +17,9 @@ func newLayer(storage storage, entities *entities) *tree {
 	}
 }
 
-func (t *tree) provideRoot(bitEntity bit.Entity) (Entity, error) {
+func (t *tree) provideRoot(codeEntity code.Entity) (Entity, error) {
 
-	bitIdentifier, err := bitEntity.ProvideSingleTarget()
+	bitIdentifier, err := codeEntity.ProvideSingleTarget()
 	if err != nil {
 		return Entity{}, err
 	}
@@ -34,7 +34,7 @@ func (t *tree) provideRoot(bitEntity bit.Entity) (Entity, error) {
 
 	switch len(bitTargets) {
 	case 0:
-		err = bitEntity.Mark(bitIdentifier)
+		err = codeEntity.Mark(bitIdentifier)
 		if err != nil {
 			return Entity{}, err
 		}
@@ -59,7 +59,7 @@ func (t *tree) provideRoot(bitEntity bit.Entity) (Entity, error) {
 			return Entity{}, err
 		}
 	case 1:
-		if bitTargets[0] != bitEntity.Identifier() {
+		if bitTargets[0] != codeEntity.Identifier() {
 			return Entity{}, fmt.Errorf("wrong target %d in code tree at bit %d", bitTargets[0], bitIdentifier)
 		}
 
