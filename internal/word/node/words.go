@@ -10,6 +10,6 @@ func NewWords(storage storage) *Words {
 	}
 }
 
-func (w *Words) Create(identifier uint) Word {
-	return newWord(identifier, w.storage)
+func (c *Words) Create(identifier uint) Word {
+	return newWord(identifier, c.storage)
 }

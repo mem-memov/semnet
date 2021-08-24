@@ -31,7 +31,7 @@ func (b Bit) HasBitValue(value bool) (bool, error) {
 	}
 
 	if len(targets) != 1 {
-		return false, fmt.Errorf("wrong number of targets %d in code layer at bit %d", len(targets), b.identifier)
+		return false, fmt.Errorf("wrong number of targets %d in character layer at bit %d", len(targets), b.identifier)
 	}
 
 	bitEntity, err := b.bitRepository.Fetch(targets[0])
@@ -70,7 +70,7 @@ func (b Bit) BitValue() (bool, error) {
 	}
 
 	if len(targets) != 1 {
-		return false, fmt.Errorf("wrong number of targets %d in code layer at bit %d", len(targets), b.identifier)
+		return false, fmt.Errorf("wrong number of targets %d in character layer at bit %d", len(targets), b.identifier)
 	}
 
 	bitEntity, err := b.bitRepository.Fetch(targets[0])

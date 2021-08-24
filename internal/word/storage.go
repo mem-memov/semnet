@@ -1,4 +1,4 @@
-package action
+package word
 
 type storage interface {
 	Has(source uint) (bool, error)

@@ -5,7 +5,6 @@ import (
 	"github.com/mem-memov/semnet/internal/action"
 	"github.com/mem-memov/semnet/internal/bit"
 	"github.com/mem-memov/semnet/internal/character"
-	"github.com/mem-memov/semnet/internal/code"
 	"github.com/mem-memov/semnet/internal/word"
 )
 
@@ -17,7 +16,7 @@ type Graph struct {
 func NewGraph(storage internal.storage) *Graph {
 	bits := bit.newBits(storage)
 	codes := code.newCodes(storage, bits)
-	characters := character.newCharacters(storage, codes)
+	characters := word.newCharacters(storage, codes)
 	words := word.newWords(storage, characters)
 	actions := action.newActions(storage, words)
 

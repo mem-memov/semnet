@@ -1,4 +1,4 @@
-package code
+package character
 
 import (
 	"github.com/mem-memov/clew"

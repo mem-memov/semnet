@@ -1,8 +1,8 @@
-package character
+package word
 
 import (
 	"fmt"
-	"github.com/mem-memov/semnet/internal/bit"
+	"github.com/mem-memov/semnet/internal/character"
 )
 
 type tree struct {
@@ -17,9 +17,9 @@ func newLayer(storage storage, entities *entities) *tree {
 	}
 }
 
-func (t *tree) provideRoot(bitEntity bit.Entity) (Entity, error) {
+func (t *tree) provideRoot(characterEntity character.Entity) (Entity, error) {
 
-	bitIdentifier, err := bitEntity.ProvideSingleTarget()
+	bitIdentifier, err := characterEntity.ProvideSingleTarget()
 	if err != nil {
 		return Entity{}, err
 	}
@@ -30,11 +30,11 @@ func (t *tree) provideRoot(bitEntity bit.Entity) (Entity, error) {
 	}
 
 	var characterIdentifier uint
-	var wordIdentifier uint
+	var characterIdentifier uint
 
 	switch len(bitTargets) {
 	case 0:
-		err = bitEntity.Mark(bitIdentifier)
+		err = characterEntity.Mark(bitIdentifier)
 		if err != nil {
 			return Entity{}, err
 		}
@@ -49,17 +49,17 @@ func (t *tree) provideRoot(bitEntity bit.Entity) (Entity, error) {
 			return Entity{}, err
 		}
 
-		wordIdentifier, err = t.storage.Create()
+		characterIdentifier, err = t.storage.Create()
 		if err != nil {
 			return Entity{}, err
 		}
 
-		err = t.storage.SetReference(characterIdentifier, wordIdentifier)
+		err = t.storage.SetReference(characterIdentifier, characterIdentifier)
 		if err != nil {
 			return Entity{}, err
 		}
 	case 1:
-		if bitTargets[0] != bitEntity.Identifier() {
+		if bitTargets[0] != characterEntity.Identifier() {
 			return Entity{}, fmt.Errorf("wrong target %d in character tree at bit %d", bitTargets[0], bitIdentifier)
 		}
 
@@ -68,7 +68,7 @@ func (t *tree) provideRoot(bitEntity bit.Entity) (Entity, error) {
 			return Entity{}, err
 		}
 
-		_, wordIdentifier, err = t.storage.GetReference(characterIdentifier)
+		_, characterIdentifier, err = t.storage.GetReference(characterIdentifier)
 		if err != nil {
 			return Entity{}, err
 		}
@@ -76,5 +76,5 @@ func (t *tree) provideRoot(bitEntity bit.Entity) (Entity, error) {
 		return Entity{}, fmt.Errorf("wrong number of targets %d in character tree at bit %d", len(bitTargets), bitIdentifier)
 	}
 
-	return t.entities.create(bitIdentifier, characterIdentifier, wordIdentifier), nil
+	return t.entities.create(bitIdentifier, characterIdentifier, characterIdentifier), nil
 }

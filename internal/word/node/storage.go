@@ -1,4 +1,4 @@
-package code
+package node
 
 type storage interface {
 	Has(source uint) (bool, error)

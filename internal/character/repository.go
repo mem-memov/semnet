@@ -1,47 +1,47 @@
 package character
 
 import (
-	"github.com/mem-memov/semnet/internal/code"
+	"github.com/mem-memov/semnet/internal/bit"
 )
 
 type Repository struct {
-	entities       *entities
-	codeRepository *code.Repository
-	tree           *tree
-	paths          *paths
+	entities      *entities
+	bitRepository *bit.Repository
+	tree          *tree
+	paths         *paths
 }
 
-func NewRepository(storage storage, codeRepository *code.Repository) *Repository {
-	entities := newEntities(storage, codeRepository)
+func newRepository(storage storage, bitRepository *bit.Repository) *Repository {
+	entities := newEntities(storage, bitRepository)
 
 	return &Repository{
-		entities:       entities,
-		codeRepository: codeRepository,
-		tree:           newLayer(storage, entities),
-		paths:          newPaths(),
+		entities:      entities,
+		bitRepository: bitRepository,
+		tree:          newLayer(storage, entities),
+		paths:         newPaths(),
 	}
 }
 
-func (r *Repository) Provide(word string) (Entity, error) {
+func (r *Repository) Provide(integer rune) (Entity, error) {
 
-	path, err := r.paths.collect(word)
+	path, err := r.paths.collect(integer)
 	if err != nil {
 		return Entity{}, err
 	}
 
-	firstCode, err := r.codeRepository.Provide(path[0])
+	firstBit, err := r.bitRepository.Provide(path[0])
 	if err != nil {
 		return Entity{}, err
 	}
 
-	entity, err := r.tree.provideRoot(firstCode)
+	entity, err := r.tree.provideRoot(firstBit)
 	if err != nil {
 		return Entity{}, err
 	}
 
-	for _, codeValue := range path[1:] {
+	for _, bitValue := range path[1:] {
 
-		entity, err = entity.provideNext(codeValue, r.entities)
+		entity, err = entity.provideNext(bitValue, r.entities)
 		if err != nil {
 			return Entity{}, err
 		}
@@ -50,47 +50,39 @@ func (r *Repository) Provide(word string) (Entity, error) {
 	return entity, nil
 }
 
-//func (r *Repository) create(rune rune) (Entity, error) {
-//
-//	code, err := c.codes.create(int32(rune))
-//	if err != nil {
-//		return Entity{}, err
-//	}
-//
-//	var code code
-//	var err error
-//
-//	for i, bitName := range fmt.Sprintf("%b", r) {
-//
-//		switch bitName {
-//		case '0':
-//			if i == 0 {
-//				code, err = c.codes.createZero()
-//				if err != nil {
-//					return Entity{}, err
-//				}
-//			} else {
-//				code, err = code.NextZero()
-//				if err != nil {
-//					return Entity{}, err
-//				}
-//			}
-//		case '1':
-//			if i == 0 {
-//				code, err = c.codes.createOne()
-//				if err != nil {
-//					return Entity{}, err
-//				}
-//			} else {
-//				code, err = code.NextOne()
-//				if err != nil {
-//					return Entity{}, err
-//				}
-//			}
-//		default:
-//			return Entity{}, fmt.Errorf("unexpected bit name: %c", bitName)
-//		}
-//	}
-//
-//	return newCharacter(code), nil
-//}
+func (r *Repository) Extract(entity Entity) (int32, error) {
+
+	bitValue, err := entity.BitValue()
+	if err != nil {
+		return 0, err
+	}
+
+	path := r.paths.create(bitValue)
+
+	for {
+		var isRoot bool
+		entity, isRoot, err = entity.findPrevious(r.entities)
+
+		if isRoot {
+			break
+		}
+
+		bitValue, err = entity.BitValue()
+		if err != nil {
+			return 0, err
+		}
+
+		path = append(path, bitValue)
+	}
+
+	var integer int32
+
+	for _, bitValue := range path.reverse() {
+		integer <<= 1
+		if bitValue {
+			integer += 1
+		}
+	}
+
+	return integer, nil
+}

@@ -26,7 +26,7 @@ func (c Character) ReadTargets() ([]Character, error) {
 	}
 
 	if len(targetIdentifiers) > 2 {
-		return []Character{}, fmt.Errorf("too many targets in ccharacter layer at ccharacter %d", c.identifier)
+		return []Character{}, fmt.Errorf("too many targets in character layer at character %d", c.identifier)
 	}
 
 	characters := make([]Character, len(targetIdentifiers))
@@ -36,4 +36,58 @@ func (c Character) ReadTargets() ([]Character, error) {
 	}
 
 	return characters, nil
+}
+
+func (c Character) ReadSources() ([]Character, error) {
+
+	sourceIdentifiers, err := c.storage.ReadSources(c.identifier)
+	if err != nil {
+		return []Character{}, err
+	}
+
+	if len(sourceIdentifiers) > 1 {
+		return []Character{}, fmt.Errorf("too many sources in character layer at character %d", c.identifier)
+	}
+
+	characters := make([]Character, len(sourceIdentifiers))
+
+	for i, targetIdentifier := range sourceIdentifiers {
+		characters[i] = newCharacter(targetIdentifier, c.storage)
+	}
+
+	return characters, nil
+}
+
+func (c Character) GetBitAndWord() (uint, uint, error) {
+
+	bitIdentifier, wordIdentifier, err := c.storage.GetReference(c.identifier)
+	if err != nil {
+		return 0, 0, nil
+	}
+
+	return bitIdentifier, wordIdentifier, nil
+}
+
+func (c Character) NewCharacter(bit Bit) (Character, error) {
+
+	identifier, err := c.storage.Create()
+	if err != nil {
+		return Character{}, err
+	}
+
+	err = c.storage.SetReference(bit.Identifier(), identifier)
+	if err != nil {
+		return Character{}, err
+	}
+
+	err = c.storage.Connect(c.identifier, identifier)
+	if err != nil {
+		return Character{}, err
+	}
+
+	return newCharacter(identifier, c.storage), nil
+}
+
+func (c Character) String() string {
+	return fmt.Sprintf("character %d", c.identifier)
 }
