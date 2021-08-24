@@ -26,7 +26,7 @@ func TestRepository(t *testing.T) {
 			slices := clew.NewSliceStorage()
 			storage := clew.NewGraph(slices)
 			bitRepository := bit.NewRepository(storage)
-			r := newRepository(storage, bitRepository)
+			r := NewRepository(storage, bitRepository)
 
 			entity, err := r.Provide(d.integer)
 

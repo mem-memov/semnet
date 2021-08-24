@@ -1,6 +1,7 @@
 package word
 
 import (
+	"fmt"
 	"github.com/mem-memov/semnet/internal/word/node"
 )
 
@@ -71,4 +72,33 @@ func (e Entity) hasCharacterValue(characterValue rune) (bool, error) {
 	}
 
 	return hasCharacterValue, nil
+}
+
+func (e Entity) characterValue() (rune, error) {
+
+	return e.characterNode.CharacterValue()
+}
+
+func (e Entity) findPrevious(entities *entities) (Entity, bool, error) {
+
+	sourceWords, err := e.wordNode.ReadSources()
+	if err != nil {
+		return Entity{}, false, nil
+	}
+
+	switch len(sourceWords) {
+	case 0:
+		return e, true, nil
+	case 1:
+		parentWord := sourceWords[0]
+
+		characterIdentifier, phraseIdentifier, err := parentWord.GetCharacterAndPhrase()
+		if err != nil {
+			return Entity{}, false, nil
+		}
+
+		return entities.create(characterIdentifier, parentWord.Identifier(), phraseIdentifier), false, nil
+	default:
+		return Entity{}, false, fmt.Errorf("too many sources in word tree")
+	}
 }

@@ -19,6 +19,10 @@ func newEntity(bitNode node.Bit, characterNode node.Character, wordNode node.Wor
 	}
 }
 
+func (e Entity) CharacterIdentifier() uint {
+	return e.characterNode.Identifier()
+}
+
 func (e Entity) Mark(sourceIdentifier uint) error {
 	return e.wordNode.Mark(sourceIdentifier)
 }
@@ -107,7 +111,7 @@ func (e Entity) findPrevious(entities *entities) (Entity, bool, error) {
 	}
 }
 
-func (e Entity) BitValue() (bool, error) {
+func (e Entity) bitValue() (bool, error) {
 
 	return e.bitNode.BitValue()
 }

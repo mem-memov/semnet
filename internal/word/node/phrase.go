@@ -6,7 +6,10 @@ type Phrase struct {
 }
 
 func newPhrase(identifier uint, storage storage) Phrase {
-	return Phrase{}
+	return Phrase{
+		identifier: identifier,
+		storage: storage,
+	}
 }
 
 func (p Phrase) NewPhrase(word Word) (Phrase, error) {

@@ -11,7 +11,7 @@ type Repository struct {
 	paths         *paths
 }
 
-func newRepository(storage storage, bitRepository *bit.Repository) *Repository {
+func NewRepository(storage storage, bitRepository *bit.Repository) *Repository {
 	entities := newEntities(storage, bitRepository)
 
 	return &Repository{
@@ -50,9 +50,9 @@ func (r *Repository) Provide(integer rune) (Entity, error) {
 	return entity, nil
 }
 
-func (r *Repository) Extract(entity Entity) (int32, error) {
+func (r *Repository) Extract(entity Entity) (rune, error) {
 
-	bitValue, err := entity.BitValue()
+	bitValue, err := entity.bitValue()
 	if err != nil {
 		return 0, err
 	}
@@ -67,7 +67,7 @@ func (r *Repository) Extract(entity Entity) (int32, error) {
 			break
 		}
 
-		bitValue, err = entity.BitValue()
+		bitValue, err = entity.bitValue()
 		if err != nil {
 			return 0, err
 		}
@@ -85,4 +85,9 @@ func (r *Repository) Extract(entity Entity) (int32, error) {
 	}
 
 	return integer, nil
+}
+
+func (r *Repository) Fetch(wordIdentifier uint) (Entity, error) {
+
+	return r.entities.createWithWord(wordIdentifier)
 }

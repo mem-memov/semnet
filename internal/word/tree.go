@@ -19,62 +19,62 @@ func newLayer(storage storage, entities *entities) *tree {
 
 func (t *tree) provideRoot(characterEntity character.Entity) (Entity, error) {
 
-	bitIdentifier, err := characterEntity.ProvideSingleTarget()
+	characterIdentifier, err := characterEntity.ProvideSingleTarget()
 	if err != nil {
 		return Entity{}, err
 	}
 
-	bitTargets, err := t.storage.ReadTargets(bitIdentifier)
+	characterTargets, err := t.storage.ReadTargets(characterIdentifier)
 	if err != nil {
 		return Entity{}, err
 	}
 
-	var characterIdentifier uint
-	var characterIdentifier uint
+	var wordIdentifier uint
+	var phraseIdentifier uint
 
-	switch len(bitTargets) {
+	switch len(characterTargets) {
 	case 0:
-		err = characterEntity.Mark(bitIdentifier)
+		err = characterEntity.Mark(characterIdentifier)
 		if err != nil {
 			return Entity{}, err
 		}
 
-		characterIdentifier, err = t.storage.Create()
+		wordIdentifier, err = t.storage.Create()
 		if err != nil {
 			return Entity{}, err
 		}
 
-		err = t.storage.SetReference(bitIdentifier, characterIdentifier)
+		err = t.storage.SetReference(characterIdentifier, wordIdentifier)
 		if err != nil {
 			return Entity{}, err
 		}
 
-		characterIdentifier, err = t.storage.Create()
+		phraseIdentifier, err = t.storage.Create()
 		if err != nil {
 			return Entity{}, err
 		}
 
-		err = t.storage.SetReference(characterIdentifier, characterIdentifier)
+		err = t.storage.SetReference(wordIdentifier, phraseIdentifier)
 		if err != nil {
 			return Entity{}, err
 		}
 	case 1:
-		if bitTargets[0] != characterEntity.Identifier() {
-			return Entity{}, fmt.Errorf("wrong target %d in character tree at bit %d", bitTargets[0], bitIdentifier)
+		if characterTargets[0] != characterEntity.CharacterIdentifier() {
+			return Entity{}, fmt.Errorf("wrong target %d in word tree at character %d", characterTargets[0], characterIdentifier)
 		}
 
-		_, characterIdentifier, err = t.storage.GetReference(bitIdentifier)
+		_, wordIdentifier, err = t.storage.GetReference(characterIdentifier)
 		if err != nil {
 			return Entity{}, err
 		}
 
-		_, characterIdentifier, err = t.storage.GetReference(characterIdentifier)
+		_, phraseIdentifier, err = t.storage.GetReference(wordIdentifier)
 		if err != nil {
 			return Entity{}, err
 		}
 	default:
-		return Entity{}, fmt.Errorf("wrong number of targets %d in character tree at bit %d", len(bitTargets), bitIdentifier)
+		return Entity{}, fmt.Errorf("wrong number of targets %d in word tree at character %d", len(characterTargets), characterIdentifier)
 	}
 
-	return t.entities.create(bitIdentifier, characterIdentifier, characterIdentifier), nil
+	return t.entities.create(characterIdentifier, wordIdentifier, phraseIdentifier), nil
 }

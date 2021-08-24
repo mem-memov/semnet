@@ -12,3 +12,7 @@ func (p path) reverse() path {
 
 	return reversed
 }
+
+func (p path) toString() string {
+	return string(p)
+}

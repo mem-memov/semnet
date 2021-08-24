@@ -1,6 +1,7 @@
 package character
 
 import (
+	"fmt"
 	"github.com/mem-memov/semnet/internal/bit"
 	"github.com/mem-memov/semnet/internal/character/node"
 )
@@ -26,4 +27,27 @@ func (e *entities) create(bitIdentifier uint, characterIdentifier uint, wordIden
 		e.characters.Create(characterIdentifier),
 		e.words.Create(wordIdentifier),
 	)
+}
+
+func (e *entities) createWithWord(wordIdentifier uint) (Entity, error) {
+
+	wordNode := e.words.Create(wordIdentifier)
+
+	characterIdentifier, err := wordNode.GetCharacter()
+	if err != nil {
+		return Entity{}, nil
+	}
+
+	characterNode := e.characters.Create(characterIdentifier)
+
+	bitIdentifier, wordIdentifierOfCharacter, err := characterNode.GetBitAndWord()
+	if err != nil {
+		return Entity{}, nil
+	}
+
+	if wordIdentifier != wordIdentifierOfCharacter {
+		return Entity{}, fmt.Errorf("character has incorrect reference to word in character layer at character %d", characterIdentifier)
+	}
+
+	return e.create(bitIdentifier, characterIdentifier, wordIdentifier), nil
 }

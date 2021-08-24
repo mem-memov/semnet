@@ -40,6 +40,26 @@ func (w Word) ReadTargets() ([]Word, error) {
 	return words, nil
 }
 
+func (w Word) ReadSources() ([]Word, error) {
+
+	sourceIdentifiers, err := w.storage.ReadSources(w.identifier)
+	if err != nil {
+		return []Word{}, err
+	}
+
+	if len(sourceIdentifiers) > 1 {
+		return []Word{}, fmt.Errorf("too many sources in word layer at word %d", w.identifier)
+	}
+
+	words := make([]Word, len(sourceIdentifiers))
+
+	for i, targetIdentifier := range sourceIdentifiers {
+		words[i] = newWord(targetIdentifier, w.storage)
+	}
+
+	return words, nil
+}
+
 func (w Word) GetCharacterAndPhrase() (uint, uint, error) {
 
 	characterIdentifier, phraseIdentifier, err := w.storage.GetReference(w.identifier)

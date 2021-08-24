@@ -67,6 +67,20 @@ func (w Word) NewWord(character Character) (Word, error) {
 	return newWord(identifier, w.storage), nil
 }
 
+func (c Word) GetCharacter() (uint, error) {
+
+	characterIdentifier, emptyReference, err := c.storage.GetReference(c.identifier)
+	if err != nil {
+		return 0, nil
+	}
+
+	if emptyReference != 0 {
+		return 0, fmt.Errorf("next node reference is not empty in character layer at word %d", c.identifier)
+	}
+
+	return characterIdentifier, nil
+}
+
 func (w Word) String() string {
 	return fmt.Sprintf("word %d", w.identifier)
 }

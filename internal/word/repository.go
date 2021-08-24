@@ -50,47 +50,30 @@ func (r *Repository) Provide(word string) (Entity, error) {
 	return entity, nil
 }
 
-//func (r *Repository) create(rune rune) (Entity, error) {
-//
-//	character, err := c.characters.create(int32(rune))
-//	if err != nil {
-//		return Entity{}, err
-//	}
-//
-//	var character character
-//	var err error
-//
-//	for i, bitName := range fmt.Sprintf("%b", r) {
-//
-//		switch bitName {
-//		case '0':
-//			if i == 0 {
-//				character, err = c.characters.createZero()
-//				if err != nil {
-//					return Entity{}, err
-//				}
-//			} else {
-//				character, err = character.NextZero()
-//				if err != nil {
-//					return Entity{}, err
-//				}
-//			}
-//		case '1':
-//			if i == 0 {
-//				character, err = c.characters.createOne()
-//				if err != nil {
-//					return Entity{}, err
-//				}
-//			} else {
-//				character, err = character.NextOne()
-//				if err != nil {
-//					return Entity{}, err
-//				}
-//			}
-//		default:
-//			return Entity{}, fmt.Errorf("unexpected bit name: %c", bitName)
-//		}
-//	}
-//
-//	return newCharacter(character), nil
-//}
+func (r *Repository) Extract(entity Entity) (string, error) {
+
+	characterValue, err := entity.characterValue()
+	if err != nil {
+		return "", err
+	}
+
+	path := r.paths.create(characterValue)
+
+	for {
+		var isRoot bool
+		entity, isRoot, err = entity.findPrevious(r.entities)
+
+		if isRoot {
+			break
+		}
+
+		characterValue, err = entity.characterValue()
+		if err != nil {
+			return "", err
+		}
+
+		path = append(path, characterValue)
+	}
+
+	return path.reverse().toString(), nil
+}

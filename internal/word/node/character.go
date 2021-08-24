@@ -59,5 +59,34 @@ func (c Character) HasCharacterValue(value rune) (bool, error) {
 		return false, err
 	}
 
-	return characterEntity.Is(value), nil
+	characterValue, err := c.characterRepository.Extract(characterEntity)
+	if err != nil {
+		return false, err
+	}
+
+	return characterValue == value, nil
+}
+
+func (c Character) CharacterValue() (rune, error) {
+
+	targets, err := c.storage.ReadTargets(c.identifier)
+	if err != nil {
+		return 0, err
+	}
+
+	if len(targets) != 1 {
+		return 0, fmt.Errorf("wrong number of targets %d in word layer at character %d", len(targets), c.identifier)
+	}
+
+	characterEntity, err := c.characterRepository.Fetch(targets[0])
+	if err != nil {
+		return 0, err
+	}
+
+	characterValue, err := c.characterRepository.Extract(characterEntity)
+	if err != nil {
+		return 0, err
+	}
+
+	return characterValue, nil
 }

@@ -15,5 +15,5 @@ func NewCharacters(storage storage, characterRepository *character.Repository) *
 }
 
 func (c *Characters) Create(identifier uint) Character {
-	return NewCharacter(identifier, c.storage, c.characterRepository)
+	return newCharacter(identifier, c.storage, c.characterRepository)
 }
