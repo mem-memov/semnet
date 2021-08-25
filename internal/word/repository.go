@@ -77,3 +77,8 @@ func (r *Repository) Extract(entity Entity) (string, error) {
 
 	return path.reverse().toString(), nil
 }
+
+func (r *Repository) Fetch(phraseIdentifier uint) (Entity, error) {
+
+	return r.entities.createWithPhrase(phraseIdentifier)
+}

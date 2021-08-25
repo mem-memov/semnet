@@ -3,13 +3,13 @@ package node
 import "github.com/mem-memov/semnet/internal/word"
 
 type Words struct {
-	storage             storage
+	storage        storage
 	wordRepository *word.Repository
 }
 
 func NewWords(storage storage, wordRepository *word.Repository) *Words {
 	return &Words{
-		storage:             storage,
+		storage:        storage,
 		wordRepository: wordRepository,
 	}
 }

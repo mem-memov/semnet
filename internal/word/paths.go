@@ -23,7 +23,7 @@ func (p *paths) collect(word string) (path, error) {
 	path := []rune(word)
 
 	if len(path) < 1 {
-		return path, fmt.Errorf("no phrases in word entity: %s", word)
+		return path, fmt.Errorf("no character in word entity: %s", word)
 	}
 
 	return path, nil

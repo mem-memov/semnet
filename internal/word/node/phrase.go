@@ -66,3 +66,17 @@ func (p Phrase) ProvideSingleTarget() (uint, error) {
 		return 0, fmt.Errorf("entity %d has too many targets: %d", p.identifier, len(targets))
 	}
 }
+
+func (p Phrase) GetWord() (uint, error) {
+
+	wordIdentifier, emptyReference, err := p.storage.GetReference(p.identifier)
+	if err != nil {
+		return 0, nil
+	}
+
+	if emptyReference != 0 {
+		return 0, fmt.Errorf("next node reference is not empty in word layer at phrase %d", p.identifier)
+	}
+
+	return wordIdentifier, nil
+}
