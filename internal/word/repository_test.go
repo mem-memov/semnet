@@ -11,7 +11,7 @@ import (
 func TestRepository(t *testing.T) {
 	data := []struct {
 		name       string
-		word    string
+		word       string
 		provideErr error
 		extractErr error
 	}{

@@ -17,7 +17,7 @@ func NewRepository(storage storage, bitRepository *bit.Repository) *Repository {
 	return &Repository{
 		entities:      entities,
 		bitRepository: bitRepository,
-		tree:          newLayer(storage, entities),
+		tree:          newTree(storage, entities),
 		paths:         newPaths(),
 	}
 }

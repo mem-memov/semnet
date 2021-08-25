@@ -10,7 +10,7 @@ type tree struct {
 	entities *entities
 }
 
-func newLayer(storage storage, entities *entities) *tree {
+func newTree(storage storage, entities *entities) *tree {
 	return &tree{
 		storage:  storage,
 		entities: entities,

@@ -17,7 +17,7 @@ func NewRepository(storage storage, characterRepository *character.Repository) *
 	return &Repository{
 		entities:            entities,
 		characterRepository: characterRepository,
-		tree:                newLayer(storage, entities),
+		tree:                newTree(storage, entities),
 		paths:               newPaths(),
 	}
 }

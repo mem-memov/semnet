@@ -19,8 +19,8 @@ func newEntity(bitNode node.Bit, characterNode node.Character, wordNode node.Wor
 	}
 }
 
-func (e Entity) CharacterIdentifier() uint {
-	return e.characterNode.Identifier()
+func (e Entity) WordIdentifier() uint {
+	return e.wordNode.Identifier()
 }
 
 func (e Entity) Mark(sourceIdentifier uint) error {

@@ -19,6 +19,19 @@ func newEntity(characterNode node.Character, wordNode node.Word, phraseNode node
 	}
 }
 
+func (e Entity) PhraseIdentifier() uint {
+	return e.phraseNode.Identifier()
+}
+
+func (e Entity) Mark(sourceIdentifier uint) error {
+	return e.phraseNode.Mark(sourceIdentifier)
+}
+
+func (e Entity) ProvideSingleTarget() (uint, error) {
+
+	return e.phraseNode.ProvideSingleTarget()
+}
+
 func (e Entity) provideNext(characterValue rune, entities *entities) (Entity, error) {
 
 	targetWords, err := e.wordNode.ReadTargets()

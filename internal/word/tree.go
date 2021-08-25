@@ -10,7 +10,7 @@ type tree struct {
 	entities *entities
 }
 
-func newLayer(storage storage, entities *entities) *tree {
+func newTree(storage storage, entities *entities) *tree {
 	return &tree{
 		storage:  storage,
 		entities: entities,
@@ -59,7 +59,7 @@ func (t *tree) provideRoot(characterEntity character.Entity) (Entity, error) {
 			return Entity{}, err
 		}
 	case 1:
-		if characterTargets[0] != characterEntity.CharacterIdentifier() {
+		if characterTargets[0] != characterEntity.WordIdentifier() {
 			return Entity{}, fmt.Errorf("wrong target %d in word tree at character %d", characterTargets[0], characterIdentifier)
 		}
 
