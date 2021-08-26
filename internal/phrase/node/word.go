@@ -54,17 +54,17 @@ func (w Word) HasWordValue(value string) (bool, error) {
 		return false, fmt.Errorf("wrong number of targets %d in phrase layer at word %d", len(targets), w.identifier)
 	}
 
-	characterEntity, err := w.wordRepository.Fetch(targets[0])
+	wordEntity, err := w.wordRepository.Fetch(targets[0])
 	if err != nil {
 		return false, err
 	}
 
-	characterValue, err := w.wordRepository.Extract(characterEntity)
+	wordValue, err := w.wordRepository.Extract(wordEntity)
 	if err != nil {
 		return false, err
 	}
 
-	return characterValue == value, nil
+	return wordValue == value, nil
 }
 
 func (w Word) WordValue() (string, error) {
@@ -78,15 +78,15 @@ func (w Word) WordValue() (string, error) {
 		return "", fmt.Errorf("wrong number of targets %d in phrase layer at word %d", len(targets), w.identifier)
 	}
 
-	characterEntity, err := w.wordRepository.Fetch(targets[0])
+	wordEntity, err := w.wordRepository.Fetch(targets[0])
 	if err != nil {
 		return "", err
 	}
 
-	characterValue, err := w.wordRepository.Extract(characterEntity)
+	wordValue, err := w.wordRepository.Extract(wordEntity)
 	if err != nil {
 		return "", err
 	}
 
-	return characterValue, nil
+	return wordValue, nil
 }

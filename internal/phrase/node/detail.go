@@ -29,6 +29,44 @@ func (d Detail) NewDetail(phrase Phrase) (Detail, error) {
 	return newDetail(identifier, d.storage), nil
 }
 
+func (d Detail) Identifier() uint {
+	return d.identifier
+}
+
+func (d Detail) Mark(sourceIdentifier uint) error {
+	return d.storage.Connect(sourceIdentifier, d.identifier)
+}
+
+func (d Detail) ProvideSingleTarget() (uint, error) {
+
+	targets, err := d.storage.ReadTargets(d.identifier)
+	if err != nil {
+		return 0, err
+	}
+
+	switch len(targets) {
+
+	case 0:
+		target, err := d.storage.Create()
+		if err != nil {
+			return 0, err
+		}
+
+		err = d.storage.Connect(d.identifier, target)
+		if err != nil {
+			return 0, err
+		}
+
+		return target, nil
+
+	case 1:
+		return targets[0], nil
+
+	default:
+		return 0, fmt.Errorf("entity %d has too many targets: %d", d.identifier, len(targets))
+	}
+}
+
 func (d Detail) GetPhrase() (uint, error) {
 
 	phraseIdentifier, emptyReference, err := d.storage.GetReference(d.identifier)
