@@ -35,4 +35,3 @@ func (e *entities) createWithRemark(remarkIdentifier uint) (Entity, error) {
 
 	return e.create(phraseIdentifier, remarkIdentifier), nil
 }
-
