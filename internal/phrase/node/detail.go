@@ -37,30 +37,51 @@ func (d Detail) Mark(sourceIdentifier uint) error {
 	return d.storage.Connect(sourceIdentifier, d.identifier)
 }
 
-func (d Detail) ProvideSingleTarget() (uint, error) {
+func (d Detail) ProvideDetailTarget(another Detail) (uint, error) {
 
 	targets, err := d.storage.ReadTargets(d.identifier)
 	if err != nil {
 		return 0, err
 	}
 
-	switch len(targets) {
+	sources, err := d.storage.ReadSources(another.identifier)
+	if err != nil {
+		return 0, err
+	}
+
+	commonIdentifiers := make([]uint, 0, 1)
+
+	// TODO: optimize (cut tails, use map, sort)
+	for _, target := range targets {
+		for _, source := range sources {
+			if source == target {
+				commonIdentifiers = append(commonIdentifiers, source)
+			}
+		}
+	}
+
+	switch len(commonIdentifiers) {
 
 	case 0:
-		target, err := d.storage.Create()
+		commonIdentifier, err := d.storage.Create()
 		if err != nil {
 			return 0, err
 		}
 
-		err = d.storage.Connect(d.identifier, target)
+		err = d.storage.Connect(d.identifier, commonIdentifier)
 		if err != nil {
 			return 0, err
 		}
 
-		return target, nil
+		err = d.storage.Connect(commonIdentifier, another.identifier)
+		if err != nil {
+			return 0, err
+		}
+
+		return commonIdentifier, nil
 
 	case 1:
-		return targets[0], nil
+		return commonIdentifiers[0], nil
 
 	default:
 		return 0, fmt.Errorf("entity %d has too many targets: %d", d.identifier, len(targets))

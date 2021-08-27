@@ -7,22 +7,32 @@ import (
 
 type entities struct {
 	phrases *node.Phrases
-	details *node.Details
 	remarks *node.Remarks
 }
 
 func newEntities(storage storage, phraseRepository *phrase.Repository) *entities {
 	return &entities{
 		phrases: node.NewPhrases(storage, phraseRepository),
-		details: node.NewDetails(storage),
 		remarks: node.NewRemarks(storage),
 	}
 }
 
-func (e *entities) create(phraseIdentifier uint, detailIdentifier uint, remarkIdentifier uint) Entity {
+func (e *entities) create(phraseIdentifier uint, remarkIdentifier uint) Entity {
 	return newEntity(
 		e.phrases.Create(phraseIdentifier),
-		e.details.Create(detailIdentifier),
 		e.remarks.Create(remarkIdentifier),
 	)
 }
+
+func (e *entities) createWithRemark(remarkIdentifier uint) (Entity, error) {
+
+	remarkNode := e.remarks.Create(remarkIdentifier)
+
+	phraseIdentifier, err := remarkNode.GetPhrase()
+	if err != nil {
+		return Entity{}, nil
+	}
+
+	return e.create(phraseIdentifier, remarkIdentifier), nil
+}
+

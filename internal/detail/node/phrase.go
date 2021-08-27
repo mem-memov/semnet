@@ -67,26 +67,45 @@ func (p Phrase) HasPhraseValue(value string) (bool, error) {
 	return phraseValue == value, nil
 }
 
-func (p Phrase) PhraseValue() (string, error) {
+func (p Phrase) PhraseValues() (string, string, error) {
+
+	sources, err := p.storage.ReadSources(p.identifier)
+	if err != nil {
+		return "", "", err
+	}
+
+	if len(sources) != 1 {
+		return "", "", fmt.Errorf("wrong number of sources %d in detail layer at phrase %d", len(sources), p.identifier)
+	}
+
+	objectPhraseEntity, err := p.phraseRepository.Fetch(sources[0])
+	if err != nil {
+		return "", "", err
+	}
+
+	objectPhraseValue, err := p.phraseRepository.Extract(objectPhraseEntity)
+	if err != nil {
+		return "", "", err
+	}
 
 	targets, err := p.storage.ReadTargets(p.identifier)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
 	if len(targets) != 1 {
-		return "", fmt.Errorf("wrong number of targets %d in detail layer at phrase %d", len(targets), p.identifier)
+		return "", "", fmt.Errorf("wrong number of targets %d in detail layer at phrase %d", len(targets), p.identifier)
 	}
 
-	phraseEntity, err := p.phraseRepository.Fetch(targets[0])
+	propertyPhraseEntity, err := p.phraseRepository.Fetch(targets[0])
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
-	phraseValue, err := p.phraseRepository.Extract(phraseEntity)
+	propertyPhraseValue, err := p.phraseRepository.Extract(propertyPhraseEntity)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
-	return phraseValue, nil
+	return objectPhraseValue, propertyPhraseValue, nil
 }

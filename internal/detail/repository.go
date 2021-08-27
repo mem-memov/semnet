@@ -20,53 +20,32 @@ func NewRepository(storage storage, phraseRepository *phrase.Repository) *Reposi
 	}
 }
 
-func (r *Repository) Provide(object string, property string) (Entity, Entity, error) {
+func (r *Repository) Provide(object string, property string) (Entity, error) {
 
 	objectPhrase, err := r.phraseRepository.Provide(object)
 	if err != nil {
-		return Entity{}, Entity{}, err
+		return Entity{}, err
 	}
 
-	objectEntity, err := r.star.provideRoot(objectPhrase)
+	propertyPhrase, err := r.phraseRepository.Provide(property)
 	if err != nil {
-		return Entity{}, Entity{}, err
+		return Entity{}, err
 	}
 
-	propertyEntity, err := objectEntity.provideNext(property, r.entities)
+	entity, err := r.star.provideBeam(objectPhrase, propertyPhrase)
 	if err != nil {
-		return Entity{}, Entity{}, err
+		return Entity{}, err
 	}
 
-	return objectEntity, propertyEntity, nil
+	return entity, nil
 }
 
-func (r *Repository) Extract(entity Entity) (string, []string, error) {
+func (r *Repository) Extract(entity Entity) (string, string, error) {
 
-	propertyValue, err := entity.phraseValue()
-	if err != nil {
-		return "", "", err
-	}
+	return entity.phraseValues()
+}
 
-	entity, err = entity.findPrevious(r.entities)
+func (r *Repository) Fetch(remarkIdentifier uint) (Entity, error) {
 
-
-	path := r.paths.create(propertyValue)
-
-	for {
-		var isRoot bool
-		entity, isRoot, err = entity.findPrevious(r.entities)
-
-		if isRoot {
-			break
-		}
-
-		propertyValue, err = entity.wordValue()
-		if err != nil {
-			return "", "", err
-		}
-
-		path = append(path, propertyValue)
-	}
-
-	return path.reverse().toString(), "", nil
+	return r.entities.createWithRemark(remarkIdentifier)
 }

@@ -23,9 +23,9 @@ func (e Entity) DetailIdentifier() uint {
 	return e.detailNode.Identifier()
 }
 
-func (e Entity) ProvideSingleTarget() (uint, error) {
+func (e Entity) ProvideDetailTarget(another Entity) (uint, error) {
 
-	return e.detailNode.ProvideSingleTarget()
+	return e.detailNode.ProvideDetailTarget(another.detailNode)
 }
 
 func (e Entity) Mark(sourceIdentifier uint) error {
