@@ -20,6 +20,26 @@ func NewRepository(storage storage, phraseRepository *phrase.Repository) *Reposi
 	}
 }
 
+func (r *Repository) Extend(objectIdentifier uint, property string) (Entity, error) {
+
+	objectPhrase, err := r.phraseRepository.Fetch(objectIdentifier)
+	if err != nil {
+		return Entity{}, err
+	}
+
+	propertyPhrase, err := r.phraseRepository.Provide(property)
+	if err != nil {
+		return Entity{}, err
+	}
+
+	entity, err := r.star.provideBeam(objectPhrase, propertyPhrase)
+	if err != nil {
+		return Entity{}, err
+	}
+
+	return entity, nil
+}
+
 func (r *Repository) Provide(object string, property string) (Entity, error) {
 
 	objectPhrase, err := r.phraseRepository.Provide(object)

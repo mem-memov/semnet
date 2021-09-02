@@ -19,14 +19,19 @@ func (r *Repository) StartStory(object string, property string) (Entity, error) 
 		return Entity{}, err
 	}
 
-	return Entity{}, nil
+	entity, err := r.star.provideBeam(detailEntity)
+	if err != nil {
+		return Entity{}, err
+	}
+
+	return entity, nil
 }
 
-func (r *Repository) AppendFact(previousIdentifier uint, object string, property string) (Entity, error) {
+func (r *Repository) AppendFactToStory(previousIdentifier uint, object string, property string) (Entity, error) {
 
 }
 
-func (r *Repository) AddRemark(previousIdentifier uint, object string, property string) (Entity, error) {
+func (r *Repository) AddRemarkToFact(objectIdentifier uint, property string) (Entity, error) {
 
 	detailEntity, err := r.detailRepository.Provide(object, property)
 	if err != nil {
