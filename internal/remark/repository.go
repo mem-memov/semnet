@@ -22,6 +22,10 @@ func (r *Repository) StartStory(object string, property string) (Entity, error) 
 	return Entity{}, nil
 }
 
+func (r *Repository) AppendFact(previousIdentifier uint, object string, property string) (Entity, error) {
+
+}
+
 func (r *Repository) AddRemark(previousIdentifier uint, object string, property string) (Entity, error) {
 
 	detailEntity, err := r.detailRepository.Provide(object, property)
