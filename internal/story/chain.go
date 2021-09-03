@@ -1,8 +1,6 @@
-package remark
+package story
 
-import (
-	"github.com/mem-memov/semnet/internal/detail"
-)
+import "github.com/mem-memov/semnet/internal/detail"
 
 type chain struct {
 	storage  storage

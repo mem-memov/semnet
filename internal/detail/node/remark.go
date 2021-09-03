@@ -42,3 +42,8 @@ func (r Remark) GetPhrase() (uint, error) {
 
 	return phraseIdentifier, nil
 }
+
+func (r Remark) AddRemark(targetIdentifier uint) error {
+
+	return r.storage.Connect(r.identifier, targetIdentifier)
+}

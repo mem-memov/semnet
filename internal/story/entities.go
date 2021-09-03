@@ -1,4 +1,4 @@
-package remark
+package story
 
 import (
 	"github.com/mem-memov/semnet/internal/detail"

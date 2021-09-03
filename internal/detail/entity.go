@@ -30,3 +30,8 @@ func (e Entity) phraseValues() (string, string, error) {
 
 	return e.phraseNode.PhraseValues()
 }
+
+func (e Entity) AddRemark(remarkIdentifier uint) error {
+
+	return e.remarkNode.AddRemark(remarkIdentifier)
+}

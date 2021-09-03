@@ -1,42 +1,36 @@
 package remark
 
-import "github.com/mem-memov/semnet/internal/detail"
+import (
+	"github.com/mem-memov/semnet/internal/detail"
+)
 
 type Repository struct {
-	detailRepository detail.Repository
+	entities         *entities
+	detailRepository *detail.Repository
+	chain            *chain
 }
 
-func NewRepository(detailRepository detail.Repository) *Repository {
+func NewRepository(storage storage, detailRepository *detail.Repository) *Repository {
+	entities := newEntities(storage, detailRepository)
+
 	return &Repository{
+		entities:         entities,
 		detailRepository: detailRepository,
+		chain:            newChain(storage, entities),
 	}
 }
 
-func (r *Repository) StartStory(object string, property string) (Entity, error) {
+func (r *Repository) CreateRemark(remarkIdentifiers []uint, factIdentifier uint, object string, property string) (uint, error) {
 
 	detailEntity, err := r.detailRepository.Provide(object, property)
 	if err != nil {
-		return Entity{}, err
+		return 0, err
 	}
 
-	entity, err := r.star.provideBeam(detailEntity)
+	entity, err := r.chain.createFirstLink(detailEntity)
 	if err != nil {
-		return Entity{}, err
+		return 0, err
 	}
 
-	return entity, nil
-}
-
-func (r *Repository) AppendFactToStory(previousIdentifier uint, object string, property string) (Entity, error) {
-
-}
-
-func (r *Repository) AddRemarkToFact(objectIdentifier uint, property string) (Entity, error) {
-
-	detailEntity, err := r.detailRepository.Provide(object, property)
-	if err != nil {
-		return Entity{}, err
-	}
-
-	return Entity{}, nil
+	return 0, nil
 }
