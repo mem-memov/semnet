@@ -1,6 +1,9 @@
 package story
 
-import "github.com/mem-memov/semnet/internal/story/node"
+import (
+	"github.com/mem-memov/semnet/internal/fact"
+	"github.com/mem-memov/semnet/internal/story/node"
+)
 
 type Entity struct {
 	factNode node.Fact
@@ -16,4 +19,14 @@ func newEntity(factNode node.Fact, topicNode node.Topic, storyNode node.Story, u
 		storyNode:  storyNode,
 		userNode:   userNode,
 	}
+}
+
+func (e Entity) AddFact() (fact.Entity, error) {
+
+	return fact.Entity{}, nil
+}
+
+func (e Entity) GetFact(factIdentifier uint) (fact.Entity, error) {
+
+	return fact.Entity{}, nil
 }

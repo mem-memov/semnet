@@ -1,7 +1,7 @@
 package user
 
 import (
-	"github.com/mem-memov/semnet/internal/remark"
+	"github.com/mem-memov/semnet/internal/story"
 	"github.com/mem-memov/semnet/internal/user/node"
 )
 
@@ -17,22 +17,12 @@ func newEntity(storyNode node.Story, userNode node.User) Entity {
 	}
 }
 
-func (e Entity) AddStoryToUser(remarkIdentifiers []uint, object string, property string) (remark.Entity, error) {
+func (e Entity) AddStory() (story.Entity, error) {
 
-	remarkEntity, err := e.storyNode.CreateStory(remarkIdentifiers, object, property)
-	if err != nil {
-		return remark.Entity{}, err
-	}
-
-	return remarkEntity, nil
+	return story.Entity{}, nil
 }
 
-func (e Entity) AddFactToStory(remarkIdentifiers []uint, object string, property string) (remark.Entity, error) {
+func (e Entity) GetStory(storyIdentifier uint) (story.Entity, error) {
 
-	return remark.Entity{}, nil
-}
-
-func (e Entity) AddRemarkToFact(remarkIdentifiers []uint, object string, property string) (remark.Entity, error) {
-
-	return remark.Entity{}, nil
+	return story.Entity{}, nil
 }

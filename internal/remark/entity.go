@@ -1,6 +1,9 @@
 package remark
 
-import "github.com/mem-memov/semnet/internal/remark/node"
+import (
+	"github.com/mem-memov/semnet/internal/fact"
+	"github.com/mem-memov/semnet/internal/remark/node"
+)
 
 type Entity struct {
 	detailNode node.Detail
@@ -17,3 +20,5 @@ func newEntity(detailNode node.Detail, remarkNode node.Remark, topicNode node.To
 		factNode:   factNode,
 	}
 }
+
+func (e Entity)
