@@ -6,18 +6,18 @@ import (
 )
 
 type Entity struct {
-	factNode node.Fact
+	factNode  node.Fact
 	topicNode node.Topic
 	storyNode node.Story
-	userNode node.User
+	userNode  node.User
 }
 
 func newEntity(factNode node.Fact, topicNode node.Topic, storyNode node.Story, userNode node.User) Entity {
 	return Entity{
-		factNode: factNode,
+		factNode:  factNode,
 		topicNode: topicNode,
-		storyNode:  storyNode,
-		userNode:   userNode,
+		storyNode: storyNode,
+		userNode:  userNode,
 	}
 }
 

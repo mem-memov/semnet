@@ -3,28 +3,25 @@ package story
 import (
 	"github.com/mem-memov/semnet/internal/fact"
 	"github.com/mem-memov/semnet/internal/remark"
-	"github.com/mem-memov/semnet/internal/user"
 )
 
 type Repository struct {
-	storage storage
+	storage        storage
 	factRepository *fact.Repository
 }
 
-func (r *Repository) CreateStory(remarkIdentifiers []uint, userIdentifier uint, object string, property string) (remark.Entity, error) {
-
-	var storyEntity Entity
-
-	r.factRepository.CreateFact(remarkIdentifiers, storyEntity.FactIdentifier(), object, property)
-
-	return remark.Entity{}, nil
+func NewRepository(storage storage, factRepository *fact.Repository) *Repository {
+	return &Repository{
+		factRepository: factRepository,
+	}
 }
 
-func (r *Repository) AddFactToStory(userEntity user.Entity, userStoryIdentifier uint, object string, property string) (remark.Entity, error) {
+func (r *Repository) CreateStory(userIdentifier uint, remarks []remark.Entity) (Entity, error) {
 
-	var storyEntity Entity
+	return Entity{}, nil
+}
 
-	r.factRepository.AddFactToStory(storyEntity, object, property)
+func (r *Repository) GetStory(storyIdentifier uint) (Entity, error) {
 
-	return remark.Entity{}, nil
+	return Entity{}, nil
 }

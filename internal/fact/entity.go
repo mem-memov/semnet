@@ -5,7 +5,6 @@ import (
 )
 
 type Entity struct {
-
 }
 
 func (e Entity) AddRemark(object string, property string) (remark.Entity, error) {

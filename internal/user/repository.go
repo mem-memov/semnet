@@ -16,7 +16,12 @@ func NewRepository(storage storage, storyRepository *story.Repository) *Reposito
 	}
 }
 
-func (r *Repository) Fetch(userIdentifier uint) (Entity, error) {
+func (r *Repository) CreateUser() (Entity, error) {
+
+	return Entity{}, nil
+}
+
+func (r *Repository) GetUser(userIdentifier uint) (Entity, error) {
 
 	return Entity{}, nil
 }
