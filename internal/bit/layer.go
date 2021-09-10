@@ -1,58 +1,59 @@
 package bit
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/mem-memov/semnet/internal/class"
+)
 
 type layer struct {
-	storage       storage
-	isInitialized bool
+	storage         storage
+	classRepository *class.Repository
+	isInitialized   bool
+	zeroIdentifier uint
+	oneIdentifier uint
 }
 
-func newLayer(storage storage) *layer {
+func newLayer(storage storage, classRepository *class.Repository) *layer {
 	return &layer{
-		storage:       storage,
-		isInitialized: false,
+		storage:         storage,
+		classRepository: classRepository,
+		isInitialized:   false,
 	}
 }
 
-func (l *layer) initialize() error {
+func (l *layer) initialize() (uint, uint, error) {
 
-	if l.isInitialized {
-		return nil
-	}
-
-	hasZero, err := l.storage.Has(bitZeroNode)
-	if err != nil {
-		return err
-	}
-
-	if !hasZero {
-		zeroNode, err := l.storage.Create()
+	if !l.isInitialized {
+		classEntity, err := l.classRepository.ProvideEntity()
 		if err != nil {
-			return err
+			return 0, 0, err
 		}
 
-		if zeroNode != bitZeroNode {
-			return fmt.Errorf("invalid zero identifier %d", zeroNode)
-		}
-	}
-
-	hasOne, err := l.storage.Has(bitOneNode)
-	if err != nil {
-		return err
-	}
-
-	if !hasOne {
-		oneNode, err := l.storage.Create()
+		bitIdentifiers, err := classEntity.GetAllBits()
 		if err != nil {
-			return err
+			return 0, 0, err
 		}
 
-		if oneNode != bitOneNode {
-			return fmt.Errorf("invalid one identifier %d", oneNode)
+		switch len(bitIdentifiers) {
+		case 0:
+			l.zeroIdentifier, err = classEntity.CreateBit()
+			if err != nil {
+				return 0, 0, err
+			}
+
+			l.oneIdentifier, err = classEntity.CreateBit()
+			if err != nil {
+				return 0, 0, err
+			}
+		case 2:
+			l.zeroIdentifier = bitIdentifiers[0]
+			l.oneIdentifier = bitIdentifiers[1]
+		default:
+			return 0, 0, fmt.Errorf("wrong number of bit nodes in class %d", len(bitIdentifiers))
 		}
+
+		l.isInitialized = true
 	}
 
-	l.isInitialized = true
-
-	return nil
+	return l.zeroIdentifier, l.oneIdentifier, nil
 }

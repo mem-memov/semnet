@@ -3,6 +3,7 @@ package semnet
 import (
 	"github.com/mem-memov/semnet/internal/bit"
 	"github.com/mem-memov/semnet/internal/character"
+	"github.com/mem-memov/semnet/internal/class"
 	"github.com/mem-memov/semnet/internal/detail"
 	"github.com/mem-memov/semnet/internal/fact"
 	"github.com/mem-memov/semnet/internal/phrase"
@@ -18,7 +19,8 @@ type Graph struct {
 
 func NewGraph(storage storage) *Graph {
 
-	bitRepository := bit.NewRepository(storage)
+	classRepository := class.NewRepository(storage)
+	bitRepository := bit.NewRepository(storage, classRepository)
 	characterRepository := character.NewRepository(storage, bitRepository)
 	wordRepository := word.NewRepository(storage, characterRepository)
 	phraseRepository := phrase.NewRepository(storage, wordRepository)
@@ -34,6 +36,11 @@ func NewGraph(storage storage) *Graph {
 }
 
 func (g *Graph) CreateUser() (User, error) {
+
+	return User{}, nil
+}
+
+func (g *Graph) GetUser(userId uint) (User, error) {
 
 	return User{}, nil
 }

@@ -1,46 +1,46 @@
 package bit
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/mem-memov/semnet/internal/class"
+)
 
 type Repository struct {
 	storage storage
 	layer   *layer
 }
 
-func NewRepository(storage storage) *Repository {
+func NewRepository(storage storage, classRepository *class.Repository) *Repository {
 	return &Repository{
 		storage: storage,
-		layer:   newLayer(storage),
+		layer:   newLayer(storage, classRepository),
 	}
 }
 
 func (r *Repository) Provide(value bool) (Entity, error) {
 
-	err := r.layer.initialize()
+	zeroIdentifier, oneIdentifier, err := r.layer.initialize()
 	if err != nil {
 		return Entity{}, err
 	}
 
 	if value {
-		return newEntity(bitOneNode, r.storage), nil
+		return newEntity(oneIdentifier, r.storage), nil
 	} else {
-		return newEntity(bitZeroNode, r.storage), nil
+		return newEntity(zeroIdentifier, r.storage), nil
 	}
 }
 
 func (r *Repository) Fetch(identifier uint) (Entity, error) {
 
-	err := r.layer.initialize()
+	zeroIdentifier, oneIdentifier, err := r.layer.initialize()
 	if err != nil {
 		return Entity{}, err
 	}
 
-	switch identifier {
-	case bitZeroNode:
-		return newEntity(bitZeroNode, r.storage), nil
-	case bitOneNode:
-		return newEntity(bitOneNode, r.storage), nil
-	default:
+	if identifier != zeroIdentifier && identifier != oneIdentifier {
 		return Entity{}, fmt.Errorf("wrong identifier in bit layer %d", identifier)
 	}
+
+	return newEntity(identifier, r.storage), nil
 }
