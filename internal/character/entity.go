@@ -6,13 +6,15 @@ import (
 )
 
 type Entity struct {
+	classNode     node.Class
 	bitNode       node.Bit
 	characterNode node.Character
 	wordNode      node.Word
 }
 
-func newEntity(bitNode node.Bit, characterNode node.Character, wordNode node.Word) Entity {
+func newEntity(classNode node.Class, bitNode node.Bit, characterNode node.Character, wordNode node.Word) Entity {
 	return Entity{
+		classNode:     classNode,
 		bitNode:       bitNode,
 		characterNode: characterNode,
 		wordNode:      wordNode,
@@ -41,12 +43,12 @@ func (e Entity) provideNext(bitValue bool, entities *entities) (Entity, error) {
 
 	// search existing
 	for _, targetCharacter := range targetCharacters {
-		bitIdentifier, wordIdentifier, err := targetCharacter.GetBitAndWord()
+		classIdentifier, bitIdentifier, wordIdentifier, err := targetCharacter.GetClassAndBitAndWord()
 		if err != nil {
 			return Entity{}, nil
 		}
 
-		entity := entities.create(bitIdentifier, targetCharacter.Identifier(), wordIdentifier)
+		entity := entities.create(classIdentifier, bitIdentifier, targetCharacter.Identifier(), wordIdentifier)
 
 		hasBitValue, err := entity.hasBitValue(bitValue)
 		if err != nil {
@@ -59,6 +61,11 @@ func (e Entity) provideNext(bitValue bool, entities *entities) (Entity, error) {
 	}
 
 	// Provide new
+	newClassNode, err := e.classNode.NewClass()
+	if err != nil {
+		return Entity{}, nil
+	}
+
 	newBitNode, err := e.bitNode.NewBit(bitValue)
 	if err != nil {
 		return Entity{}, nil
@@ -74,7 +81,7 @@ func (e Entity) provideNext(bitValue bool, entities *entities) (Entity, error) {
 		return Entity{}, nil
 	}
 
-	return newEntity(newBitNode, newCharacterNode, newWordNode), nil
+	return newEntity(newClassNode, newBitNode, newCharacterNode, newWordNode), nil
 }
 
 func (e Entity) hasBitValue(bit bool) (bool, error) {
@@ -100,12 +107,12 @@ func (e Entity) findPrevious(entities *entities) (Entity, bool, error) {
 	case 1:
 		parentCharacter := sourceCharacters[0]
 
-		bitIdentifier, wordIdentifier, err := parentCharacter.GetBitAndWord()
+		classIdentifier, bitIdentifier, wordIdentifier, err := parentCharacter.GetClassAndBitAndWord()
 		if err != nil {
 			return Entity{}, false, nil
 		}
 
-		return entities.create(bitIdentifier, parentCharacter.Identifier(), wordIdentifier), false, nil
+		return entities.create(classIdentifier, bitIdentifier, parentCharacter.Identifier(), wordIdentifier), false, nil
 	default:
 		return Entity{}, false, fmt.Errorf("too many sources in character tree")
 	}

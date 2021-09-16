@@ -1,72 +1,39 @@
 package bit
 
 import (
-	"fmt"
+	"github.com/mem-memov/semnet/internal/bit/node"
 )
 
 type Entity struct {
-	identifier uint
-	storage    storage
+	value         bool
+	classNode     node.Class
+	characterNode node.Character
 }
 
-func newEntity(identifier uint, storage storage) Entity {
+func newEntity(value bool, classNode node.Class, characterNode node.Character) Entity {
 	return Entity{
-		identifier: identifier,
-		storage:    storage,
+		value:         value,
+		classNode:     classNode,
+		characterNode: characterNode,
 	}
 }
 
 func (e Entity) Identifier() uint {
-	return e.identifier
+	return e.characterNode.Identifier()
 }
 
 func (e Entity) Is(bit bool) bool {
-	if bit {
-		return e.identifier == bitOneNode
-	} else {
-		return e.identifier == bitZeroNode
-	}
+	return e.value == bit
 }
 
 func (e Entity) Bit() bool {
-
-	if e.identifier == bitZeroNode {
-		return false
-	} else {
-		return true
-	}
+	return e.value
 }
 
 func (e Entity) Mark(sourceIdentifier uint) error {
-	return e.storage.Connect(sourceIdentifier, e.identifier)
+	return e.characterNode.Mark(sourceIdentifier)
 }
 
 func (e Entity) ProvideSingleTarget() (uint, error) {
-
-	targets, err := e.storage.ReadTargets(e.identifier)
-	if err != nil {
-		return 0, err
-	}
-
-	switch len(targets) {
-
-	case 0:
-		target, err := e.storage.Create()
-		if err != nil {
-			return 0, err
-		}
-
-		err = e.storage.Connect(e.identifier, target)
-		if err != nil {
-			return 0, err
-		}
-
-		return target, nil
-
-	case 1:
-		return targets[0], nil
-
-	default:
-		return 0, fmt.Errorf("entity %d has too many targets: %d", e.identifier, len(targets))
-	}
+	return e.characterNode.ProvideSingleTarget()
 }

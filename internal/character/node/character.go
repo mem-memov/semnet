@@ -58,14 +58,23 @@ func (c Character) ReadSources() ([]Character, error) {
 	return characters, nil
 }
 
-func (c Character) GetBitAndWord() (uint, uint, error) {
+func (c Character) GetClassAndBitAndWord() (uint, uint, uint, error) {
 
 	bitIdentifier, wordIdentifier, err := c.storage.GetReference(c.identifier)
 	if err != nil {
-		return 0, 0, nil
+		return 0, 0, 0, nil
 	}
 
-	return bitIdentifier, wordIdentifier, nil
+	classIdentifier, characterIdentifier, err := c.storage.GetReference(bitIdentifier)
+	if err != nil {
+		return 0, 0, 0, nil
+	}
+
+	if characterIdentifier != c.identifier {
+		return 0, 0, 0, fmt.Errorf("cheracter entity invalid at charcter node %d", c.identifier)
+	}
+
+	return classIdentifier, bitIdentifier, wordIdentifier, nil
 }
 
 func (c Character) NewCharacter(bit Bit) (Character, error) {

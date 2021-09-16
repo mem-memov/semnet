@@ -11,36 +11,42 @@ type Repository struct {
 }
 
 func NewRepository(storage storage, classRepository *class.Repository) *Repository {
+	entities := newEntities(storage, classRepository)
+
 	return &Repository{
 		storage: storage,
-		layer:   newLayer(storage, classRepository),
+		layer:   newLayer(storage, entities, classRepository),
 	}
 }
 
 func (r *Repository) Provide(value bool) (Entity, error) {
 
-	zeroIdentifier, oneIdentifier, err := r.layer.initialize()
+	zeroEntity, oneEntity, err := r.layer.initialize()
 	if err != nil {
 		return Entity{}, err
 	}
 
 	if value {
-		return newEntity(oneIdentifier, r.storage), nil
+		return oneEntity, nil
 	} else {
-		return newEntity(zeroIdentifier, r.storage), nil
+		return zeroEntity, nil
 	}
 }
 
 func (r *Repository) Fetch(identifier uint) (Entity, error) {
 
-	zeroIdentifier, oneIdentifier, err := r.layer.initialize()
+	zeroEntity, oneEntity, err := r.layer.initialize()
 	if err != nil {
 		return Entity{}, err
 	}
 
-	if identifier != zeroIdentifier && identifier != oneIdentifier {
-		return Entity{}, fmt.Errorf("wrong identifier in bit layer %d", identifier)
+	if identifier == zeroEntity.Identifier() {
+		return zeroEntity, nil
 	}
 
-	return newEntity(identifier, r.storage), nil
+	if identifier == oneEntity.Identifier() {
+		return oneEntity, nil
+	}
+
+	return Entity{}, fmt.Errorf("wrong identifier in bit layer %d", identifier)
 }

@@ -29,6 +29,7 @@ func (t *tree) provideRoot(bitEntity bit.Entity) (Entity, error) {
 		return Entity{}, err
 	}
 
+	var classIdentifier uint
 	var characterIdentifier uint
 	var wordIdentifier uint
 
@@ -58,12 +59,19 @@ func (t *tree) provideRoot(bitEntity bit.Entity) (Entity, error) {
 		if err != nil {
 			return Entity{}, err
 		}
+
+		entity, err := t.entities.createAndAddClass(bitIdentifier, characterIdentifier, wordIdentifier)
+		if err != nil {
+			return Entity{}, err
+		}
+
+		return entity, nil
 	case 1:
 		if bitTargets[0] != bitEntity.Identifier() {
 			return Entity{}, fmt.Errorf("wrong target %d in character tree at bit %d", bitTargets[0], bitIdentifier)
 		}
 
-		_, characterIdentifier, err = t.storage.GetReference(bitIdentifier)
+		classIdentifier, characterIdentifier, err = t.storage.GetReference(bitIdentifier)
 		if err != nil {
 			return Entity{}, err
 		}
@@ -72,9 +80,9 @@ func (t *tree) provideRoot(bitEntity bit.Entity) (Entity, error) {
 		if err != nil {
 			return Entity{}, err
 		}
+
+		return t.entities.create(classIdentifier, bitIdentifier, characterIdentifier, wordIdentifier), nil
 	default:
 		return Entity{}, fmt.Errorf("wrong number of targets %d in character tree at bit %d", len(bitTargets), bitIdentifier)
 	}
-
-	return t.entities.create(bitIdentifier, characterIdentifier, wordIdentifier), nil
 }

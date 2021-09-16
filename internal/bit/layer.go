@@ -7,53 +7,98 @@ import (
 
 type layer struct {
 	storage         storage
+	entities        *entities
 	classRepository *class.Repository
 	isInitialized   bool
-	zeroIdentifier uint
-	oneIdentifier uint
+	zeroEntity      Entity
+	oneEntity       Entity
 }
 
-func newLayer(storage storage, classRepository *class.Repository) *layer {
+func newLayer(storage storage, entities *entities, classRepository *class.Repository) *layer {
 	return &layer{
 		storage:         storage,
+		entities:        entities,
 		classRepository: classRepository,
 		isInitialized:   false,
 	}
 }
 
-func (l *layer) initialize() (uint, uint, error) {
+func (l *layer) initialize() (Entity, Entity, error) {
 
 	if !l.isInitialized {
 		classEntity, err := l.classRepository.ProvideEntity()
 		if err != nil {
-			return 0, 0, err
+			return Entity{}, Entity{}, err
 		}
 
-		bitIdentifiers, err := classEntity.GetAllBits()
+		classIdentifiers, err := classEntity.GetAllBits()
 		if err != nil {
-			return 0, 0, err
+			return Entity{}, Entity{}, err
 		}
 
-		switch len(bitIdentifiers) {
+		switch len(classIdentifiers) {
 		case 0:
-			l.zeroIdentifier, err = classEntity.CreateBit()
+			// zero
+
+			zeroClassIdentifier, err := classEntity.CreateBit()
 			if err != nil {
-				return 0, 0, err
+				return Entity{}, Entity{}, err
 			}
 
-			l.oneIdentifier, err = classEntity.CreateBit()
+			zeroCharacterIdentifier, err := l.storage.Create()
 			if err != nil {
-				return 0, 0, err
+				return Entity{}, Entity{}, err
 			}
+
+			err = l.storage.SetReference(zeroClassIdentifier, zeroCharacterIdentifier)
+			if err != nil {
+				return Entity{}, Entity{}, err
+			}
+
+			l.zeroEntity = l.entities.create(false, zeroClassIdentifier, zeroCharacterIdentifier)
+
+			// one
+
+			oneClassIdentifier, err := classEntity.CreateBit()
+			if err != nil {
+				return Entity{}, Entity{}, err
+			}
+
+			oneCharacterIdentifier, err := l.storage.Create()
+			if err != nil {
+				return Entity{}, Entity{}, err
+			}
+
+			err = l.storage.SetReference(oneClassIdentifier, oneCharacterIdentifier)
+			if err != nil {
+				return Entity{}, Entity{}, err
+			}
+
+			l.oneEntity = l.entities.create(true, oneClassIdentifier, oneCharacterIdentifier)
 		case 2:
-			l.zeroIdentifier = bitIdentifiers[0]
-			l.oneIdentifier = bitIdentifiers[1]
+			// zero
+
+			_, zeroCharacterIdentifier, err := l.storage.GetReference(classIdentifiers[0])
+			if err != nil {
+				return Entity{}, Entity{}, err
+			}
+
+			l.zeroEntity = l.entities.create(false, classIdentifiers[0], zeroCharacterIdentifier)
+
+			// one
+
+			_, oneCharacterIdentifier, err := l.storage.GetReference(classIdentifiers[1])
+			if err != nil {
+				return Entity{}, Entity{}, err
+			}
+
+			l.oneEntity = l.entities.create(true, classIdentifiers[1], oneCharacterIdentifier)
 		default:
-			return 0, 0, fmt.Errorf("wrong number of bit nodes in class %d", len(bitIdentifiers))
+			return Entity{}, Entity{}, fmt.Errorf("wrong number of bit nodes in class %d", len(classIdentifiers))
 		}
 
 		l.isInitialized = true
 	}
 
-	return l.zeroIdentifier, l.oneIdentifier, nil
+	return l.zeroEntity, l.oneEntity, nil
 }

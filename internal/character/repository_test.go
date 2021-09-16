@@ -3,6 +3,7 @@ package character
 import (
 	"github.com/mem-memov/clew"
 	"github.com/mem-memov/semnet/internal/bit"
+	"github.com/mem-memov/semnet/internal/class"
 	"testing"
 )
 
@@ -25,8 +26,9 @@ func TestRepository(t *testing.T) {
 		t.Run(d.name, func(t *testing.T) {
 			slices := clew.NewSliceStorage()
 			storage := clew.NewGraph(slices)
-			bitRepository := bit.NewRepository(storage)
-			r := NewRepository(storage, bitRepository)
+			classRepository := class.NewRepository(storage)
+			bitRepository := bit.NewRepository(storage, classRepository)
+			r := NewRepository(storage, classRepository, bitRepository)
 
 			entity, err := r.Provide(d.integer)
 

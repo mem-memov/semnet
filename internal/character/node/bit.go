@@ -42,6 +42,16 @@ func (b Bit) HasBitValue(value bool) (bool, error) {
 	return bitEntity.Is(value), nil
 }
 
+func (b Bit) GetClassAndCharacter() (uint, uint, error) {
+
+	classIdentifier, characterIdentifier, err := b.storage.GetReference(b.identifier)
+	if err != nil {
+		return 0, 0, nil
+	}
+
+	return classIdentifier, characterIdentifier, nil
+}
+
 func (b Bit) NewBit(bitValue bool) (Bit, error) {
 
 	identifier, err := b.storage.Create()

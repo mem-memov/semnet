@@ -2,6 +2,7 @@ package character
 
 import (
 	"github.com/mem-memov/semnet/internal/bit"
+	"github.com/mem-memov/semnet/internal/class"
 )
 
 type Repository struct {
@@ -11,8 +12,8 @@ type Repository struct {
 	paths         *paths
 }
 
-func NewRepository(storage storage, bitRepository *bit.Repository) *Repository {
-	entities := newEntities(storage, bitRepository)
+func NewRepository(storage storage, classRepository *class.Repository, bitRepository *bit.Repository) *Repository {
+	entities := newEntities(storage, classRepository, bitRepository)
 
 	return &Repository{
 		entities:      entities,
