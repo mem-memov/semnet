@@ -2,6 +2,7 @@ package phrase
 
 import (
 	"fmt"
+	"github.com/mem-memov/semnet/internal/detail"
 	"github.com/mem-memov/semnet/internal/phrase/node"
 )
 
@@ -121,4 +122,14 @@ func (e Entity) findPrevious(entities *entities) (Entity, bool, error) {
 	default:
 		return Entity{}, false, fmt.Errorf("too many sources in phrase tree")
 	}
+}
+
+func (e Entity) GetDetailsOfObject(detailRepository detail.Repository) ([]detail.Entity, error) {
+
+	return []detail.Entity{}, nil
+}
+
+func (e Entity) GetDetailsOfProperty(detailRepository detail.Repository) ([]detail.Entity, error) {
+
+	return []detail.Entity{}, nil
 }

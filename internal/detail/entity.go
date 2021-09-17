@@ -2,6 +2,7 @@ package detail
 
 import (
 	"github.com/mem-memov/semnet/internal/detail/node"
+	"github.com/mem-memov/semnet/internal/phrase"
 )
 
 type Entity struct {
@@ -36,4 +37,14 @@ func (e Entity) phraseValues() (string, string, error) {
 func (e Entity) AddRemark(remarkIdentifier uint) error {
 
 	return e.remarkNode.AddRemark(remarkIdentifier)
+}
+
+func (e Entity) GetObjectPhrase() (phrase.Entity, error) {
+
+	return phrase.Entity{}, nil
+}
+
+func (e Entity) GetPropertyPhrase() (phrase.Entity, error) {
+
+	return phrase.Entity{}, nil
 }

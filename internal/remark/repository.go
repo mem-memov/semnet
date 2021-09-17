@@ -1,6 +1,7 @@
 package remark
 
 import (
+	"github.com/mem-memov/semnet/internal/class"
 	"github.com/mem-memov/semnet/internal/detail"
 )
 
@@ -10,7 +11,7 @@ type Repository struct {
 	chain            *chain
 }
 
-func NewRepository(storage storage, detailRepository *detail.Repository) *Repository {
+func NewRepository(storage storage, classRepository *class.Repository, detailRepository *detail.Repository) *Repository {
 	entities := newEntities(storage, detailRepository)
 
 	return &Repository{

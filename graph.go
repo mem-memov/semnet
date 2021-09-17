@@ -21,14 +21,14 @@ func NewGraph(storage storage) *Graph {
 
 	classRepository := class.NewRepository(storage)
 	bitRepository := bit.NewRepository(storage, classRepository)
-	characterRepository := character.NewRepository(storage, bitRepository)
-	wordRepository := word.NewRepository(storage, characterRepository)
-	phraseRepository := phrase.NewRepository(storage, wordRepository)
-	detailRepository := detail.NewRepository(storage, phraseRepository)
-	remarkRepository := remark.NewRepository(storage, detailRepository)
-	factRepository := fact.NewRepository(storage, remarkRepository)
-	storyRepository := story.NewRepository(storage, factRepository)
-	userRepository := user.NewRepository(storage, storyRepository)
+	characterRepository := character.NewRepository(storage, classRepository, bitRepository)
+	wordRepository := word.NewRepository(storage, classRepository, characterRepository)
+	phraseRepository := phrase.NewRepository(storage, classRepository, wordRepository)
+	detailRepository := detail.NewRepository(storage, classRepository, phraseRepository)
+	remarkRepository := remark.NewRepository(storage, classRepository, detailRepository)
+	factRepository := fact.NewRepository(storage, classRepository, remarkRepository)
+	storyRepository := story.NewRepository(storage, classRepository, factRepository)
+	userRepository := user.NewRepository(storage, classRepository, storyRepository)
 
 	return &Graph{
 		userRepository: userRepository,
@@ -43,44 +43,4 @@ func (g *Graph) CreateUser() (User, error) {
 func (g *Graph) GetUser(userId uint) (User, error) {
 
 	return User{}, nil
-}
-
-func (g *Graph) CreateStory(user User) (Story, error) {
-
-	return Story{}, nil
-}
-
-func (g *Graph) CreateFact(story Story) (Fact, error) {
-
-	return Fact{}, nil
-}
-
-func (g *Graph) CreateRemark(fact Fact, detail Detail) (Remark, error) {
-
-	return Remark{}, nil
-}
-
-func (g *Graph) CreateDetail(object string, property string) (Detail, error) {
-
-	return Detail{}, nil
-}
-
-func (g *Graph) GetDetailRemarks(detail Detail) ([]Remark, error) {
-
-	return []Remark{}, nil
-}
-
-func (g *Graph) GetFactRemarks(fact Fact) ([]Remark, error) {
-
-	return []Remark{}, nil
-}
-
-func (g *Graph) GetStoryFacts(story Story) ([]Fact, error) {
-
-	return []Fact{}, nil
-}
-
-func (g *Graph) GetUserStories(user User) ([]Story, error) {
-
-	return []Story{}, nil
 }

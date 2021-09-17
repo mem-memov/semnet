@@ -1,6 +1,7 @@
 package story
 
 import (
+	"github.com/mem-memov/semnet/internal/class"
 	"github.com/mem-memov/semnet/internal/fact"
 	"github.com/mem-memov/semnet/internal/remark"
 )
@@ -10,7 +11,7 @@ type Repository struct {
 	factRepository *fact.Repository
 }
 
-func NewRepository(storage storage, factRepository *fact.Repository) *Repository {
+func NewRepository(storage storage, classRepository *class.Repository, factRepository *fact.Repository) *Repository {
 	return &Repository{
 		factRepository: factRepository,
 	}

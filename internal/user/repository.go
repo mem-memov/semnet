@@ -1,6 +1,7 @@
 package user
 
 import (
+	"github.com/mem-memov/semnet/internal/class"
 	"github.com/mem-memov/semnet/internal/story"
 )
 
@@ -9,7 +10,7 @@ type Repository struct {
 	storyRepository *story.Repository
 }
 
-func NewRepository(storage storage, storyRepository *story.Repository) *Repository {
+func NewRepository(storage storage, classRepository *class.Repository, storyRepository *story.Repository) *Repository {
 	return &Repository{
 		storage:         storage,
 		storyRepository: storyRepository,
