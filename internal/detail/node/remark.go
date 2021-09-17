@@ -29,18 +29,27 @@ func (r Remark) NewRemark(phrase Phrase) (Remark, error) {
 	return newRemark(identifier, r.storage), nil
 }
 
-func (r Remark) GetPhrase() (uint, error) {
+func (r Remark) GetClassAndPhrase() (uint, uint, error) {
 
 	phraseIdentifier, emptyReference, err := r.storage.GetReference(r.identifier)
 	if err != nil {
-		return 0, nil
+		return 0, 0, nil
 	}
 
 	if emptyReference != 0 {
-		return 0, fmt.Errorf("next node reference is not empty in detail layer at remark %d", r.identifier)
+		return 0, 0, fmt.Errorf("next node reference is not empty in detail layer at remark %d", r.identifier)
 	}
 
-	return phraseIdentifier, nil
+	classIdentifier, remarkIdentifier, err := r.storage.GetReference(phraseIdentifier)
+	if err != nil {
+		return 0, 0, nil
+	}
+
+	if remarkIdentifier != r.identifier {
+		return 0, 0, fmt.Errorf("detail entity invalid at remark node %d", r.identifier)
+	}
+
+	return classIdentifier, phraseIdentifier, nil
 }
 
 func (r Remark) AddRemark(targetIdentifier uint) error {

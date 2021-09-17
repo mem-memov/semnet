@@ -38,5 +38,10 @@ func (s *star) provideBeam(objectPhraseEntity phrase.Entity, propertyPhraseEntit
 		}
 	}
 
-	return s.entities.create(phraseIdentifier, remarkIdentifier), nil
+	entity, err := s.entities.createAndAddClass(phraseIdentifier, remarkIdentifier)
+	if err != nil {
+		return Entity{}, err
+	}
+
+	return entity, nil
 }

@@ -5,12 +5,14 @@ import (
 )
 
 type Entity struct {
+	classNode  node.Class
 	phraseNode node.Phrase
 	remarkNode node.Remark
 }
 
-func newEntity(phraseNode node.Phrase, remarkNode node.Remark) Entity {
+func newEntity(classNode node.Class, phraseNode node.Phrase, remarkNode node.Remark) Entity {
 	return Entity{
+		classNode:  classNode,
 		phraseNode: phraseNode,
 		remarkNode: remarkNode,
 	}

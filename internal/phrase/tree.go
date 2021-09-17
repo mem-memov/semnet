@@ -29,6 +29,7 @@ func (t *tree) provideRoot(wordEntity word.Entity) (Entity, error) {
 		return Entity{}, err
 	}
 
+	var classIdentifier uint
 	var phraseIdentifier uint
 	var detailIdentifier uint
 
@@ -58,12 +59,19 @@ func (t *tree) provideRoot(wordEntity word.Entity) (Entity, error) {
 		if err != nil {
 			return Entity{}, err
 		}
+
+		entity, err := t.entities.createAndAddClass(wordIdentifier, phraseIdentifier, detailIdentifier)
+		if err != nil {
+			return Entity{}, err
+		}
+
+		return entity, nil
 	case 1:
 		if wordTargets[0] != wordEntity.PhraseIdentifier() {
 			return Entity{}, fmt.Errorf("wrong target %d in detail tree at word %d", wordTargets[0], wordIdentifier)
 		}
 
-		_, wordIdentifier, err = t.storage.GetReference(wordIdentifier)
+		classIdentifier, wordIdentifier, err = t.storage.GetReference(wordIdentifier)
 		if err != nil {
 			return Entity{}, err
 		}
@@ -72,9 +80,9 @@ func (t *tree) provideRoot(wordEntity word.Entity) (Entity, error) {
 		if err != nil {
 			return Entity{}, err
 		}
+
+		return t.entities.create(classIdentifier, wordIdentifier, phraseIdentifier, detailIdentifier), nil
 	default:
 		return Entity{}, fmt.Errorf("wrong number of targets %d in word tree at word %d", len(wordTargets), wordIdentifier)
 	}
-
-	return t.entities.create(wordIdentifier, phraseIdentifier, detailIdentifier), nil
 }

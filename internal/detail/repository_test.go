@@ -28,9 +28,9 @@ func TestRepository(t *testing.T) {
 			classRepository := class.NewRepository(storage)
 			bitRepository := bit.NewRepository(storage, classRepository)
 			characterRepository := character.NewRepository(storage, classRepository, bitRepository)
-			wordRepository := word.NewRepository(storage, characterRepository)
-			phraseRepository := phrase.NewRepository(storage, wordRepository)
-			r := NewRepository(storage, phraseRepository)
+			wordRepository := word.NewRepository(storage, classRepository, characterRepository)
+			phraseRepository := phrase.NewRepository(storage, classRepository, wordRepository)
+			r := NewRepository(storage, classRepository, phraseRepository)
 
 			entity, err := r.Provide(d.object, d.property)
 			if err != nil && err.Error() != d.provideErr.Error() {

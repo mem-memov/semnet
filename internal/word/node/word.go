@@ -60,14 +60,23 @@ func (w Word) ReadSources() ([]Word, error) {
 	return words, nil
 }
 
-func (w Word) GetCharacterAndPhrase() (uint, uint, error) {
+func (w Word) GetClassAndCharacterAndPhrase() (uint, uint, uint, error) {
 
 	characterIdentifier, phraseIdentifier, err := w.storage.GetReference(w.identifier)
 	if err != nil {
-		return 0, 0, nil
+		return 0, 0, 0, nil
 	}
 
-	return characterIdentifier, phraseIdentifier, nil
+	classIdentifier, wordIdentifier, err := w.storage.GetReference(characterIdentifier)
+	if err != nil {
+		return 0, 0, 0, nil
+	}
+
+	if wordIdentifier != w.identifier {
+		return 0, 0, 0, fmt.Errorf("word entity invalid at word node %d", w.identifier)
+	}
+
+	return classIdentifier, characterIdentifier, phraseIdentifier, nil
 }
 
 func (w Word) NewWord(character Character) (Word, error) {

@@ -78,12 +78,21 @@ func (p Phrase) ReadSources() ([]Phrase, error) {
 	return phrases, nil
 }
 
-func (p Phrase) GetWordAndDetail() (uint, uint, error) {
+func (p Phrase) GetClassAndWordAndDetail() (uint, uint, uint, error) {
 
 	wordIdentifier, detailIdentifier, err := p.storage.GetReference(p.identifier)
 	if err != nil {
-		return 0, 0, nil
+		return 0, 0, 0, nil
 	}
 
-	return wordIdentifier, detailIdentifier, nil
+	classIdentifier, wordIdentifier, err := p.storage.GetReference(wordIdentifier)
+	if err != nil {
+		return 0, 0, 0, nil
+	}
+
+	if wordIdentifier != p.identifier {
+		return 0, 0, 0, fmt.Errorf("phrase entity invalid at phrase node %d", p.identifier)
+	}
+
+	return classIdentifier, wordIdentifier, detailIdentifier, nil
 }

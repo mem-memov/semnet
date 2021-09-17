@@ -6,13 +6,15 @@ import (
 )
 
 type Entity struct {
+	classNode  node.Class
 	wordNode   node.Word
 	phraseNode node.Phrase
 	detailNode node.Detail
 }
 
-func newEntity(wordNode node.Word, phraseNode node.Phrase, detailNode node.Detail) Entity {
+func newEntity(classNode node.Class, wordNode node.Word, phraseNode node.Phrase, detailNode node.Detail) Entity {
 	return Entity{
+		classNode:  classNode,
 		wordNode:   wordNode,
 		phraseNode: phraseNode,
 		detailNode: detailNode,
@@ -41,12 +43,12 @@ func (e Entity) provideNext(wordValue string, entities *entities) (Entity, error
 
 	// search existing
 	for _, targetPhrase := range targetPhrases {
-		wordIdentifier, detailIdentifier, err := targetPhrase.GetWordAndDetail()
+		classIdentifier, wordIdentifier, detailIdentifier, err := targetPhrase.GetClassAndWordAndDetail()
 		if err != nil {
 			return Entity{}, nil
 		}
 
-		entity := entities.create(wordIdentifier, targetPhrase.Identifier(), detailIdentifier)
+		entity := entities.create(classIdentifier, wordIdentifier, targetPhrase.Identifier(), detailIdentifier)
 
 		hasWordValue, err := entity.hasWordValue(wordValue)
 		if err != nil {
@@ -59,6 +61,11 @@ func (e Entity) provideNext(wordValue string, entities *entities) (Entity, error
 	}
 
 	// Provide new
+	newClassNode, err := e.classNode.NewClass()
+	if err != nil {
+		return Entity{}, nil
+	}
+
 	newWordNode, err := e.wordNode.NewWord(wordValue)
 	if err != nil {
 		return Entity{}, nil
@@ -74,7 +81,7 @@ func (e Entity) provideNext(wordValue string, entities *entities) (Entity, error
 		return Entity{}, nil
 	}
 
-	return newEntity(newWordNode, newPhraseNode, newDetailNode), nil
+	return newEntity(newClassNode, newWordNode, newPhraseNode, newDetailNode), nil
 }
 
 func (e Entity) hasWordValue(wordValue string) (bool, error) {
@@ -105,12 +112,12 @@ func (e Entity) findPrevious(entities *entities) (Entity, bool, error) {
 	case 1:
 		parentPhrase := sourcePhrases[0]
 
-		wordIdentifier, detailIdentifier, err := parentPhrase.GetWordAndDetail()
+		classIdentifier, wordIdentifier, detailIdentifier, err := parentPhrase.GetClassAndWordAndDetail()
 		if err != nil {
 			return Entity{}, false, nil
 		}
 
-		return entities.create(wordIdentifier, parentPhrase.Identifier(), detailIdentifier), false, nil
+		return entities.create(classIdentifier, wordIdentifier, parentPhrase.Identifier(), detailIdentifier), false, nil
 	default:
 		return Entity{}, false, fmt.Errorf("too many sources in phrase tree")
 	}

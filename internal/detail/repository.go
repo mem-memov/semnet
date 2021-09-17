@@ -1,6 +1,7 @@
 package detail
 
 import (
+	"github.com/mem-memov/semnet/internal/class"
 	"github.com/mem-memov/semnet/internal/phrase"
 )
 
@@ -10,8 +11,8 @@ type Repository struct {
 	star             *star
 }
 
-func NewRepository(storage storage, phraseRepository *phrase.Repository) *Repository {
-	entities := newEntities(storage, phraseRepository)
+func NewRepository(storage storage, classRepository *class.Repository, phraseRepository *phrase.Repository) *Repository {
+	entities := newEntities(storage, classRepository, phraseRepository)
 
 	return &Repository{
 		entities:         entities,

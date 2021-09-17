@@ -5,6 +5,7 @@ import (
 	"github.com/mem-memov/clew"
 	"github.com/mem-memov/semnet/internal/bit"
 	"github.com/mem-memov/semnet/internal/character"
+	"github.com/mem-memov/semnet/internal/class"
 	"github.com/mem-memov/semnet/internal/word"
 	"testing"
 )
@@ -26,10 +27,11 @@ func TestRepository(t *testing.T) {
 		t.Run(d.name, func(t *testing.T) {
 			slices := clew.NewSliceStorage()
 			storage := clew.NewGraph(slices)
-			bitRepository := bit.NewRepository(storage)
-			characterRepository := character.NewRepository(storage, bitRepository)
-			wordRepository := word.NewRepository(storage, characterRepository)
-			r := NewRepository(storage, wordRepository)
+			classRepository := class.NewRepository(storage)
+			bitRepository := bit.NewRepository(storage, classRepository)
+			characterRepository := character.NewRepository(storage, classRepository, bitRepository)
+			wordRepository := word.NewRepository(storage, classRepository, characterRepository)
+			r := NewRepository(storage, classRepository, wordRepository)
 
 			entity, err := r.Provide(d.phrase)
 			if err != nil && err.Error() != d.provideErr.Error() {

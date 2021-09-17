@@ -2,6 +2,7 @@ package word
 
 import (
 	"github.com/mem-memov/semnet/internal/character"
+	"github.com/mem-memov/semnet/internal/class"
 )
 
 type Repository struct {
@@ -11,8 +12,8 @@ type Repository struct {
 	paths               *paths
 }
 
-func NewRepository(storage storage, characterRepository *character.Repository) *Repository {
-	entities := newEntities(storage, characterRepository)
+func NewRepository(storage storage, classRepository *class.Repository, characterRepository *character.Repository) *Repository {
+	entities := newEntities(storage, classRepository, characterRepository)
 
 	return &Repository{
 		entities:            entities,

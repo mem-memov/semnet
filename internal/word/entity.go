@@ -6,13 +6,15 @@ import (
 )
 
 type Entity struct {
+	classNode     node.Class
 	characterNode node.Character
 	wordNode      node.Word
 	phraseNode    node.Phrase
 }
 
-func newEntity(characterNode node.Character, wordNode node.Word, phraseNode node.Phrase) Entity {
+func newEntity(classNode node.Class, characterNode node.Character, wordNode node.Word, phraseNode node.Phrase) Entity {
 	return Entity{
+		classNode:     classNode,
 		characterNode: characterNode,
 		wordNode:      wordNode,
 		phraseNode:    phraseNode,
@@ -41,12 +43,12 @@ func (e Entity) provideNext(characterValue rune, entities *entities) (Entity, er
 
 	// search existing
 	for _, targetWord := range targetWords {
-		characterIdentifier, phraseIdentifier, err := targetWord.GetCharacterAndPhrase()
+		classIdentifier, characterIdentifier, phraseIdentifier, err := targetWord.GetClassAndCharacterAndPhrase()
 		if err != nil {
 			return Entity{}, nil
 		}
 
-		entity := entities.create(characterIdentifier, targetWord.Identifier(), phraseIdentifier)
+		entity := entities.create(classIdentifier, characterIdentifier, targetWord.Identifier(), phraseIdentifier)
 
 		hasBitValue, err := entity.hasCharacterValue(characterValue)
 		if err != nil {
@@ -59,6 +61,11 @@ func (e Entity) provideNext(characterValue rune, entities *entities) (Entity, er
 	}
 
 	// Provide new
+	newClassNode, err := e.classNode.NewClass()
+	if err != nil {
+		return Entity{}, nil
+	}
+
 	newCharacterNode, err := e.characterNode.NewCharacter(characterValue)
 	if err != nil {
 		return Entity{}, nil
@@ -74,7 +81,7 @@ func (e Entity) provideNext(characterValue rune, entities *entities) (Entity, er
 		return Entity{}, nil
 	}
 
-	return newEntity(newCharacterNode, newWordNode, newPhraseNode), nil
+	return newEntity(newClassNode, newCharacterNode, newWordNode, newPhraseNode), nil
 }
 
 func (e Entity) hasCharacterValue(characterValue rune) (bool, error) {
@@ -105,12 +112,12 @@ func (e Entity) findPrevious(entities *entities) (Entity, bool, error) {
 	case 1:
 		parentWord := sourceWords[0]
 
-		characterIdentifier, phraseIdentifier, err := parentWord.GetCharacterAndPhrase()
+		classIdentifier, characterIdentifier, phraseIdentifier, err := parentWord.GetClassAndCharacterAndPhrase()
 		if err != nil {
 			return Entity{}, false, nil
 		}
 
-		return entities.create(characterIdentifier, parentWord.Identifier(), phraseIdentifier), false, nil
+		return entities.create(classIdentifier, characterIdentifier, parentWord.Identifier(), phraseIdentifier), false, nil
 	default:
 		return Entity{}, false, fmt.Errorf("too many sources in word tree")
 	}
