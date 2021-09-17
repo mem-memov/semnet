@@ -17,7 +17,7 @@ func TestRepository_ProvideZero(t *testing.T) {
 		t.Fail()
 	}
 
-	if zeroEntity.Identifier() != 12 {
+	if zeroEntity.Identifier() != 14 {
 		t.Errorf("wrong identifier %d", zeroEntity.Identifier())
 	}
 
@@ -28,7 +28,7 @@ func TestRepository_ProvideZero(t *testing.T) {
 		t.Fail()
 	}
 
-	if zeroEntity.Identifier() != 12 {
+	if zeroEntity.Identifier() != 14 {
 		t.Errorf("wrong identifier %d", zeroEntity.Identifier())
 	}
 }
