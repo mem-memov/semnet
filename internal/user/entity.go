@@ -6,15 +6,20 @@ import (
 )
 
 type Entity struct {
+	classNode node.Class
 	storyNode node.Story
-	userNode  node.User
 }
 
-func newEntity(storyNode node.Story, userNode node.User) Entity {
+func newEntity(classNode node.Class, storyNode node.Story) Entity {
 	return Entity{
+		classNode: classNode,
 		storyNode: storyNode,
-		userNode:  userNode,
 	}
+}
+
+func (e Entity) IdentifierForStory() uint {
+
+	return e.storyNode.Identifier()
 }
 
 func (e Entity) AddStory() (story.Entity, error) {

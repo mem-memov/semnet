@@ -1,10 +1,19 @@
 package fact
 
 import (
+	"github.com/mem-memov/semnet/internal/fact/node"
 	"github.com/mem-memov/semnet/internal/remark"
 )
 
 type Entity struct {
+	classNode  node.Class
+	remarkNode node.Remark
+	factNode   node.Fact
+	storyNode  node.Story
+}
+
+func (e Entity) IdentifierForRemark() uint {
+	return e.remarkNode.Identifier()
 }
 
 func (e Entity) AddRemark(object string, property string) (remark.Entity, error) {

@@ -11,6 +11,10 @@ type Story struct {
 	storyRepository *story.Repository
 }
 
+func (s Story) Identifier() uint {
+	return s.identifier
+}
+
 func (s Story) CreateStory(remarkIdentifiers []uint, object string, property string) (remark.Entity, error) {
 
 	return s.storyRepository.CreateStory(remarkIdentifiers, s.identifier, object, property)

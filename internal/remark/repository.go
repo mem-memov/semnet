@@ -21,7 +21,12 @@ func NewRepository(storage storage, classRepository *class.Repository, detailRep
 	}
 }
 
-func (r *Repository) CreateRemark(factIdentifier uint, remarkEntities []Entity, object string, property string) (Entity, error) {
+func (r *Repository) CreateRemark(
+	factIdentifier uint,
+	remarkEntities []Entity,
+	object string,
+	property string,
+	) (Entity, error) {
 
 	detailEntity, err := r.detailRepository.Provide(object, property)
 	if err != nil {

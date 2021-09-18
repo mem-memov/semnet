@@ -21,6 +21,10 @@ func newEntity(factNode node.Fact, topicNode node.Topic, storyNode node.Story, u
 	}
 }
 
+func (e Entity) IdentifierForFact() uint {
+	return e.factNode.Identifier()
+}
+
 func (e Entity) AddFact() (fact.Entity, error) {
 
 	return fact.Entity{}, nil

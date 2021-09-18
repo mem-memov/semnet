@@ -3,7 +3,6 @@ package story
 import (
 	"github.com/mem-memov/semnet/internal/class"
 	"github.com/mem-memov/semnet/internal/fact"
-	"github.com/mem-memov/semnet/internal/remark"
 )
 
 type Repository struct {
@@ -17,7 +16,7 @@ func NewRepository(storage storage, classRepository *class.Repository, factRepos
 	}
 }
 
-func (r *Repository) CreateStory(userIdentifier uint, remarks []remark.Entity) (Entity, error) {
+func (r *Repository) CreateStory(userIdentifier uint) (Entity, error) {
 
 	return Entity{}, nil
 }
