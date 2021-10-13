@@ -21,7 +21,7 @@ func (r *Repository) CreateStory(userIdentifier uint) (Entity, error) {
 	return Entity{}, nil
 }
 
-func (r *Repository) GetStory(storyIdentifier uint) (Entity, error) {
+func (r *Repository) GetFactStory(fact fact.Entity) (Entity, error) {
 
 	return Entity{}, nil
 }

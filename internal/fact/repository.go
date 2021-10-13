@@ -21,7 +21,7 @@ func (r *Repository) CreateFact(storyIdentifier uint, remarks []remark.Entity) (
 	return Entity{}, nil
 }
 
-func (r *Repository) GetFact(identifier uint) (Entity, error) {
+func (r *Repository) GetRemarkFact(remark remark.Entity) (Entity, error) {
 
 	return Entity{}, nil
 }

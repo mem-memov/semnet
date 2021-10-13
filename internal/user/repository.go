@@ -26,3 +26,8 @@ func (r *Repository) GetUser(userIdentifier uint) (Entity, error) {
 
 	return Entity{}, nil
 }
+
+func (r *Repository) GetStoryUser(story story.Entity) (Entity, error) {
+
+	return Entity{}, nil
+}
