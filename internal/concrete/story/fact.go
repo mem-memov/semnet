@@ -1,4 +1,4 @@
-package semnet
+package story
 
 type Fact interface {
 	GetStory() (Story, error)

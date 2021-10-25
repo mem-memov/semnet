@@ -1,4 +1,4 @@
-package semnet
+package fact
 
 type Story interface {
 	AddFact()

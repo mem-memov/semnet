@@ -1,4 +1,4 @@
-package semnet
+package fact
 
 type Remark interface {
 	GetFact() (Fact, error)
