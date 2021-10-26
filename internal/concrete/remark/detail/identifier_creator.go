@@ -6,7 +6,7 @@ import (
 )
 
 // IdentifierCreator structure is a service for several other structures that need it.
-// This service creates new detail identifiers for remark entities.
+// This service creates new detail identifiers for position entities.
 type IdentifierCreator struct {
 	storage    abstract.Storage
 	repository detail.Repository
@@ -19,7 +19,7 @@ func newIdentifierCreator(storage abstract.Storage, repository detail.Repository
 	}
 }
 
-// CreateNewIdentifier creates a new detail identifier to be used as part of a remark cluster.
+// CreateNewIdentifier creates a new detail identifier to be used as part of a position cluster.
 func (i *IdentifierCreator) CreateNewIdentifier(object string, property string) (uint, error) {
 
 	entity, err := i.repository.Provide(object, property)

@@ -12,13 +12,13 @@ func TestFactory_CreateExistingNode(t *testing.T) {
 	repositoryInstance := &detailMock.RepositoryMock{}
 	creatorInstance := &creatorMock.IdentifierCreatorMock{}
 
-	factory := NewFactory(storageInstance, repositoryInstance, creatorInstance)
-
-	node := factory.CreateExistingNode(1)
-
-	if node.identifier != 1 {
-		t.Fail()
+	factory := &Factory{
+		storage: storageInstance,
+		repository: repositoryInstance,
+		creator: creatorInstance,
 	}
+
+	_ = factory.CreateExistingNode(1)
 }
 
 func TestFactory_CreateNewNode_Success(t *testing.T) {
@@ -31,14 +31,14 @@ func TestFactory_CreateNewNode_Success(t *testing.T) {
 		},
 	}
 
-	factory := NewFactory(storageInstance, repositoryInstance, creatorInstance)
-
-	newNode, err := factory.CreateNewNode("sings", "a bird")
-	if err != nil {
-		t.Fail()
+	factory := &Factory{
+		storage: storageInstance,
+		repository: repositoryInstance,
+		creator: creatorInstance,
 	}
 
-	if newNode.identifier != 2 {
+	_, err := factory.CreateNewNode("sings", "a bird")
+	if err != nil {
 		t.Fail()
 	}
 }
@@ -59,7 +59,11 @@ func TestFactory_CreateNewNode_CreatorFails(t *testing.T) {
 		},
 	}
 
-	factory := NewFactory(storageInstance, repositoryInstance, creatorInstance)
+	factory := &Factory{
+		storage: storageInstance,
+		repository: repositoryInstance,
+		creator: creatorInstance,
+	}
 
 	_, err := factory.CreateNewNode("sings", "a bird")
 	if err == nil {

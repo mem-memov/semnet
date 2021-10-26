@@ -5,10 +5,10 @@ import (
 	abstractRemarkClass "github.com/mem-memov/semnet/internal/abstract/remark/class"
 )
 
-// Factory structure creates class nodes for remark structures.
+// Factory structure creates class nodes for position structures.
 type Factory struct {
 	repository abstractClass.Repository
-	creator    *IdentifierCreator
+	creator    abstractRemarkClass.IdentifierCreator
 }
 
 var _ abstractRemarkClass.Factory = &Factory{}
@@ -22,13 +22,13 @@ func NewFactory(repository abstractClass.Repository) *Factory {
 	}
 }
 
-// CreateExistingNode takes an identifier that is part of an existing remark.
+// CreateExistingNode takes an identifier that is part of an existing position.
 // It wraps the identifier into a structure adding some useful methods to it.
 func (f *Factory) CreateExistingNode(identifier uint) abstractRemarkClass.Node {
 	return newNode(identifier, f.repository, f.creator)
 }
 
-// CreateNewNode helps to create a new remark providing a new node pointing to another node that is common for all remarks.
+// CreateNewNode helps to create a new position providing a new node pointing to another node that is common for all remarks.
 func (f *Factory) CreateNewNode() (abstractRemarkClass.Node, error) {
 	newIdentifier, err := f.creator.CreateNewIdentifier()
 	if err != nil {

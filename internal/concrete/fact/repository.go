@@ -1,28 +1,40 @@
 package fact
 
 import (
-	"github.com/mem-memov/semnet/internal/concrete/class"
-	remark2 "github.com/mem-memov/semnet/internal/concrete/remark"
-	"github.com/mem-memov/semnet/internal/remark"
+	"github.com/mem-memov/semnet/internal/abstract"
+	abstractClass "github.com/mem-memov/semnet/internal/abstract/class"
+	abstractFact "github.com/mem-memov/semnet/internal/abstract/fact"
+	abstractRemark "github.com/mem-memov/semnet/internal/abstract/remark"
+	abstractStory "github.com/mem-memov/semnet/internal/abstract/story"
 )
 
 type Repository struct {
-	storage          storage
-	remarkRepository *remark2.Repository
+	factory abstractFact.Factory
+	storyRepository abstractStory.Repository
 }
 
-func NewRepository(storage storage, classRepository *class.Repository, remarkRepository *remark2.Repository) *Repository {
+func NewRepository(
+	storage abstract.Storage,
+	classRepository abstractClass.Repository,
+	storyRepository abstractStory.Repository,
+) *Repository {
 	return &Repository{
-		remarkRepository: remarkRepository,
+		factory: newFactory(storage, classRepository),
+		storyRepository: storyRepository,
 	}
 }
 
-func (r *Repository) CreateFact(storyIdentifier uint, remarks []remark.Entity) (Entity, error) {
+func (r *Repository) CreateNewFact(remarkEntity abstractRemark.Entity) (abstractFact.Entity, error) {
 
-	return Entity{}, nil
-}
+	entity, err :=  r.factory.CreateNewEntity(remarkEntity)
+	if err != nil {
+		return nil, err
+	}
 
-func (r *Repository) GetRemarkFact(remark remark.Entity) (Entity, error) {
+	_, err = r.storyRepository.CreateNewEntity(entity)
+	if err != nil {
+		return nil, err
+	}
 
-	return Entity{}, nil
+	return entity, nil
 }

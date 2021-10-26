@@ -1,27 +1,42 @@
 package fact
 
 import (
-	node2 "github.com/mem-memov/semnet/internal/concrete/fact/node"
-	"github.com/mem-memov/semnet/internal/remark"
+	abstractFact "github.com/mem-memov/semnet/internal/abstract/fact"
+	abstractFactClass "github.com/mem-memov/semnet/internal/abstract/fact/class"
+	abstractFactPosition "github.com/mem-memov/semnet/internal/abstract/fact/position"
+	abstractFactRemark "github.com/mem-memov/semnet/internal/abstract/fact/remark"
+	abstractFactStory "github.com/mem-memov/semnet/internal/abstract/fact/story"
+	abstractRemark "github.com/mem-memov/semnet/internal/abstract/remark"
 )
 
 type Entity struct {
-	classNode  node2.Class
-	remarkNode node2.Remark
-	factNode   node2.Fact
-	storyNode  node2.Story
+	classNode  abstractFactClass.Node
+	remarkNode abstractFactRemark.Node
+	positionNode   abstractFactPosition.Node
+	storyNode  abstractFactStory.Node
 }
 
-func (e Entity) IdentifierForRemark() uint {
-	return e.remarkNode.Identifier()
+var _ abstractFact.Entity = Entity{}
+
+func newEntity(
+	classNode  abstractFactClass.Node,
+	remarkNode abstractFactRemark.Node,
+	positionNode   abstractFactPosition.Node,
+	storyNode  abstractFactStory.Node,
+) Entity {
+	return Entity{
+		classNode: classNode,
+		remarkNode: remarkNode,
+		positionNode: positionNode,
+		storyNode: storyNode,
+	}
 }
 
-func (e Entity) AddRemark(object string, property string) (remark.Entity, error) {
-
-	return remark.Entity{}, nil
+func (e Entity) Mark(sourceIdentifier uint) error {
+	return e.storyNode.Mark(sourceIdentifier)
 }
 
-func (e Entity) GetFact() (Fact, error) {
-
-	return nil, nil
+func (e Entity) GetMarked(remarkEntity abstractRemark.Entity) error {
+	return e.remarkNode.GetMarked(remarkEntity)
 }
+

@@ -12,7 +12,13 @@ type Node struct {
 	creator    abstractRemarkClass.IdentifierCreator
 }
 
-func newNode(identifier uint, repository abstractClass.Repository, creator abstractRemarkClass.IdentifierCreator) Node {
+var _ abstractRemarkClass.Node = Node{}
+
+func newNode(
+	identifier uint,
+	repository abstractClass.Repository,
+	creator abstractRemarkClass.IdentifierCreator,
+) abstractRemarkClass.Node {
 	return Node{
 		identifier: identifier,
 		repository: repository,
@@ -20,7 +26,11 @@ func newNode(identifier uint, repository abstractClass.Repository, creator abstr
 	}
 }
 
-// IsValid checks the single target of this node is common to all remark entities.
+func (n Node) GetIdentifier() uint {
+	return n.identifier
+}
+
+// IsValid checks the single target of this node is common to all position entities.
 func (n Node) IsValid() (bool, error) {
 	classEntity, err := n.repository.ProvideEntity()
 	if err != nil {

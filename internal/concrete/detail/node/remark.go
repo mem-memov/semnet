@@ -37,7 +37,7 @@ func (r Remark) GetClassAndPhrase() (uint, uint, error) {
 	}
 
 	if emptyReference != 0 {
-		return 0, 0, fmt.Errorf("next node reference is not empty in detail layer at remark %d", r.identifier)
+		return 0, 0, fmt.Errorf("next node reference is not empty in detail layer at position %d", r.identifier)
 	}
 
 	classIdentifier, remarkIdentifier, err := r.storage.GetReference(phraseIdentifier)
@@ -46,7 +46,7 @@ func (r Remark) GetClassAndPhrase() (uint, uint, error) {
 	}
 
 	if remarkIdentifier != r.identifier {
-		return 0, 0, fmt.Errorf("detail cluster invalid at remark node %d", r.identifier)
+		return 0, 0, fmt.Errorf("detail cluster invalid at position node %d", r.identifier)
 	}
 
 	return classIdentifier, phraseIdentifier, nil

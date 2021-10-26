@@ -1,29 +1,33 @@
 package story
 
 import (
-	node2 "github.com/mem-memov/semnet/internal/concrete/story/node"
-	"github.com/mem-memov/semnet/internal/story/node"
+	abstractFact "github.com/mem-memov/semnet/internal/abstract/fact"
+	abstractStoryClass "github.com/mem-memov/semnet/internal/abstract/story/class"
+	abstractStoryFact "github.com/mem-memov/semnet/internal/abstract/story/fact"
+	abstractStoryUser "github.com/mem-memov/semnet/internal/abstract/story/user"
 )
 
 type Entity struct {
-	factNode  node2.Fact
-	topicNode node.Topic
-	storyNode node2.Story
+	classNode  abstractStoryClass.Node
+	factNode abstractStoryFact.Node
+	userNode abstractStoryUser.Node
 }
 
-func newEntity(factNode node2.Fact, topicNode node.Topic, storyNode node2.Story) Entity {
+func newEntity(
+	classNode  abstractStoryClass.Node,
+	factNode abstractStoryFact.Node,
+	userNode abstractStoryUser.Node,
+) Entity {
 	return Entity{
-		factNode:  factNode,
-		topicNode: topicNode,
-		storyNode: storyNode,
+		classNode:  classNode,
+		factNode: factNode,
+		userNode: userNode,
 	}
 }
 
-func (e Entity) IdentifierForFact() uint {
-	return e.factNode.Identifier()
+func (e Entity) GetMarked(factEntity abstractFact.Entity) error {
+
+	return e.factNode.GetMarked(factEntity)
 }
 
-func (e Entity) AddFact() (Fact, error) {
 
-	return nil, nil
-}

@@ -4,6 +4,7 @@ import (
 	"github.com/mem-memov/semnet/internal/abstract"
 	abstractDetail "github.com/mem-memov/semnet/internal/abstract/detail"
 	abstractCreator "github.com/mem-memov/semnet/internal/abstract/remark/detail"
+	abstractRemarkDetail "github.com/mem-memov/semnet/internal/abstract/remark/detail"
 )
 
 type Node struct {
@@ -12,6 +13,8 @@ type Node struct {
 	repository abstractDetail.Repository
 	creator    abstractCreator.IdentifierCreator
 }
+
+var _ abstractRemarkDetail.Node = Node{}
 
 func newNode(
 	identifier uint,
@@ -27,7 +30,11 @@ func newNode(
 	}
 }
 
-// GetObjectAndProperty provides actual text of the remark
+func (n Node) GetIdentifier() uint {
+	return n.identifier
+}
+
+// GetObjectAndProperty provides actual text of the position
 func (n Node) GetObjectAndProperty() (string, string, error) {
 	detailEntity, err := n.repository.Fetch(n.identifier)
 	if err != nil {

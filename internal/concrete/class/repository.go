@@ -114,7 +114,7 @@ func (r *Repository) ProvideEntity() (class.Entity, error) {
 			}
 
 			if result != remarkIdentifier {
-				return Entity{}, fmt.Errorf("wrong remark class node %d", result)
+				return Entity{}, fmt.Errorf("wrong position class node %d", result)
 			}
 
 			err = r.storage.SetReference(detailIdentifier, remarkIdentifier)

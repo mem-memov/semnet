@@ -1,22 +1,26 @@
 package story
 
 import (
-	"github.com/mem-memov/semnet/internal/concrete/class"
-	"github.com/mem-memov/semnet/internal/concrete/fact"
+	"github.com/mem-memov/semnet/internal/abstract"
+	abstractClass "github.com/mem-memov/semnet/internal/abstract/class"
+	abstractFact "github.com/mem-memov/semnet/internal/abstract/fact"
+	abstractStory "github.com/mem-memov/semnet/internal/abstract/story"
 )
 
 type Repository struct {
-	storage        storage
-	factRepository *fact.Repository
+	factory abstractStory.Factory
 }
 
-func NewRepository(storage storage, classRepository *class.Repository, factRepository *fact.Repository) *Repository {
+var _ abstractStory.Repository = &Repository{}
+
+func NewRepository(storage abstract.Storage, classRepository abstractClass.Repository) *Repository {
+
 	return &Repository{
-		factRepository: factRepository,
+		factory: newFactory(storage, classRepository),
 	}
 }
 
-func (r *Repository) CreateStory() (Story, error) {
+func (r *Repository) CreateNewEntity(factEntity abstractFact.Entity) (abstractStory.Entity, error) {
 
-	return nil, nil
+	return r.factory.CreateNewEntity(factEntity)
 }

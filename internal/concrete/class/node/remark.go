@@ -37,7 +37,7 @@ func (r Remark) Is(identifier uint) (bool, error) {
 	}
 
 	if len(targets) != 1 {
-		return false, fmt.Errorf("wrong number of targets at remark class node %d", identifier)
+		return false, fmt.Errorf("wrong number of targets at position class node %d", identifier)
 	}
 
 	return targets[0] == r.identifier, nil

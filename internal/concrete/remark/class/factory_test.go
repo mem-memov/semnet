@@ -12,7 +12,10 @@ func TestFactory_CreateNew(t *testing.T) {
 
 	creatorInstance := &class.IdentifierCreatorMock{}
 
-	factory := NewFactory(repositoryInstance, creatorInstance)
+	factory := &Factory{
+		repository: repositoryInstance,
+		creator: creatorInstance,
+	}
 
 	_ = factory.CreateExistingNode(1)
 }
@@ -26,7 +29,10 @@ func TestFactory_CreateNewNode_Success(t *testing.T) {
 		},
 	}
 
-	factory := NewFactory(repositoryInstance, creatorInstance)
+	factory := &Factory{
+		repository: repositoryInstance,
+		creator: creatorInstance,
+	}
 
 	_, err := factory.CreateNewNode()
 	if err != nil {
@@ -49,7 +55,10 @@ func TestFactory_CreateNewNode_CreatorFails(t *testing.T) {
 		},
 	}
 
-	factory := NewFactory(repositoryInstance, creatorInstance)
+	factory := &Factory{
+		repository: repositoryInstance,
+		creator: creatorInstance,
+	}
 
 	_, err := factory.CreateNewNode()
 	if err == nil {
