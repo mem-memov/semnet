@@ -28,9 +28,12 @@ func NewGraph(storage storage) *Graph {
 	wordRepository := word.NewRepository(storage, classRepository, characterRepository)
 	phraseRepository := phrase.NewRepository(storage, classRepository, wordRepository)
 	detailRepository := detail.NewRepository(storage, classRepository, phraseRepository)
-	remarkRepository := remark.NewRepository(storage, classRepository, detailRepository)
-	factRepository := fact.NewRepository(storage, classRepository, remarkRepository)
-	storyRepository := story.NewRepository(storage, classRepository, factRepository)
+
+	storyRepository := story.NewRepository(storage, classRepository)
+	factRepository := fact.NewRepository(storage, classRepository, storyRepository)
+
+	remarkRepository := remark.NewRepository(storage, classRepository, detailRepository, factRepository)
+
 
 	return &Graph{
 		storyRepository:  storyRepository,
@@ -41,8 +44,8 @@ func NewGraph(storage storage) *Graph {
 	}
 }
 
-func (g *Graph) CreateStory() (Story, error) {
-	return g.storyRepository.CreateStory()
+func (g *Graph) CreateStory() (Remark, error) {
+	return g.storyRepository.CreateFirstUserStory()
 }
 
 func (g *Graph) GetRemark(remarkIdentifier uint) (Remark, error) {

@@ -1,33 +1,134 @@
 package story
 
 import (
+	"github.com/mem-memov/semnet/internal/abstract"
+	abstractClass "github.com/mem-memov/semnet/internal/abstract/class"
 	abstractFact "github.com/mem-memov/semnet/internal/abstract/fact"
-	abstractStoryClass "github.com/mem-memov/semnet/internal/abstract/story/class"
-	abstractStoryFact "github.com/mem-memov/semnet/internal/abstract/story/fact"
-	abstractStoryUser "github.com/mem-memov/semnet/internal/abstract/story/user"
+	abstractStory "github.com/mem-memov/semnet/internal/abstract/story"
 )
 
 type Entity struct {
-	classNode  abstractStoryClass.Node
-	factNode abstractStoryFact.Node
-	userNode abstractStoryUser.Node
+	class uint
+	fact uint
+	user uint
+	storage abstract.Storage
 }
 
-func newEntity(
-	classNode  abstractStoryClass.Node,
-	factNode abstractStoryFact.Node,
-	userNode abstractStoryUser.Node,
-) Entity {
-	return Entity{
-		classNode:  classNode,
-		factNode: factNode,
-		userNode: userNode,
+var _ abstractStory.Entity = Entity{}
+
+func createEntity(storage abstract.Storage) (Entity, error) {
+
+	class, err := storage.Create()
+	if err != nil {
+		return Entity{}, err
 	}
+
+	fact, err := storage.Create()
+	if err != nil {
+		return Entity{}, err
+	}
+
+	user, err := storage.Create()
+	if err != nil {
+		return Entity{}, err
+	}
+
+	err = storage.SetReference(class, fact)
+	if err != nil {
+		return Entity{}, err
+	}
+
+	err = storage.SetReference(fact, user)
+	if err != nil {
+		return Entity{}, err
+	}
+
+	return Entity{
+		class:  class,
+		fact: fact,
+		user: user,
+		storage: storage,
+	}, nil
 }
 
-func (e Entity) GetMarked(factEntity abstractFact.Entity) error {
+func readEntityByClass(storage abstract.Storage, class uint) (Entity, error) {
 
-	return e.factNode.GetMarked(factEntity)
+	_, fact, err := storage.GetReference(class)
+	if err != nil {
+		return Entity{}, err
+	}
+
+	_, user, err := storage.GetReference(fact)
+	if err != nil {
+		return Entity{}, err
+	}
+
+	return Entity{
+		class:  class,
+		fact: fact,
+		user: user,
+		storage: storage,
+	}, nil
+}
+
+func readEntityByFact(storage abstract.Storage, fact uint) (Entity, error) {
+
+	class, user, err := storage.GetReference(fact)
+	if err != nil {
+		return Entity{}, err
+	}
+
+	return Entity{
+		class:  class,
+		fact: fact,
+		user: user,
+		storage: storage,
+	}, nil
+}
+
+func readEntityByUser(storage abstract.Storage, user uint) (Entity, error) {
+
+	fact, _, err := storage.GetReference(user)
+	if err != nil {
+		return Entity{}, err
+	}
+
+	class, _, err := storage.GetReference(fact)
+	if err != nil {
+		return Entity{}, err
+	}
+
+	return Entity{
+		class:  class,
+		fact: fact,
+		user: user,
+		storage: storage,
+	}, nil
+}
+
+func (e Entity) GetClass() uint {
+
+	return e.class
+}
+
+func (e Entity) GetFact() uint {
+
+	return e.fact
+}
+
+func (e Entity) GetUser() uint {
+
+	return e.user
+}
+
+func (e Entity) PointToClass(class abstractClass.Entity) error {
+
+	return e.storage.Connect(e.fact, class.GetStory())
+}
+
+func (e Entity) PointToFact(fact abstractFact.Entity) error {
+
+	return e.storage.Connect(e.fact, fact.GetStory())
 }
 
 

@@ -14,6 +14,12 @@ func NewFact(identifier uint, storage storage) Fact {
 	}
 }
 
+func (f Fact) GetIdentifier() uint {
+	return f.identifier
+}
+
+
+
 func (f Fact) Create() (uint, error) {
 
 	identifier, err := f.storage.Create()

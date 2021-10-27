@@ -52,7 +52,7 @@ func (r Remark) GetClassAndPhrase() (uint, uint, error) {
 	return classIdentifier, phraseIdentifier, nil
 }
 
-func (r Remark) AddRemark(targetIdentifier uint) error {
+func (r Remark) PointToRemark(targetIdentifier uint) error {
 
 	return r.storage.Connect(r.identifier, targetIdentifier)
 }

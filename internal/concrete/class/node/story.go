@@ -14,6 +14,12 @@ func NewStory(identifier uint, storage storage) Story {
 	}
 }
 
+func (s Story) GetIdentifier() uint {
+	return s.identifier
+}
+
+
+
 func (s Story) Create() (uint, error) {
 
 	identifier, err := s.storage.Create()

@@ -1,6 +1,12 @@
 package class
 
 type Entity interface {
+	GetRemark() uint
+	GetFact() uint
+	GetStory() uint
+
+
+
 	CreateBit() (uint, error)
 	IsBit(identifier uint) (bool, error)
 	GetAllBits() ([]uint, error)

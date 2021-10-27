@@ -3,12 +3,12 @@ package story
 import (
 	"github.com/mem-memov/semnet/internal/abstract"
 	abstractClass "github.com/mem-memov/semnet/internal/abstract/class"
-	abstractFact "github.com/mem-memov/semnet/internal/abstract/fact"
 	abstractStory "github.com/mem-memov/semnet/internal/abstract/story"
 )
 
 type Repository struct {
-	factory abstractStory.Factory
+	storage abstract.Storage
+	classRepository abstractClass.Repository
 }
 
 var _ abstractStory.Repository = &Repository{}
@@ -16,11 +16,27 @@ var _ abstractStory.Repository = &Repository{}
 func NewRepository(storage abstract.Storage, classRepository abstractClass.Repository) *Repository {
 
 	return &Repository{
-		factory: newFactory(storage, classRepository),
+		storage: storage,
+		classRepository: classRepository,
 	}
 }
 
-func (r *Repository) CreateNewEntity(factEntity abstractFact.Entity) (abstractStory.Entity, error) {
+func (r *Repository) CreateFirstUserStory() (abstractStory.Entity, error) {
 
-	return r.factory.CreateNewEntity(factEntity)
+	story, err := createEntity(r.storage)
+	if err != nil {
+		return nil, err
+	}
+
+	class, err := r.classRepository.ProvideEntity()
+	if err != nil {
+		return nil, err
+	}
+
+	err = story.PointToClass(class)
+	if err != nil {
+		return nil, err
+	}
+
+	return story, nil
 }
