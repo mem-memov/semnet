@@ -1,6 +1,5 @@
 package semnet
 
 type Remark interface {
-	//GetFact() (Fact, error)
-	//GetObjectProperty() (string, string, error)
+	AddRemarkToFact(property string) (Remark, error)
 }

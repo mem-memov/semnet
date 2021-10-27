@@ -1,6 +1,7 @@
 package remark
 
 import (
+	"fmt"
 	"github.com/mem-memov/semnet/internal/abstract"
 	abstractClass "github.com/mem-memov/semnet/internal/abstract/class"
 	abstractFact "github.com/mem-memov/semnet/internal/abstract/fact"
@@ -185,4 +186,18 @@ func (e Entity) PointToClass(class abstractClass.Entity) error {
 func (e Entity) PointToFact(fact abstractFact.Entity) error {
 
 	return e.storage.Connect(e.fact, fact.GetRemark())
+}
+
+func (e Entity) FetchTargetFact(factRepository abstractFact.Repository) (abstractFact.Entity, error) {
+
+	targetFacts, err := e.storage.ReadTargets(e.fact)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(targetFacts) != 1 {
+		return nil, fmt.Errorf("remark has wrong number of facts")
+	}
+
+	return factRepository.FetchByRemark(targetFacts[0])
 }

@@ -61,3 +61,7 @@ func (r *Repository) CreateFirstUserStoryFact() (abstractFact.Entity, error) {
 
 	return fact, nil
 }
+
+func (r *Repository) FetchByRemark(remarkIdentifier uint) (abstractFact.Entity, error) {
+	return readEntityByRemark(r.storage, remarkIdentifier)
+}

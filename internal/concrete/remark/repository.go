@@ -37,6 +37,8 @@ func (r *Repository) CreateFirstUserRemark(object string, property string) (api.
 		return nil, err
 	}
 
+	// class
+
 	class, err := r.classRepository.ProvideEntity()
 	if err != nil {
 		return nil, err
@@ -47,6 +49,8 @@ func (r *Repository) CreateFirstUserRemark(object string, property string) (api.
 		return nil, err
 	}
 
+	// detail
+
 	detail, err := r.detailRepository.Provide(object, property)
 	if err != nil {
 		return nil, err
@@ -56,6 +60,8 @@ func (r *Repository) CreateFirstUserRemark(object string, property string) (api.
 	if err != nil {
 		return nil, err
 	}
+
+	// fact
 
 	fact, err := r.factRepository.CreateFirstUserStoryFact()
 	if err != nil {
@@ -72,7 +78,13 @@ func (r *Repository) CreateFirstUserRemark(object string, property string) (api.
 		return nil, err
 	}
 
-	return remark, nil
+	return aggregate{
+		remark: remark,
+		storage: r.storage,
+		classRepository: r.classRepository,
+		detailRepository: r.detailRepository,
+		factRepository: r.factRepository,
+	}, nil
 }
 
 func (r *Repository) GetRemark(remarkIdentifier uint) (api.Remark, error) {

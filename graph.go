@@ -1,6 +1,7 @@
 package semnet
 
 import (
+	"github.com/mem-memov/semnet/internal/abstract"
 	"github.com/mem-memov/semnet/internal/concrete/bit"
 	"github.com/mem-memov/semnet/internal/concrete/character"
 	"github.com/mem-memov/semnet/internal/concrete/class"
@@ -20,7 +21,7 @@ type Graph struct {
 	phraseRepository *phrase.Repository
 }
 
-func NewGraph(storage storage) *Graph {
+func NewGraph(storage abstract.Storage) *Graph {
 
 	classRepository := class.NewRepository(storage)
 	bitRepository := bit.NewRepository(storage, classRepository)
@@ -36,16 +37,12 @@ func NewGraph(storage storage) *Graph {
 
 
 	return &Graph{
-		storyRepository:  storyRepository,
-		factRepository:   factRepository,
 		remarkRepository: remarkRepository,
-		detailRepository: detailRepository,
-		phraseRepository: phraseRepository,
 	}
 }
 
-func (g *Graph) CreateStory() (Remark, error) {
-	return g.storyRepository.CreateFirstUserStory()
+func (g *Graph) CreateStory(object string, property string) (Remark, error) {
+	return g.remarkRepository.CreateFirstUserRemark(object, property)
 }
 
 func (g *Graph) GetRemark(remarkIdentifier uint) (Remark, error) {
