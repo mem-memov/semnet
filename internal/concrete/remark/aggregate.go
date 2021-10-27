@@ -68,10 +68,70 @@ func (a aggregate) AddRemarkToFact(property string) (api.Remark, error)  {
 	}
 
 	return aggregate{
-		remark: remark,
-		storage: a.storage,
-		classRepository: a.classRepository,
+		remark:           remark,
+		storage:          a.storage,
+		classRepository:  a.classRepository,
 		detailRepository: a.detailRepository,
-		factRepository: a.factRepository,
+		factRepository:   a.factRepository,
+	}, nil
+}
+
+func (a aggregate) AddFactToStory(object string, property string) (api.Remark, error)  {
+
+	remark, err := createEntity(a.storage)
+	if err != nil {
+		return nil, err
+	}
+
+	// class
+
+	class, err := a.classRepository.ProvideEntity()
+	if err != nil {
+		return nil, err
+	}
+
+	err = remark.PointToClass(class)
+	if err != nil {
+		return nil, err
+	}
+
+	// detail
+
+	detail, err := a.detailRepository.Provide(object, property)
+	if err != nil {
+		return nil, err
+	}
+
+
+	err = detail.PointToRemark(remark)
+	if err != nil {
+		return nil, err
+	}
+
+	// position
+
+	err = a.remark.PointToPosition(remark)
+	if err != nil {
+		return nil, err
+	}
+
+	// fact
+
+	fact, err := a.remark.CreateNextStoryFact(a.factRepository)
+	if err != nil {
+		return nil, err
+	}
+
+	err = remark.PointToFact(fact)
+	if err != nil {
+		return nil, err
+	}
+
+	return aggregate{
+		remark:           remark,
+		storage:          a.storage,
+		classRepository:  a.classRepository,
+		detailRepository: a.detailRepository,
+		factRepository:   a.factRepository,
 	}, nil
 }

@@ -11,6 +11,7 @@ type Entity interface {
 	GetPosition() uint
 	GetFact() uint
 	PointToClass(class class.Entity) error
+	PointToPosition(remark Entity) error
 	PointToFact(fact fact.Entity) error
 	FetchTargetFact(factRepository fact.Repository) (fact.Entity, error)
 }

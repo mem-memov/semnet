@@ -183,6 +183,11 @@ func (e Entity) PointToClass(class abstractClass.Entity) error {
 	return e.storage.Connect(e.fact, class.GetRemark())
 }
 
+func (e Entity) PointToPosition(remark abstractRemark.Entity) error {
+
+	return e.storage.Connect(e.position, remark.GetPosition())
+}
+
 func (e Entity) PointToFact(fact abstractFact.Entity) error {
 
 	return e.storage.Connect(e.fact, fact.GetRemark())
@@ -200,4 +205,19 @@ func (e Entity) FetchTargetFact(factRepository abstractFact.Repository) (abstrac
 	}
 
 	return factRepository.FetchByRemark(targetFacts[0])
+}
+
+func (e Entity) CreateNextStoryFact(factRepository abstractFact.Repository) (abstractFact.Entity, error) {
+
+	targetFacts, err := e.storage.ReadTargets(e.fact)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(targetFacts) != 1 {
+		return nil, fmt.Errorf("remark has wrong number of facts")
+	}
+
+	// TODO: create new fact of the same story
+	return nil, nil
 }
