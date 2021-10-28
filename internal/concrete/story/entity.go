@@ -8,9 +8,9 @@ import (
 )
 
 type Entity struct {
-	class uint
-	fact uint
-	user uint
+	class   uint
+	fact    uint
+	user    uint
 	storage abstract.Storage
 }
 
@@ -44,9 +44,9 @@ func createEntity(storage abstract.Storage) (Entity, error) {
 	}
 
 	return Entity{
-		class:  class,
-		fact: fact,
-		user: user,
+		class:   class,
+		fact:    fact,
+		user:    user,
 		storage: storage,
 	}, nil
 }
@@ -64,9 +64,9 @@ func readEntityByClass(storage abstract.Storage, class uint) (Entity, error) {
 	}
 
 	return Entity{
-		class:  class,
-		fact: fact,
-		user: user,
+		class:   class,
+		fact:    fact,
+		user:    user,
 		storage: storage,
 	}, nil
 }
@@ -79,9 +79,9 @@ func readEntityByFact(storage abstract.Storage, fact uint) (Entity, error) {
 	}
 
 	return Entity{
-		class:  class,
-		fact: fact,
-		user: user,
+		class:   class,
+		fact:    fact,
+		user:    user,
 		storage: storage,
 	}, nil
 }
@@ -99,9 +99,9 @@ func readEntityByUser(storage abstract.Storage, user uint) (Entity, error) {
 	}
 
 	return Entity{
-		class:  class,
-		fact: fact,
-		user: user,
+		class:   class,
+		fact:    fact,
+		user:    user,
 		storage: storage,
 	}, nil
 }
@@ -130,5 +130,3 @@ func (e Entity) PointToFact(fact abstractFact.Entity) error {
 
 	return e.storage.Connect(e.fact, fact.GetStory())
 }
-
-

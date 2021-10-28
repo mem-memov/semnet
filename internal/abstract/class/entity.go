@@ -5,8 +5,6 @@ type Entity interface {
 	GetFact() uint
 	GetStory() uint
 
-
-
 	CreateBit() (uint, error)
 	IsBit(identifier uint) (bool, error)
 	GetAllBits() ([]uint, error)

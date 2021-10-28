@@ -9,11 +9,11 @@ import (
 )
 
 type Entity struct {
-	class uint
-	detail uint
+	class    uint
+	detail   uint
 	position uint
-	fact uint
-	storage abstract.Storage
+	fact     uint
+	storage  abstract.Storage
 }
 
 var _ abstractRemark.Entity = Entity{}
@@ -60,7 +60,7 @@ func createEntity(storage abstract.Storage) (Entity, error) {
 		detail:   detail,
 		position: position,
 		fact:     fact,
-		storage: storage,
+		storage:  storage,
 	}, nil
 }
 
@@ -86,7 +86,7 @@ func readEntityByClass(storage abstract.Storage, class uint) (Entity, error) {
 		detail:   detail,
 		position: position,
 		fact:     fact,
-		storage: storage,
+		storage:  storage,
 	}, nil
 }
 
@@ -107,7 +107,7 @@ func readEntityByDetail(storage abstract.Storage, detail uint) (Entity, error) {
 		detail:   detail,
 		position: position,
 		fact:     fact,
-		storage: storage,
+		storage:  storage,
 	}, nil
 }
 
@@ -128,7 +128,7 @@ func readEntityByPosition(storage abstract.Storage, position uint) (Entity, erro
 		detail:   detail,
 		position: position,
 		fact:     fact,
-		storage: storage,
+		storage:  storage,
 	}, nil
 }
 
@@ -154,7 +154,7 @@ func readEntityByFact(storage abstract.Storage, fact uint) (Entity, error) {
 		detail:   detail,
 		position: position,
 		fact:     fact,
-		storage: storage,
+		storage:  storage,
 	}, nil
 }
 

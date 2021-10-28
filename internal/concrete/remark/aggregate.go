@@ -10,9 +10,9 @@ import (
 )
 
 type aggregate struct {
-	remark abstractRemark.Entity
-	storage abstract.Storage
-	classRepository abstractClass.Repository
+	remark           abstractRemark.Entity
+	storage          abstract.Storage
+	classRepository  abstractClass.Repository
 	detailRepository abstractDetail.Repository
 	factRepository   abstractFact.Repository
 }
@@ -88,7 +88,7 @@ func (a aggregate) GetObjectAndProperty() (string, string, error) {
 	return detail.GetObjectAndProperty()
 }
 
-func (a aggregate) AddRemarkToFact(property string) (api.Remark, error)  {
+func (a aggregate) AddRemarkToFact(property string) (api.Remark, error) {
 
 	remark, err := createEntity(a.storage)
 	if err != nil {
@@ -147,7 +147,7 @@ func (a aggregate) AddRemarkToFact(property string) (api.Remark, error)  {
 	}, nil
 }
 
-func (a aggregate) AddFactToStory(object string, property string) (api.Remark, error)  {
+func (a aggregate) AddFactToStory(object string, property string) (api.Remark, error) {
 
 	remark, err := createEntity(a.storage)
 	if err != nil {
@@ -172,7 +172,6 @@ func (a aggregate) AddFactToStory(object string, property string) (api.Remark, e
 	if err != nil {
 		return nil, err
 	}
-
 
 	err = detail.PointToRemark(remark)
 	if err != nil {

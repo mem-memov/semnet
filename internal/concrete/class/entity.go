@@ -52,9 +52,6 @@ func (e Entity) GetStory() uint {
 	return e.storyNode.GetIdentifier()
 }
 
-
-
-
 func (e Entity) CreateBit() (uint, error) {
 	return e.bitNode.Create()
 }
@@ -122,4 +119,3 @@ func (e Entity) CreateStory() (uint, error) {
 func (e Entity) IsStory(identifier uint) (bool, error) {
 	return e.storyNode.Is(identifier)
 }
-

@@ -10,11 +10,11 @@ import (
 )
 
 type Entity struct {
-	class uint
-	remark uint
+	class    uint
+	remark   uint
 	position uint
-	story uint
-	storage abstract.Storage
+	story    uint
+	storage  abstract.Storage
 }
 
 var _ abstractFact.Entity = Entity{}
@@ -57,11 +57,11 @@ func createEntity(storage abstract.Storage) (Entity, error) {
 	}
 
 	return Entity{
-		class: class,
-		remark: remark,
+		class:    class,
+		remark:   remark,
 		position: position,
-		story: story,
-		storage: storage,
+		story:    story,
+		storage:  storage,
 	}, nil
 }
 
@@ -83,11 +83,11 @@ func readEntityByClass(storage abstract.Storage, class uint) (Entity, error) {
 	}
 
 	return Entity{
-		class: class,
-		remark: remark,
+		class:    class,
+		remark:   remark,
 		position: position,
-		story: story,
-		storage: storage,
+		story:    story,
+		storage:  storage,
 	}, nil
 }
 
@@ -104,11 +104,11 @@ func readEntityByRemark(storage abstract.Storage, remark uint) (Entity, error) {
 	}
 
 	return Entity{
-		class: class,
-		remark: remark,
+		class:    class,
+		remark:   remark,
 		position: position,
-		story: story,
-		storage: storage,
+		story:    story,
+		storage:  storage,
 	}, nil
 }
 
@@ -125,11 +125,11 @@ func readEntityByPosition(storage abstract.Storage, position uint) (Entity, erro
 	}
 
 	return Entity{
-		class: class,
-		remark: remark,
+		class:    class,
+		remark:   remark,
 		position: position,
-		story: story,
-		storage: storage,
+		story:    story,
+		storage:  storage,
 	}, nil
 }
 
@@ -151,11 +151,11 @@ func readEntityByStory(storage abstract.Storage, story uint) (Entity, error) {
 	}
 
 	return Entity{
-		class: class,
-		remark: remark,
+		class:    class,
+		remark:   remark,
 		position: position,
-		story: story,
-		storage: storage,
+		story:    story,
+		storage:  storage,
 	}, nil
 }
 
@@ -233,4 +233,3 @@ func (e Entity) GetFirstRemark() (uint, error) {
 
 	return targets[0], nil
 }
-

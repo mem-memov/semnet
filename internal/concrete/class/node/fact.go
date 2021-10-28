@@ -18,8 +18,6 @@ func (f Fact) GetIdentifier() uint {
 	return f.identifier
 }
 
-
-
 func (f Fact) Create() (uint, error) {
 
 	identifier, err := f.storage.Create()

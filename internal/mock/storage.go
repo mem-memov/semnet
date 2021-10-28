@@ -1,15 +1,15 @@
 package mock
 
 type StorageMock struct {
-	Has_ func(source uint) (bool, error)
-	Create_ func() (uint, error)
-	ReadSources_ func(target uint) ([]uint, error)
-	ReadTargets_ func(source uint) ([]uint, error)
+	Has_          func(source uint) (bool, error)
+	Create_       func() (uint, error)
+	ReadSources_  func(target uint) ([]uint, error)
+	ReadTargets_  func(source uint) ([]uint, error)
 	SetReference_ func(source uint, reference uint) error
 	GetReference_ func(source uint) (uint, uint, error)
-	Connect_ func(source uint, target uint) error
-	Disconnect_ func(source uint, target uint) error
-	Delete_ func(source uint) error
+	Connect_      func(source uint, target uint) error
+	Disconnect_   func(source uint, target uint) error
+	Delete_       func(source uint) error
 }
 
 func (s *StorageMock) Has(source uint) (bool, error) {

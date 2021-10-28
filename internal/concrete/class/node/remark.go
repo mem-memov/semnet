@@ -18,7 +18,6 @@ func (r Remark) GetIdentifier() uint {
 	return r.identifier
 }
 
-
 func (r Remark) Create() (uint, error) {
 
 	identifier, err := r.storage.Create()

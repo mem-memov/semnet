@@ -3,30 +3,30 @@ package class
 import abstractClass "github.com/mem-memov/semnet/internal/abstract/class"
 
 type EntityMock struct {
-	CreateBit_ func() (uint, error)
-	IsBit_ func(identifier uint) (bool, error)
+	CreateBit_  func() (uint, error)
+	IsBit_      func(identifier uint) (bool, error)
 	GetAllBits_ func() ([]uint, error)
 
 	CreateCharacter_ func() (uint, error)
-	IsCharacter_ func(identifier uint) (bool, error)
+	IsCharacter_     func(identifier uint) (bool, error)
 
 	CreateWord_ func() (uint, error)
-	IsWord_ func(identifier uint) (bool, error)
+	IsWord_     func(identifier uint) (bool, error)
 
 	CreatePhrase_ func() (uint, error)
-	IsPhrase_ func(identifier uint) (bool, error)
+	IsPhrase_     func(identifier uint) (bool, error)
 
 	CreateDetail_ func() (uint, error)
-	IsDetail_ func(identifier uint) (bool, error)
+	IsDetail_     func(identifier uint) (bool, error)
 
 	CreateRemark_ func() (uint, error)
 	IsRemark_     func(uint) (bool, error)
 
 	CreateFact_ func() (uint, error)
-	IsFact_ func(identifier uint) (bool, error)
+	IsFact_     func(identifier uint) (bool, error)
 
 	CreateStory_ func() (uint, error)
-	IsStory_ func(identifier uint) (bool, error)
+	IsStory_     func(identifier uint) (bool, error)
 }
 
 var _ abstractClass.Entity = EntityMock{}
@@ -98,4 +98,3 @@ func (e EntityMock) CreateStory() (uint, error) {
 func (e EntityMock) IsStory(identifier uint) (bool, error) {
 	return e.IsStory_(identifier)
 }
-

@@ -18,8 +18,6 @@ func (s Story) GetIdentifier() uint {
 	return s.identifier
 }
 
-
-
 func (s Story) Create() (uint, error) {
 
 	identifier, err := s.storage.Create()

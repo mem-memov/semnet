@@ -7,7 +7,7 @@ import (
 )
 
 type Repository struct {
-	storage abstract.Storage
+	storage         abstract.Storage
 	classRepository abstractClass.Repository
 }
 
@@ -16,7 +16,7 @@ var _ abstractStory.Repository = &Repository{}
 func NewRepository(storage abstract.Storage, classRepository abstractClass.Repository) *Repository {
 
 	return &Repository{
-		storage: storage,
+		storage:         storage,
 		classRepository: classRepository,
 	}
 }

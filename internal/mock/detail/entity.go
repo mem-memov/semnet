@@ -1,8 +1,8 @@
 package detail
 
 type EntityMock struct {
-	HasPhraseValue_ func(phraseValue string) (bool, error)
-	AddRemark_ func(uint) error
+	HasPhraseValue_       func(phraseValue string) (bool, error)
+	AddRemark_            func(uint) error
 	GetObjectAndProperty_ func() (string, string, error)
 }
 

@@ -9,8 +9,8 @@ import (
 )
 
 type Repository struct {
-	storage abstract.Storage
-	classRepository abstractClass.Repository
+	storage          abstract.Storage
+	classRepository  abstractClass.Repository
 	detailRepository abstractDetail.Repository
 	factRepository   abstractFact.Repository
 }
@@ -23,10 +23,10 @@ func NewRepository(
 ) *Repository {
 
 	return &Repository{
-		storage:         storage,
-		classRepository: classRepository,
+		storage:          storage,
+		classRepository:  classRepository,
 		detailRepository: detailRepository,
-		factRepository:  factRepository,
+		factRepository:   factRepository,
 	}
 }
 
@@ -79,11 +79,11 @@ func (r *Repository) CreateFirstUserRemark(object string, property string) (api.
 	}
 
 	return aggregate{
-		remark: remark,
-		storage: r.storage,
-		classRepository: r.classRepository,
+		remark:           remark,
+		storage:          r.storage,
+		classRepository:  r.classRepository,
 		detailRepository: r.detailRepository,
-		factRepository: r.factRepository,
+		factRepository:   r.factRepository,
 	}, nil
 }
 

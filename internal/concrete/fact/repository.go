@@ -8,7 +8,7 @@ import (
 )
 
 type Repository struct {
-	storage abstract.Storage
+	storage         abstract.Storage
 	classRepository abstractClass.Repository
 	storyRepository abstractStory.Repository
 }
@@ -21,7 +21,7 @@ func NewRepository(
 	storyRepository abstractStory.Repository,
 ) *Repository {
 	return &Repository{
-		storage: storage,
+		storage:         storage,
 		classRepository: classRepository,
 		storyRepository: storyRepository,
 	}
@@ -29,7 +29,7 @@ func NewRepository(
 
 func (r *Repository) CreateFirstUserStoryFact() (abstractFact.Entity, error) {
 
-	fact, err :=  createEntity(r.storage)
+	fact, err := createEntity(r.storage)
 	if err != nil {
 		return nil, err
 	}
