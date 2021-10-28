@@ -18,7 +18,7 @@ type Entity struct {
 
 var _ abstractRemark.Entity = Entity{}
 
-func createEntity(storage abstract.Storage) (Entity, error) {
+func createEntity(storage Storage) (Entity, error) {
 
 	class, err := storage.Create()
 	if err != nil {
@@ -64,7 +64,7 @@ func createEntity(storage abstract.Storage) (Entity, error) {
 	}, nil
 }
 
-func readEntityByClass(storage abstract.Storage, class uint) (Entity, error) {
+func readEntityByClass(storage Storage, class uint) (Entity, error) {
 
 	_, detail, err := storage.GetReference(class)
 	if err != nil {
@@ -90,7 +90,7 @@ func readEntityByClass(storage abstract.Storage, class uint) (Entity, error) {
 	}, nil
 }
 
-func readEntityByDetail(storage abstract.Storage, detail uint) (Entity, error) {
+func readEntityByDetail(storage Storage, detail uint) (Entity, error) {
 
 	class, position, err := storage.GetReference(detail)
 	if err != nil {
@@ -111,7 +111,7 @@ func readEntityByDetail(storage abstract.Storage, detail uint) (Entity, error) {
 	}, nil
 }
 
-func readEntityByPosition(storage abstract.Storage, position uint) (Entity, error) {
+func readEntityByPosition(storage Storage, position uint) (Entity, error) {
 
 	detail, fact, err := storage.GetReference(position)
 	if err != nil {
@@ -132,7 +132,7 @@ func readEntityByPosition(storage abstract.Storage, position uint) (Entity, erro
 	}, nil
 }
 
-func readEntityByFact(storage abstract.Storage, fact uint) (Entity, error) {
+func readEntityByFact(storage Storage, fact uint) (Entity, error) {
 
 	position, _, err := storage.GetReference(fact)
 	if err != nil {

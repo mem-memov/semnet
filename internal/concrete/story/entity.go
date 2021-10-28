@@ -3,7 +3,6 @@ package story
 import (
 	"github.com/mem-memov/semnet/internal/abstract"
 	abstractClass "github.com/mem-memov/semnet/internal/abstract/class"
-	abstractFact "github.com/mem-memov/semnet/internal/abstract/fact"
 	abstractStory "github.com/mem-memov/semnet/internal/abstract/story"
 )
 
@@ -126,7 +125,7 @@ func (e Entity) PointToClass(class abstractClass.Entity) error {
 	return e.storage.Connect(e.fact, class.GetStory())
 }
 
-func (e Entity) PointToFact(fact abstractFact.Entity) error {
+func (e Entity) PointToFact(fact uint) error {
 
-	return e.storage.Connect(e.fact, fact.GetStory())
+	return e.storage.Connect(e.fact, fact)
 }

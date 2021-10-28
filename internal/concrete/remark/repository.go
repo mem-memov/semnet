@@ -1,7 +1,6 @@
 package remark
 
 import (
-	api "github.com/mem-memov/semnet"
 	"github.com/mem-memov/semnet/internal/abstract"
 	abstractClass "github.com/mem-memov/semnet/internal/abstract/class"
 	abstractDetail "github.com/mem-memov/semnet/internal/abstract/detail"
@@ -30,55 +29,55 @@ func NewRepository(
 	}
 }
 
-func (r *Repository) CreateFirstUserRemark(object string, property string) (api.Remark, error) {
+func (r *Repository) CreateFirstUserRemark(object string, property string) (Aggregate, error) {
 
 	remark, err := createEntity(r.storage)
 	if err != nil {
-		return nil, err
+		return Aggregate{}, err
 	}
 
 	// class
 
 	class, err := r.classRepository.ProvideEntity()
 	if err != nil {
-		return nil, err
+		return Aggregate{}, err
 	}
 
 	err = remark.PointToClass(class)
 	if err != nil {
-		return nil, err
+		return Aggregate{}, err
 	}
 
 	// detail
 
 	detail, err := r.detailRepository.Provide(object, property)
 	if err != nil {
-		return nil, err
+		return Aggregate{}, err
 	}
 
 	err = detail.PointToRemark(remark)
 	if err != nil {
-		return nil, err
+		return Aggregate{}, err
 	}
 
 	// fact
 
 	fact, err := r.factRepository.CreateFirstUserStoryFact()
 	if err != nil {
-		return nil, err
+		return Aggregate{}, err
 	}
 
 	err = remark.PointToFact(fact)
 	if err != nil {
-		return nil, err
+		return Aggregate{}, err
 	}
 
-	err = fact.PointToRemark(remark)
+	err = fact.PointToRemark(remark.GetFact())
 	if err != nil {
-		return nil, err
+		return Aggregate{}, err
 	}
 
-	return aggregate{
+	return Aggregate{
 		remark:           remark,
 		storage:          r.storage,
 		classRepository:  r.classRepository,
@@ -87,7 +86,7 @@ func (r *Repository) CreateFirstUserRemark(object string, property string) (api.
 	}, nil
 }
 
-func (r *Repository) GetRemark(remarkIdentifier uint) (api.Remark, error) {
+func (r *Repository) GetRemark(remarkIdentifier uint) (Aggregate, error) {
 
-	return nil, nil
+	return Aggregate{}, nil
 }

@@ -35,16 +35,27 @@ func NewGraph(storage abstract.Storage) *Graph {
 
 	remarkRepository := remark.NewRepository(storage, classRepository, detailRepository, factRepository)
 
-
 	return &Graph{
 		remarkRepository: remarkRepository,
 	}
 }
 
 func (g *Graph) CreateStory(object string, property string) (Remark, error) {
-	return g.remarkRepository.CreateFirstUserRemark(object, property)
+
+	aggregate, err := g.remarkRepository.CreateFirstUserRemark(object, property)
+	if err != nil {
+		return Remark{}, err
+	}
+
+	return Remark{Aggregate: aggregate}, nil
 }
 
 func (g *Graph) GetRemark(remarkIdentifier uint) (Remark, error) {
-	return g.remarkRepository.GetRemark(remarkIdentifier)
+
+	aggregate, err := g.remarkRepository.GetRemark(remarkIdentifier)
+	if err != nil {
+		return Remark{}, err
+	}
+
+	return Remark{Aggregate: aggregate}, nil
 }

@@ -54,7 +54,7 @@ func (r *Repository) CreateFirstUserStoryFact() (abstractFact.Entity, error) {
 		return nil, err
 	}
 
-	err = story.PointToFact(fact)
+	err = story.PointToFact(fact.GetStory())
 	if err != nil {
 		return nil, err
 	}

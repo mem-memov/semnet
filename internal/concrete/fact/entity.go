@@ -5,7 +5,6 @@ import (
 	"github.com/mem-memov/semnet/internal/abstract"
 	abstractClass "github.com/mem-memov/semnet/internal/abstract/class"
 	abstractFact "github.com/mem-memov/semnet/internal/abstract/fact"
-	abstractRemark "github.com/mem-memov/semnet/internal/abstract/remark"
 	abstractStory "github.com/mem-memov/semnet/internal/abstract/story"
 )
 
@@ -189,9 +188,9 @@ func (e Entity) PointToStory(story abstractStory.Entity) error {
 	return e.storage.Connect(e.story, story.GetFact())
 }
 
-func (e Entity) PointToRemark(remark abstractRemark.Entity) error {
+func (e Entity) PointToRemark(remark uint) error {
 
-	return e.storage.Connect(e.remark, remark.GetFact())
+	return e.storage.Connect(e.remark, remark)
 }
 
 func (e Entity) HasNextFact() (bool, error) {
