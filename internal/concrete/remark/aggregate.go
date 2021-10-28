@@ -6,6 +6,7 @@ import (
 	abstractDetail "github.com/mem-memov/semnet/internal/abstract/detail"
 	abstractFact "github.com/mem-memov/semnet/internal/abstract/fact"
 	abstractRemark "github.com/mem-memov/semnet/internal/abstract/remark"
+	abstractStory "github.com/mem-memov/semnet/internal/abstract/story"
 )
 
 type Aggregate struct {
@@ -14,6 +15,7 @@ type Aggregate struct {
 	classRepository  abstractClass.Repository
 	detailRepository abstractDetail.Repository
 	factRepository   abstractFact.Repository
+	storyRepository abstractStory.Repository
 }
 
 func (a Aggregate) GetFact() uint {
@@ -75,6 +77,21 @@ func (a Aggregate) GetNextFact() (Aggregate, error) {
 		detailRepository: a.detailRepository,
 		factRepository:   a.factRepository,
 	}, nil
+}
+
+func (a Aggregate) HasNextStory() (bool, error) {
+
+	fact, err := a.factRepository.FetchByRemark(a.remark.GetFact())
+	if err != nil {
+		return false, err
+	}
+
+	story, err := a.storyRepository.FetchByFact(fact.GetStory())
+	if err != nil {
+		return false, err
+	}
+
+	return story.HasNextStory()
 }
 
 func (a Aggregate) GetObjectAndProperty() (string, string, error) {

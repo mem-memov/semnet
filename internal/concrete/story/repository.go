@@ -40,3 +40,8 @@ func (r *Repository) CreateFirstUserStory() (abstractStory.Entity, error) {
 
 	return story, nil
 }
+
+func (r *Repository) FetchByFact(factIdentifier uint) (abstractStory.Entity, error) {
+
+	return readEntityByFact(r.storage, factIdentifier)
+}

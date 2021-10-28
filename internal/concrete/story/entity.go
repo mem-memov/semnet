@@ -9,6 +9,7 @@ import (
 type Entity struct {
 	class   uint
 	fact    uint
+	position uint
 	user    uint
 	storage abstract.Storage
 }
@@ -27,6 +28,11 @@ func createEntity(storage abstract.Storage) (Entity, error) {
 		return Entity{}, err
 	}
 
+	position, err := storage.Create()
+	if err != nil {
+		return Entity{}, err
+	}
+
 	user, err := storage.Create()
 	if err != nil {
 		return Entity{}, err
@@ -37,7 +43,12 @@ func createEntity(storage abstract.Storage) (Entity, error) {
 		return Entity{}, err
 	}
 
-	err = storage.SetReference(fact, user)
+	err = storage.SetReference(fact, position)
+	if err != nil {
+		return Entity{}, err
+	}
+
+	err = storage.SetReference(position, user)
 	if err != nil {
 		return Entity{}, err
 	}
@@ -45,6 +56,7 @@ func createEntity(storage abstract.Storage) (Entity, error) {
 	return Entity{
 		class:   class,
 		fact:    fact,
+		position: position,
 		user:    user,
 		storage: storage,
 	}, nil
@@ -57,7 +69,12 @@ func readEntityByClass(storage abstract.Storage, class uint) (Entity, error) {
 		return Entity{}, err
 	}
 
-	_, user, err := storage.GetReference(fact)
+	_, position, err := storage.GetReference(fact)
+	if err != nil {
+		return Entity{}, err
+	}
+
+	_, user, err := storage.GetReference(position)
 	if err != nil {
 		return Entity{}, err
 	}
@@ -65,6 +82,7 @@ func readEntityByClass(storage abstract.Storage, class uint) (Entity, error) {
 	return Entity{
 		class:   class,
 		fact:    fact,
+		position: position,
 		user:    user,
 		storage: storage,
 	}, nil
@@ -72,7 +90,12 @@ func readEntityByClass(storage abstract.Storage, class uint) (Entity, error) {
 
 func readEntityByFact(storage abstract.Storage, fact uint) (Entity, error) {
 
-	class, user, err := storage.GetReference(fact)
+	class, position, err := storage.GetReference(fact)
+	if err != nil {
+		return Entity{}, err
+	}
+
+	_, user, err := storage.GetReference(position)
 	if err != nil {
 		return Entity{}, err
 	}
@@ -80,6 +103,7 @@ func readEntityByFact(storage abstract.Storage, fact uint) (Entity, error) {
 	return Entity{
 		class:   class,
 		fact:    fact,
+		position: position,
 		user:    user,
 		storage: storage,
 	}, nil
@@ -87,7 +111,12 @@ func readEntityByFact(storage abstract.Storage, fact uint) (Entity, error) {
 
 func readEntityByUser(storage abstract.Storage, user uint) (Entity, error) {
 
-	fact, _, err := storage.GetReference(user)
+	position, _, err := storage.GetReference(user)
+	if err != nil {
+		return Entity{}, err
+	}
+
+	fact, _, err := storage.GetReference(position)
 	if err != nil {
 		return Entity{}, err
 	}
@@ -100,6 +129,7 @@ func readEntityByUser(storage abstract.Storage, user uint) (Entity, error) {
 	return Entity{
 		class:   class,
 		fact:    fact,
+		position: position,
 		user:    user,
 		storage: storage,
 	}, nil
@@ -115,6 +145,11 @@ func (e Entity) GetFact() uint {
 	return e.fact
 }
 
+func (e Entity) GetPosition() uint {
+
+	return e.position
+}
+
 func (e Entity) GetUser() uint {
 
 	return e.user
@@ -128,4 +163,14 @@ func (e Entity) PointToClass(class abstractClass.Entity) error {
 func (e Entity) PointToFact(fact uint) error {
 
 	return e.storage.Connect(e.fact, fact)
+}
+
+func (e Entity) HasNextStory() (bool, error) {
+
+	targets, err := e.storage.ReadTargets(e.position)
+	if err != nil {
+		return false, err
+	}
+
+	return len(targets) != 0, nil
 }
