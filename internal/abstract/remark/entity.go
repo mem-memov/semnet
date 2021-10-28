@@ -15,4 +15,6 @@ type Entity interface {
 	PointToFact(fact fact.Entity) error
 	FetchTargetFact(factRepository fact.Repository) (fact.Entity, error)
 	CreateNextStoryFact(factRepository fact.Repository) (fact.Entity, error)
+	HasNextRemark() (bool, error)
+	GetNextRemark() (Entity, error)
 }

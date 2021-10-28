@@ -14,4 +14,7 @@ type Entity interface {
 	PointToClass(class class.Entity) error
 	PointToStory(story story.Entity) error
 	PointToRemark(remark remark.Entity) error
+	HasNextFact() (bool, error)
+	GetNextFact() (Entity, error)
+	GetFirstRemark() (uint, error)
 }

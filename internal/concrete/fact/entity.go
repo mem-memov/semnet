@@ -1,6 +1,7 @@
 package fact
 
 import (
+	"fmt"
 	"github.com/mem-memov/semnet/internal/abstract"
 	abstractClass "github.com/mem-memov/semnet/internal/abstract/class"
 	abstractFact "github.com/mem-memov/semnet/internal/abstract/fact"
@@ -191,5 +192,45 @@ func (e Entity) PointToStory(story abstractStory.Entity) error {
 func (e Entity) PointToRemark(remark abstractRemark.Entity) error {
 
 	return e.storage.Connect(e.remark, remark.GetFact())
+}
+
+func (e Entity) HasNextFact() (bool, error) {
+
+	targets, err := e.storage.ReadTargets(e.position)
+	if err != nil {
+		return false, err
+	}
+
+	return len(targets) != 0, nil
+}
+
+func (e Entity) GetNextFact() (abstractFact.Entity, error) {
+
+	targets, err := e.storage.ReadTargets(e.position)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(targets) != 1 {
+		return nil, fmt.Errorf("wrong number of next facts")
+	}
+
+	nextFact, err := readEntityByPosition(e.storage, targets[0])
+
+	return nextFact, nil
+}
+
+func (e Entity) GetFirstRemark() (uint, error) {
+
+	targets, err := e.storage.ReadTargets(e.remark)
+	if err != nil {
+		return 0, err
+	}
+
+	if len(targets) != 1 {
+		return 0, fmt.Errorf("wrong number of first remarks")
+	}
+
+	return targets[0], nil
 }
 

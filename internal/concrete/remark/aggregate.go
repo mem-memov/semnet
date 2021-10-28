@@ -17,6 +17,77 @@ type aggregate struct {
 	factRepository   abstractFact.Repository
 }
 
+func (a aggregate) GetFact() uint {
+	return a.remark.GetFact()
+}
+
+func (a aggregate) HasNextRemark() (bool, error) {
+
+	return a.remark.HasNextRemark()
+}
+
+func (a aggregate) GetNextRemark() (api.Remark, error) {
+
+	remark, err := a.remark.GetNextRemark()
+	if err != nil {
+		return nil, err
+	}
+
+	return aggregate{
+		remark:           remark,
+		storage:          a.storage,
+		classRepository:  a.classRepository,
+		detailRepository: a.detailRepository,
+		factRepository:   a.factRepository,
+	}, nil
+}
+
+func (a aggregate) HasNextFact() (bool, error) {
+
+	fact, err := a.factRepository.FetchByRemark(a.remark.GetFact())
+	if err != nil {
+		return false, err
+	}
+
+	return fact.HasNextFact()
+}
+
+func (a aggregate) GetNextFact() (api.Remark, error) {
+
+	fact, err := a.factRepository.FetchByRemark(a.remark.GetFact())
+	if err != nil {
+		return nil, err
+	}
+
+	remarkFact, err := fact.GetFirstRemark()
+	if err != nil {
+		return nil, err
+	}
+
+	remark, err := readEntityByFact(a.storage, remarkFact)
+	if err != nil {
+		return nil, err
+	}
+
+	return aggregate{
+		remark:           remark,
+		storage:          a.storage,
+		classRepository:  a.classRepository,
+		detailRepository: a.detailRepository,
+		factRepository:   a.factRepository,
+	}, nil
+}
+
+func (a aggregate) GetObjectAndProperty() (string, string, error) {
+
+	detail, err := a.detailRepository.Fetch(a.remark.GetDetail())
+	if err != nil {
+		return "", "", err
+	}
+
+	return detail.GetObjectAndProperty()
+}
+
 func (a aggregate) AddRemarkToFact(property string) (api.Remark, error)  {
 
 	remark, err := createEntity(a.storage)

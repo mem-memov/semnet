@@ -221,3 +221,29 @@ func (e Entity) CreateNextStoryFact(factRepository abstractFact.Repository) (abs
 	// TODO: create new fact of the same story
 	return nil, nil
 }
+
+func (e Entity) HasNextRemark() (bool, error) {
+
+	targets, err := e.storage.ReadTargets(e.position)
+	if err != nil {
+		return false, err
+	}
+
+	return len(targets) != 0, nil
+}
+
+func (e Entity) GetNextRemark() (abstractRemark.Entity, error) {
+
+	targets, err := e.storage.ReadTargets(e.position)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(targets) != 1 {
+		return nil, fmt.Errorf("wrong number of next remarks")
+	}
+
+	nextRemark, err := readEntityByPosition(e.storage, targets[0])
+
+	return nextRemark, nil
+}
