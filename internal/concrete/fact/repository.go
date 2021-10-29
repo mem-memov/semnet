@@ -27,7 +27,7 @@ func NewRepository(
 	}
 }
 
-func (r *Repository) CreateFirstUserStoryFact() (abstractFact.Entity, error) {
+func (r *Repository) CreateFirstUserStoryFact() (abstractFact.Aggregate, error) {
 
 	fact, err := createEntity(r.storage)
 	if err != nil {
@@ -59,9 +59,21 @@ func (r *Repository) CreateFirstUserStoryFact() (abstractFact.Entity, error) {
 		return nil, err
 	}
 
-	return fact, nil
+	return Aggregate{
+		entity:          fact,
+		storyRepository: r.storyRepository,
+	}, nil
 }
 
-func (r *Repository) FetchByRemark(remarkIdentifier uint) (abstractFact.Entity, error) {
-	return readEntityByRemark(r.storage, remarkIdentifier)
+func (r *Repository) FetchByRemark(remarkIdentifier uint) (abstractFact.Aggregate, error) {
+
+	fact, err := readEntityByRemark(r.storage, remarkIdentifier)
+	if err != nil {
+		return nil, err
+	}
+
+	return Aggregate{
+		entity:          fact,
+		storyRepository: r.storyRepository,
+	}, nil
 }

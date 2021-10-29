@@ -6,7 +6,6 @@ import (
 	abstractDetail "github.com/mem-memov/semnet/internal/abstract/detail"
 	abstractFact "github.com/mem-memov/semnet/internal/abstract/fact"
 	abstractRemark "github.com/mem-memov/semnet/internal/abstract/remark"
-	abstractStory "github.com/mem-memov/semnet/internal/abstract/story"
 )
 
 type Aggregate struct {
@@ -15,7 +14,6 @@ type Aggregate struct {
 	classRepository  abstractClass.Repository
 	detailRepository abstractDetail.Repository
 	factRepository   abstractFact.Repository
-	storyRepository abstractStory.Repository
 }
 
 func (a Aggregate) GetFact() uint {
@@ -60,7 +58,12 @@ func (a Aggregate) GetNextFact() (Aggregate, error) {
 		return Aggregate{}, err
 	}
 
-	remarkFact, err := fact.GetFirstRemark()
+	nextFact, err := fact.ToNextFact()
+	if err != nil {
+		return Aggregate{}, err
+	}
+
+	remarkFact, err := nextFact.GetFirstRemark()
 	if err != nil {
 		return Aggregate{}, err
 	}
@@ -86,12 +89,38 @@ func (a Aggregate) HasNextStory() (bool, error) {
 		return false, err
 	}
 
-	story, err := a.storyRepository.FetchByFact(fact.GetStory())
+	return fact.HasNextStory()
+}
+
+func (a Aggregate) GetNextStory() (Aggregate, error) {
+
+	fact, err := a.factRepository.FetchByRemark(a.remark.GetFact())
 	if err != nil {
-		return false, err
+		return Aggregate{}, err
 	}
 
-	return story.HasNextStory()
+	nextFact, err := fact.ToNextStory()
+	if err != nil {
+		return Aggregate{}, err
+	}
+
+	nextIdentifier, err := nextFact.GetFirstRemark()
+	if err != nil {
+		return Aggregate{}, err
+	}
+
+	nextRemark, err := a.remark.ToNextFact(nextIdentifier)
+	if err != nil {
+		return Aggregate{}, err
+	}
+
+	return Aggregate{
+		remark:           nextRemark,
+		storage:          a.storage,
+		classRepository:  a.classRepository,
+		detailRepository: a.detailRepository,
+		factRepository:   a.factRepository,
+	}, nil
 }
 
 func (a Aggregate) GetObjectAndProperty() (string, string, error) {

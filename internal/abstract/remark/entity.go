@@ -12,9 +12,10 @@ type Entity interface {
 	GetFact() uint
 	PointToClass(class class.Entity) error
 	PointToPosition(remark Entity) error
-	PointToFact(fact fact.Entity) error
-	FetchTargetFact(factRepository fact.Repository) (fact.Entity, error)
-	CreateNextStoryFact(factRepository fact.Repository) (fact.Entity, error)
+	PointToFact(fact fact.Aggregate) error
+	FetchTargetFact(factRepository fact.Repository) (fact.Aggregate, error)
+	CreateNextStoryFact(factRepository fact.Repository) (fact.Aggregate, error)
 	HasNextRemark() (bool, error)
 	GetNextRemark() (Entity, error)
+	ToNextFact(fact uint) (Entity, error)
 }

@@ -5,7 +5,6 @@ import (
 	abstractClass "github.com/mem-memov/semnet/internal/abstract/class"
 	abstractDetail "github.com/mem-memov/semnet/internal/abstract/detail"
 	abstractFact "github.com/mem-memov/semnet/internal/abstract/fact"
-	abstractStory "github.com/mem-memov/semnet/internal/abstract/story"
 )
 
 type Repository struct {
@@ -13,7 +12,6 @@ type Repository struct {
 	classRepository  abstractClass.Repository
 	detailRepository abstractDetail.Repository
 	factRepository   abstractFact.Repository
-	storyRepository abstractStory.Repository
 }
 
 func NewRepository(
@@ -21,7 +19,6 @@ func NewRepository(
 	classRepository abstractClass.Repository,
 	detailRepository abstractDetail.Repository,
 	factRepository abstractFact.Repository,
-	storyRepository abstractStory.Repository,
 ) *Repository {
 
 	return &Repository{
@@ -29,7 +26,6 @@ func NewRepository(
 		classRepository:  classRepository,
 		detailRepository: detailRepository,
 		factRepository:   factRepository,
-		storyRepository: storyRepository,
 	}
 }
 
@@ -87,7 +83,6 @@ func (r *Repository) CreateFirstUserRemark(object string, property string) (Aggr
 		classRepository:  r.classRepository,
 		detailRepository: r.detailRepository,
 		factRepository:   r.factRepository,
-		storyRepository: r.storyRepository,
 	}, nil
 }
 

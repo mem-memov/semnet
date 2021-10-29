@@ -211,7 +211,7 @@ func (e Entity) GetNextFact() (abstractFact.Entity, error) {
 	}
 
 	if len(targets) != 1 {
-		return nil, fmt.Errorf("wrong number of next facts")
+		return nil, fmt.Errorf("fact has wrong number of next facts")
 	}
 
 	nextFact, err := readEntityByPosition(e.storage, targets[0])
@@ -227,8 +227,27 @@ func (e Entity) GetFirstRemark() (uint, error) {
 	}
 
 	if len(targets) != 1 {
-		return 0, fmt.Errorf("wrong number of first remarks")
+		return 0, fmt.Errorf("fact has wrong number of first remarks")
 	}
 
 	return targets[0], nil
+}
+
+func (e Entity) GetTargetStory() (uint, error) {
+
+	targets, err := e.storage.ReadTargets(e.story)
+	if err != nil {
+		return 0, err
+	}
+
+	if len(targets) != 1 {
+		return 0, fmt.Errorf("fact has wrong number of stories")
+	}
+
+	return targets[0], nil
+}
+
+func (e Entity) ToNextStory(nextFact uint) (abstractFact.Entity, error) {
+
+	return readEntityByStory(e.storage, nextFact)
 }

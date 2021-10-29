@@ -1,17 +1,18 @@
 package story
 
 import (
+	"fmt"
 	"github.com/mem-memov/semnet/internal/abstract"
 	abstractClass "github.com/mem-memov/semnet/internal/abstract/class"
 	abstractStory "github.com/mem-memov/semnet/internal/abstract/story"
 )
 
 type Entity struct {
-	class   uint
-	fact    uint
+	class    uint
+	fact     uint
 	position uint
-	user    uint
-	storage abstract.Storage
+	user     uint
+	storage  abstract.Storage
 }
 
 var _ abstractStory.Entity = Entity{}
@@ -54,11 +55,11 @@ func createEntity(storage abstract.Storage) (Entity, error) {
 	}
 
 	return Entity{
-		class:   class,
-		fact:    fact,
+		class:    class,
+		fact:     fact,
 		position: position,
-		user:    user,
-		storage: storage,
+		user:     user,
+		storage:  storage,
 	}, nil
 }
 
@@ -80,11 +81,11 @@ func readEntityByClass(storage abstract.Storage, class uint) (Entity, error) {
 	}
 
 	return Entity{
-		class:   class,
-		fact:    fact,
+		class:    class,
+		fact:     fact,
 		position: position,
-		user:    user,
-		storage: storage,
+		user:     user,
+		storage:  storage,
 	}, nil
 }
 
@@ -101,11 +102,32 @@ func readEntityByFact(storage abstract.Storage, fact uint) (Entity, error) {
 	}
 
 	return Entity{
-		class:   class,
-		fact:    fact,
+		class:    class,
+		fact:     fact,
 		position: position,
-		user:    user,
-		storage: storage,
+		user:     user,
+		storage:  storage,
+	}, nil
+}
+
+func readEntityByPosition(storage abstract.Storage, position uint) (Entity, error) {
+
+	fact, user, err := storage.GetReference(position)
+	if err != nil {
+		return Entity{}, err
+	}
+
+	class, _, err := storage.GetReference(fact)
+	if err != nil {
+		return Entity{}, err
+	}
+
+	return Entity{
+		class:    class,
+		fact:     fact,
+		position: position,
+		user:     user,
+		storage:  storage,
 	}, nil
 }
 
@@ -127,11 +149,11 @@ func readEntityByUser(storage abstract.Storage, user uint) (Entity, error) {
 	}
 
 	return Entity{
-		class:   class,
-		fact:    fact,
+		class:    class,
+		fact:     fact,
 		position: position,
-		user:    user,
-		storage: storage,
+		user:     user,
+		storage:  storage,
 	}, nil
 }
 
@@ -173,4 +195,32 @@ func (e Entity) HasNextStory() (bool, error) {
 	}
 
 	return len(targets) != 0, nil
+}
+
+func (e Entity) GetNextStory() (abstractStory.Entity, error) {
+
+	targets, err := e.storage.ReadTargets(e.position)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(targets) != 1 {
+		return nil, fmt.Errorf("story has wrong number of next stories")
+	}
+
+	return readEntityByPosition(e.storage, targets[0])
+}
+
+func (e Entity) GetTargetFact() (uint, error) {
+
+	targets, err := e.storage.ReadTargets(e.fact)
+	if err != nil {
+		return 0, err
+	}
+
+	if len(targets) != 1 {
+		return 0, fmt.Errorf("story has wrong number of target facts")
+	}
+
+	return targets[0], nil
 }

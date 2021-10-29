@@ -16,4 +16,6 @@ type Entity interface {
 	HasNextFact() (bool, error)
 	GetNextFact() (Entity, error)
 	GetFirstRemark() (uint, error)
+	GetTargetStory() (uint, error)
+	ToNextStory(nextFact uint) (Entity, error)
 }

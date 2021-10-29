@@ -188,12 +188,12 @@ func (e Entity) PointToPosition(remark abstractRemark.Entity) error {
 	return e.storage.Connect(e.position, remark.GetPosition())
 }
 
-func (e Entity) PointToFact(fact abstractFact.Entity) error {
+func (e Entity) PointToFact(fact abstractFact.Aggregate) error {
 
 	return e.storage.Connect(e.fact, fact.GetRemark())
 }
 
-func (e Entity) FetchTargetFact(factRepository abstractFact.Repository) (abstractFact.Entity, error) {
+func (e Entity) FetchTargetFact(factRepository abstractFact.Repository) (abstractFact.Aggregate, error) {
 
 	targetFacts, err := e.storage.ReadTargets(e.fact)
 	if err != nil {
@@ -207,7 +207,7 @@ func (e Entity) FetchTargetFact(factRepository abstractFact.Repository) (abstrac
 	return factRepository.FetchByRemark(targetFacts[0])
 }
 
-func (e Entity) CreateNextStoryFact(factRepository abstractFact.Repository) (abstractFact.Entity, error) {
+func (e Entity) CreateNextStoryFact(factRepository abstractFact.Repository) (abstractFact.Aggregate, error) {
 
 	targetFacts, err := e.storage.ReadTargets(e.fact)
 	if err != nil {
@@ -246,4 +246,9 @@ func (e Entity) GetNextRemark() (abstractRemark.Entity, error) {
 	nextRemark, err := readEntityByPosition(e.storage, targets[0])
 
 	return nextRemark, nil
+}
+
+func (e Entity) ToNextFact(fact uint) (abstractRemark.Entity, error) {
+
+	return readEntityByFact(e.storage, fact)
 }
