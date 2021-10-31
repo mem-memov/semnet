@@ -31,19 +31,12 @@ func NewRepository(
 
 func (r *Repository) CreateFirstUserRemark(object string, property string) (Aggregate, error) {
 
-	remark, err := createEntity(r.storage)
-	if err != nil {
-		return Aggregate{}, err
-	}
-
-	// class
-
 	class, err := r.classRepository.ProvideEntity()
 	if err != nil {
 		return Aggregate{}, err
 	}
 
-	err = remark.PointToClass(class)
+	remark, err := createEntity(r.storage, class)
 	if err != nil {
 		return Aggregate{}, err
 	}

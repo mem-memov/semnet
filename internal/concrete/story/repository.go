@@ -23,17 +23,12 @@ func NewRepository(storage abstract.Storage, classRepository abstractClass.Repos
 
 func (r *Repository) CreateFirstUserStory() (abstractStory.Entity, error) {
 
-	story, err := createEntity(r.storage)
-	if err != nil {
-		return nil, err
-	}
-
 	class, err := r.classRepository.ProvideEntity()
 	if err != nil {
 		return nil, err
 	}
 
-	err = story.PointToClass(class)
+	story, err := createEntity(r.storage, class)
 	if err != nil {
 		return nil, err
 	}

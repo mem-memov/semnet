@@ -135,19 +135,12 @@ func (a Aggregate) GetObjectAndProperty() (string, string, error) {
 
 func (a Aggregate) AddRemarkToFact(property string) (Aggregate, error) {
 
-	remark, err := createEntity(a.storage)
-	if err != nil {
-		return Aggregate{}, err
-	}
-
-	// class
-
 	class, err := a.classRepository.ProvideEntity()
 	if err != nil {
 		return Aggregate{}, err
 	}
 
-	err = remark.PointToClass(class)
+	remark, err := createEntity(a.storage, class)
 	if err != nil {
 		return Aggregate{}, err
 	}
@@ -194,19 +187,12 @@ func (a Aggregate) AddRemarkToFact(property string) (Aggregate, error) {
 
 func (a Aggregate) AddFactToStory(object string, property string) (Aggregate, error) {
 
-	remark, err := createEntity(a.storage)
-	if err != nil {
-		return Aggregate{}, err
-	}
-
-	// class
-
 	class, err := a.classRepository.ProvideEntity()
 	if err != nil {
 		return Aggregate{}, err
 	}
 
-	err = remark.PointToClass(class)
+	remark, err := createEntity(a.storage, class)
 	if err != nil {
 		return Aggregate{}, err
 	}

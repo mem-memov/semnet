@@ -40,18 +40,6 @@ func newEntity(
 	}
 }
 
-func (e Entity) GetRemark() uint {
-	return e.remarkNode.GetIdentifier()
-}
-
-func (e Entity) GetFact() uint {
-	return e.factNode.GetIdentifier()
-}
-
-func (e Entity) GetStory() uint {
-	return e.storyNode.GetIdentifier()
-}
-
 func (e Entity) CreateBit() (uint, error) {
 	return e.bitNode.Create()
 }

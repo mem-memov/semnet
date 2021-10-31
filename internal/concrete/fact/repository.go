@@ -29,17 +29,12 @@ func NewRepository(
 
 func (r *Repository) CreateFirstUserStoryFact() (abstractFact.Aggregate, error) {
 
-	fact, err := createEntity(r.storage)
-	if err != nil {
-		return nil, err
-	}
-
 	class, err := r.classRepository.ProvideEntity()
 	if err != nil {
 		return nil, err
 	}
 
-	err = fact.PointToClass(class)
+	fact, err := createEntity(r.storage, class)
 	if err != nil {
 		return nil, err
 	}

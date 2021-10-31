@@ -18,9 +18,9 @@ type Entity struct {
 
 var _ abstractRemark.Entity = Entity{}
 
-func createEntity(storage Storage) (Entity, error) {
+func createEntity(storage Storage, classEntity abstractClass.Entity) (Entity, error) {
 
-	class, err := storage.Create()
+	class, err := classEntity.CreateRemark()
 	if err != nil {
 		return Entity{}, err
 	}
@@ -176,11 +176,6 @@ func (e Entity) GetPosition() uint {
 func (e Entity) GetFact() uint {
 
 	return e.fact
-}
-
-func (e Entity) PointToClass(class abstractClass.Entity) error {
-
-	return e.storage.Connect(e.fact, class.GetRemark())
 }
 
 func (e Entity) PointToPosition(remark abstractRemark.Entity) error {
