@@ -32,14 +32,14 @@ func TestRepository(t *testing.T) {
 			phraseRepository := phrase.NewRepository(storage, classRepository, wordRepository)
 			r := NewRepository(storage, classRepository, phraseRepository)
 
-			entity, err := r.Provide(d.object, d.property)
+			aggregate, err := r.Provide(d.object, d.property)
 			if err != nil && err.Error() != d.provideErr.Error() {
 				t.Fail()
 			} else {
 				return
 			}
 
-			object, property, err := entity.GetObjectAndProperty()
+			object, property, err := aggregate.GetObjectAndProperty()
 			if err != nil && err.Error() != d.extractErr.Error() {
 				t.Fail()
 			} else {

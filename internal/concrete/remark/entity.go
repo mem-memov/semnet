@@ -18,7 +18,7 @@ type Entity struct {
 
 var _ abstractRemark.Entity = Entity{}
 
-func createEntity(storage Storage, classEntity abstractClass.Entity) (Entity, error) {
+func createEntity(storage abstract.Storage, classEntity abstractClass.Entity) (Entity, error) {
 
 	class, err := classEntity.CreateRemark()
 	if err != nil {
@@ -64,7 +64,7 @@ func createEntity(storage Storage, classEntity abstractClass.Entity) (Entity, er
 	}, nil
 }
 
-func readEntityByClass(storage Storage, class uint) (Entity, error) {
+func readEntityByClass(storage abstract.Storage, class uint) (Entity, error) {
 
 	_, detail, err := storage.GetReference(class)
 	if err != nil {
@@ -90,7 +90,7 @@ func readEntityByClass(storage Storage, class uint) (Entity, error) {
 	}, nil
 }
 
-func readEntityByDetail(storage Storage, detail uint) (Entity, error) {
+func readEntityByDetail(storage abstract.Storage, detail uint) (Entity, error) {
 
 	class, position, err := storage.GetReference(detail)
 	if err != nil {
@@ -111,7 +111,7 @@ func readEntityByDetail(storage Storage, detail uint) (Entity, error) {
 	}, nil
 }
 
-func readEntityByPosition(storage Storage, position uint) (Entity, error) {
+func readEntityByPosition(storage abstract.Storage, position uint) (Entity, error) {
 
 	detail, fact, err := storage.GetReference(position)
 	if err != nil {
@@ -132,7 +132,7 @@ func readEntityByPosition(storage Storage, position uint) (Entity, error) {
 	}, nil
 }
 
-func readEntityByFact(storage Storage, fact uint) (Entity, error) {
+func readEntityByFact(storage abstract.Storage, fact uint) (Entity, error) {
 
 	position, _, err := storage.GetReference(fact)
 	if err != nil {
@@ -188,18 +188,32 @@ func (e Entity) PointToFact(fact abstractFact.Aggregate) error {
 	return e.storage.Connect(e.fact, fact.GetRemark())
 }
 
-func (e Entity) FetchTargetFact(factRepository abstractFact.Repository) (abstractFact.Aggregate, error) {
+func (e Entity) GetTargetFact() (uint, error) {
 
 	targetFacts, err := e.storage.ReadTargets(e.fact)
 	if err != nil {
-		return nil, err
+		return 0, err
 	}
 
 	if len(targetFacts) != 1 {
-		return nil, fmt.Errorf("remark has wrong number of facts")
+		return 0, fmt.Errorf("remark has wrong number of target facts")
 	}
 
-	return factRepository.FetchByRemark(targetFacts[0])
+	return targetFacts[0], nil
+}
+
+func (e Entity) GetSourceDetail() (uint, error) {
+
+	sourceDetails, err := e.storage.ReadSources(e.detail)
+	if err != nil {
+		return 0, err
+	}
+
+	if len(sourceDetails) != 1 {
+		return 0, fmt.Errorf("remark has wrong number of source details")
+	}
+
+	return sourceDetails[0], nil
 }
 
 func (e Entity) CreateNextStoryFact(factRepository abstractFact.Repository) (abstractFact.Aggregate, error) {

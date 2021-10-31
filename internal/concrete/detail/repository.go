@@ -1,70 +1,74 @@
 package detail
 
 import (
-	"github.com/mem-memov/semnet/internal/abstract/detail"
-	"github.com/mem-memov/semnet/internal/abstract/phrase"
-	"github.com/mem-memov/semnet/internal/concrete/class"
+	"github.com/mem-memov/semnet/internal/abstract"
+	abstractClass "github.com/mem-memov/semnet/internal/abstract/class"
+	abstractDetail "github.com/mem-memov/semnet/internal/abstract/detail"
+	abstractPhrase "github.com/mem-memov/semnet/internal/abstract/phrase"
 )
 
 type Repository struct {
-	entities         *entities
-	phraseRepository phrase.Repository
-	star             *star
+	storage          abstract.Storage
+	classRepository  abstractClass.Repository
+	phraseRepository abstractPhrase.Repository
 }
 
-var _ detail.Repository = &Repository{}
+var _ abstractDetail.Repository = &Repository{}
 
-func NewRepository(storage storage, classRepository *class.Repository, phraseRepository phrase.Repository) *Repository {
-	entities := newEntities(storage, classRepository, phraseRepository)
+func NewRepository(
+	storage abstract.Storage,
+	classRepository abstractClass.Repository,
+	phraseRepository abstractPhrase.Repository,
+) *Repository {
 
 	return &Repository{
-		entities:         entities,
+		storage:          storage,
+		classRepository:  classRepository,
 		phraseRepository: phraseRepository,
-		star:             newStar(storage, entities),
 	}
 }
 
-func (r *Repository) Extend(objectIdentifier uint, property string) (detail.Entity, error) {
-
-	objectPhrase, err := r.phraseRepository.Fetch(objectIdentifier)
-	if err != nil {
-		return Entity{}, err
-	}
-
-	propertyPhrase, err := r.phraseRepository.Provide(property)
-	if err != nil {
-		return Entity{}, err
-	}
-
-	entity, err := r.star.provideBeam(objectPhrase, propertyPhrase)
-	if err != nil {
-		return Entity{}, err
-	}
-
-	return entity, nil
-}
-
-func (r *Repository) Provide(object string, property string) (detail.Entity, error) {
+func (r *Repository) Provide(object string, property string) (abstractDetail.Aggregate, error) {
 
 	objectPhrase, err := r.phraseRepository.Provide(object)
 	if err != nil {
-		return Entity{}, err
+		return nil, err
 	}
 
 	propertyPhrase, err := r.phraseRepository.Provide(property)
 	if err != nil {
-		return Entity{}, err
+		return nil, err
 	}
 
-	entity, err := r.star.provideBeam(objectPhrase, propertyPhrase)
+	class, err := r.classRepository.ProvideEntity()
 	if err != nil {
-		return Entity{}, err
+		return nil, err
 	}
 
-	return entity, nil
+	detail, err := createEntity(r.storage, class, objectPhrase, propertyPhrase)
+	if err != nil {
+		return nil, err
+	}
+
+	return Aggregate{
+		detail:           detail,
+		storage:          r.storage,
+		classRepository:  r.classRepository,
+		phraseRepository: r.phraseRepository,
+	}, nil
 }
 
-func (r *Repository) Fetch(remarkIdentifier uint) (detail.Entity, error) {
+func (r *Repository) Fetch(remark uint) (abstractDetail.Aggregate, error) {
 
-	return r.entities.createWithRemark(remarkIdentifier)
+	detail, err := readEntityByRemark(r.storage, remark)
+	if err != nil {
+		return nil, err
+	}
+
+	return Aggregate{
+		detail:           detail,
+		storage:          r.storage,
+		classRepository:  r.classRepository,
+		phraseRepository: r.phraseRepository,
+	}, nil
 }

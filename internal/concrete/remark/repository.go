@@ -48,7 +48,7 @@ func (r *Repository) CreateFirstUserRemark(object string, property string) (Aggr
 		return Aggregate{}, err
 	}
 
-	err = detail.PointToRemark(remark)
+	err = detail.PointToRemark(remark.GetDetail())
 	if err != nil {
 		return Aggregate{}, err
 	}

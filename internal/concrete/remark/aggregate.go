@@ -125,7 +125,12 @@ func (a Aggregate) GetNextStory() (Aggregate, error) {
 
 func (a Aggregate) GetObjectAndProperty() (string, string, error) {
 
-	detail, err := a.detailRepository.Fetch(a.remark.GetDetail())
+	detailIdentifier, err := a.remark.GetSourceDetail()
+	if err != nil {
+		return "", "", err
+	}
+
+	detail, err := a.detailRepository.Fetch(detailIdentifier)
 	if err != nil {
 		return "", "", err
 	}
@@ -147,7 +152,12 @@ func (a Aggregate) AddRemarkToFact(property string) (Aggregate, error) {
 
 	// detail
 
-	aggregateDetail, err := a.detailRepository.Fetch(a.remark.GetDetail())
+	detailIdentifier, err := a.remark.GetSourceDetail()
+	if err != nil {
+		return Aggregate{}, err
+	}
+
+	aggregateDetail, err := a.detailRepository.Fetch(detailIdentifier)
 	if err != nil {
 		return Aggregate{}, err
 	}
@@ -162,14 +172,22 @@ func (a Aggregate) AddRemarkToFact(property string) (Aggregate, error) {
 		return Aggregate{}, err
 	}
 
-	err = detail.PointToRemark(remark)
+	err = detail.PointToRemark(remark.GetDetail())
 	if err != nil {
 		return Aggregate{}, err
 	}
 
 	// fact
 
-	fact, err := a.remark.FetchTargetFact(a.factRepository)
+	factIdentifier, err := a.remark.GetTargetFact()
+	if err != nil {
+		return Aggregate{}, err
+	}
+
+	fact, err := a.factRepository.FetchByRemark(factIdentifier)
+	if err != nil {
+		return Aggregate{}, err
+	}
 
 	err = remark.PointToFact(fact)
 	if err != nil {
@@ -204,7 +222,7 @@ func (a Aggregate) AddFactToStory(object string, property string) (Aggregate, er
 		return Aggregate{}, err
 	}
 
-	err = detail.PointToRemark(remark)
+	err = detail.PointToRemark(remark.GetDetail())
 	if err != nil {
 		return Aggregate{}, err
 	}
