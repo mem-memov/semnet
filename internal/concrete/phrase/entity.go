@@ -9,10 +9,10 @@ import (
 )
 
 type Entity struct {
-	class uint
-	word uint
-	phrase uint
-	detail uint
+	class   uint
+	word    uint
+	phrase  uint
+	detail  uint
 	storage abstract.Storage
 }
 
@@ -56,10 +56,10 @@ func createEntity(storage abstract.Storage, classEntity abstractClass.Entity) (E
 	}
 
 	return Entity{
-		class: class,
-		word: word,
-		phrase: phrase,
-		detail: detail,
+		class:   class,
+		word:    word,
+		phrase:  phrase,
+		detail:  detail,
 		storage: storage,
 	}, nil
 }
@@ -82,10 +82,10 @@ func readEntityByClass(storage abstract.Storage, class uint) (Entity, error) {
 	}
 
 	return Entity{
-		class: class,
-		word: word,
-		phrase: phrase,
-		detail: detail,
+		class:   class,
+		word:    word,
+		phrase:  phrase,
+		detail:  detail,
 		storage: storage,
 	}, nil
 }
@@ -103,10 +103,10 @@ func readEntityByWord(storage abstract.Storage, word uint) (Entity, error) {
 	}
 
 	return Entity{
-		class: class,
-		word: word,
-		phrase: phrase,
-		detail: detail,
+		class:   class,
+		word:    word,
+		phrase:  phrase,
+		detail:  detail,
 		storage: storage,
 	}, nil
 }
@@ -124,10 +124,10 @@ func readEntityByPhrase(storage abstract.Storage, phrase uint) (Entity, error) {
 	}
 
 	return Entity{
-		class: class,
-		word: word,
-		phrase: phrase,
-		detail: detail,
+		class:   class,
+		word:    word,
+		phrase:  phrase,
+		detail:  detail,
 		storage: storage,
 	}, nil
 }
@@ -150,10 +150,10 @@ func readEntityByDetail(storage abstract.Storage, detail uint) (Entity, error) {
 	}
 
 	return Entity{
-		class: class,
-		word: word,
-		phrase: phrase,
-		detail: detail,
+		class:   class,
+		word:    word,
+		phrase:  phrase,
+		detail:  detail,
 		storage: storage,
 	}, nil
 }
@@ -178,6 +178,37 @@ func (e Entity) GetDetail() uint {
 	return e.detail
 }
 
+func (e Entity) PointToPhrase(phrase uint) error {
+
+	return e.storage.Connect(e.phrase, phrase)
+}
+
+func (e Entity) GetTargetPhrases() ([]abstractPhrase.Entity, error) {
+
+	targetPhraseIdentifiers, err := e.storage.ReadTargets(e.phrase)
+	if err != nil {
+		return nil, err
+	}
+
+	var targetPhrases []abstractPhrase.Entity
+
+	for _, targetPhraseIdentifier := range targetPhraseIdentifiers {
+
+		targetPhrase, err := readEntityByPhrase(e.storage, targetPhraseIdentifier)
+		if err != nil {
+			return nil, err
+		}
+
+		targetPhrases = append(targetPhrases, targetPhrase)
+	}
+
+	return targetPhrases, nil
+}
+
+func (e Entity) GetTargetWord() (uint, error) {
+
+}
+
 func (e Entity) DetailIdentifier() uint {
 	return e.detailNode.Identifier()
 }
@@ -193,56 +224,6 @@ func (e Entity) ProvideDetailTarget(another abstractPhrase.Entity) (uint, error)
 
 func (e Entity) Mark(sourceIdentifier uint) error {
 	return e.detailNode.Mark(sourceIdentifier)
-}
-
-func (e Entity) ProvideNext(wordValue string, entities abstractPhrase.Entities) (abstractPhrase.Entity, error) {
-
-	targetPhrases, err := e.phraseNode.ReadTargets()
-	if err != nil {
-		return Entity{}, nil
-	}
-
-	// search existing
-	for _, targetPhrase := range targetPhrases {
-		classIdentifier, wordIdentifier, detailIdentifier, err := targetPhrase.GetClassAndWordAndDetail()
-		if err != nil {
-			return Entity{}, nil
-		}
-
-		entity := entities.Create(classIdentifier, wordIdentifier, targetPhrase.Identifier(), detailIdentifier)
-
-		hasWordValue, err := entity.HasWordValue(wordValue)
-		if err != nil {
-			return Entity{}, nil
-		}
-
-		if hasWordValue {
-			return entity, nil
-		}
-	}
-
-	// Provide new
-	newClassNode, err := e.classNode.NewClass()
-	if err != nil {
-		return Entity{}, nil
-	}
-
-	newWordNode, err := e.wordNode.NewWord(wordValue)
-	if err != nil {
-		return Entity{}, nil
-	}
-
-	newPhraseNode, err := e.phraseNode.NewPhrase(newWordNode)
-	if err != nil {
-		return Entity{}, nil
-	}
-
-	newDetailNode, err := e.detailNode.NewDetail(newPhraseNode)
-	if err != nil {
-		return Entity{}, nil
-	}
-
-	return newEntity(newClassNode, newWordNode, newPhraseNode, newDetailNode), nil
 }
 
 func (e Entity) HasWordValue(wordValue string) (bool, error) {

@@ -29,6 +29,11 @@ func (p Phrase) NewPhrase(word Word) (Phrase, error) {
 	return newPhrase(identifier, p.storage), nil
 }
 
+func (p Phrase) PointToPhrase(phrase uint) error {
+
+	return p.storage.Connect(p.identifier, phrase)
+}
+
 func (p Phrase) Identifier() uint {
 	return p.identifier
 }

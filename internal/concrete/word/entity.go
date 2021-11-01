@@ -2,23 +2,31 @@ package word
 
 import (
 	"fmt"
-	node2 "github.com/mem-memov/semnet/internal/concrete/word/node"
+	abstractWord "github.com/mem-memov/semnet/internal/abstract/word"
+	"github.com/mem-memov/semnet/internal/concrete/word/node"
 )
 
 type Entity struct {
-	classNode     node2.Class
-	characterNode node2.Character
-	wordNode      node2.Word
-	phraseNode    node2.Phrase
+	classNode     node.Class
+	characterNode node.Character
+	wordNode      node.Word
+	phraseNode    node.Phrase
 }
 
-func newEntity(classNode node2.Class, characterNode node2.Character, wordNode node2.Word, phraseNode node2.Phrase) Entity {
+var _ abstractWord.Entity = Entity{}
+
+func newEntity(classNode node.Class, characterNode node.Character, wordNode node.Word, phraseNode node.Phrase) Entity {
 	return Entity{
 		classNode:     classNode,
 		characterNode: characterNode,
 		wordNode:      wordNode,
 		phraseNode:    phraseNode,
 	}
+}
+
+func (e Entity) PointToPhrase(phrase uint) error {
+
+	return e.phraseNode.PointToPhrase(phrase)
 }
 
 func (e Entity) PhraseIdentifier() uint {

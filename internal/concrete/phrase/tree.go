@@ -3,23 +3,26 @@ package phrase
 import (
 	"fmt"
 	"github.com/mem-memov/semnet/internal/abstract"
+	abstractClass "github.com/mem-memov/semnet/internal/abstract/class"
 	abstractPhrase "github.com/mem-memov/semnet/internal/abstract/phrase"
-	"github.com/mem-memov/semnet/internal/concrete/word"
+	abstractWord "github.com/mem-memov/semnet/internal/abstract/word"
 )
 
 type tree struct {
-	storage  abstract.Storage
-	entities abstractPhrase.Entities
+	storage         abstract.Storage
+	classRepository abstractClass.Repository
 }
 
-func newTree(storage abstract.Storage, entities abstractPhrase.Entities) abstractPhrase.Tree {
+var _ abstractPhrase.Tree = &tree{}
+
+func newTree(storage abstract.Storage, classRepository abstractClass.Repository) *tree {
 	return &tree{
-		storage:  storage,
-		entities: entities,
+		storage:         storage,
+		classRepository: classRepository,
 	}
 }
 
-func (t *tree) ProvideRoot(wordEntity word.Entity) (abstractPhrase.Entity, error) {
+func (t *tree) ProvideRoot(wordEntity abstractWord.Entity) (abstractPhrase.Entity, error) {
 
 	wordIdentifier, err := wordEntity.ProvideSingleTarget()
 	if err != nil {
@@ -31,10 +34,6 @@ func (t *tree) ProvideRoot(wordEntity word.Entity) (abstractPhrase.Entity, error
 		return Entity{}, err
 	}
 
-	var classIdentifier uint
-	var phraseIdentifier uint
-	var detailIdentifier uint
-
 	switch len(wordTargets) {
 	case 0:
 		err = wordEntity.Mark(wordIdentifier)
@@ -42,32 +41,13 @@ func (t *tree) ProvideRoot(wordEntity word.Entity) (abstractPhrase.Entity, error
 			return Entity{}, err
 		}
 
-		phraseIdentifier, err = t.storage.Create()
+		class, err := t.classRepository.ProvideEntity()
 		if err != nil {
 			return Entity{}, err
 		}
 
-		err = t.storage.SetReference(wordIdentifier, phraseIdentifier)
-		if err != nil {
-			return Entity{}, err
-		}
+		return createEntity(t.storage, class)
 
-		detailIdentifier, err = t.storage.Create()
-		if err != nil {
-			return Entity{}, err
-		}
-
-		err = t.storage.SetReference(phraseIdentifier, detailIdentifier)
-		if err != nil {
-			return Entity{}, err
-		}
-
-		entity, err := t.entities.CreateAndAddClass(wordIdentifier, phraseIdentifier, detailIdentifier)
-		if err != nil {
-			return Entity{}, err
-		}
-
-		return entity, nil
 	case 1:
 		if wordTargets[0] != wordEntity.PhraseIdentifier() {
 			return Entity{}, fmt.Errorf("wrong target %d in detail tree at word %d", wordTargets[0], wordIdentifier)

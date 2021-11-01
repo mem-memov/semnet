@@ -8,28 +8,25 @@ import (
 )
 
 type Repository struct {
-	storage abstract.Storage
+	storage         abstract.Storage
 	classRepository abstractClass.Repository
-	wordRepository abstractWord.Repository
+	wordRepository  abstractWord.Repository
 
-	entities       *entities
-	tree           abstractPhrase.Tree
-	paths          *paths
+	tree  abstractPhrase.Tree
+	paths *paths
 }
 
 var _ abstractPhrase.Repository = &Repository{}
 
 func NewRepository(storage abstract.Storage, classRepository abstractClass.Repository, wordRepository abstractWord.Repository) *Repository {
-	entities := newEntities(storage, classRepository, wordRepository)
 
 	return &Repository{
-		storage: storage,
+		storage:         storage,
 		classRepository: classRepository,
-		wordRepository: wordRepository,
+		wordRepository:  wordRepository,
 
-		entities:       entities,
-		tree:           newTree(storage, entities),
-		paths:          newPaths(),
+		tree:  newTree(storage, classRepository),
+		paths: newPaths(),
 	}
 }
 
@@ -37,33 +34,85 @@ func (r *Repository) Provide(words string) (abstractPhrase.Entity, error) {
 
 	path, err := r.paths.collect(words)
 	if err != nil {
-		return Entity{}, err
+		return nil, err
 	}
 
 	firstWord, err := r.wordRepository.Provide(path[0])
 	if err != nil {
-		return Entity{}, err
+		return nil, err
 	}
 
-	entity, err := r.tree.ProvideRoot(firstWord)
+	phrase, err := r.tree.ProvideRoot(firstWord)
 	if err != nil {
-		return Entity{}, err
+		return nil, err
 	}
 
+out:
 	for _, wordValue := range path[1:] {
 
-		entity, err = entity.ProvideNext(wordValue, r.entities)
+		targetPhrases, err := phrase.GetTargetPhrases()
 		if err != nil {
-			return Entity{}, err
+			return nil, err
 		}
+
+		// use existing
+		for _, targetPhrase := range targetPhrases {
+			targetWord, err := r.wordRepository.Fetch(targetPhrase.GetWord())
+			if err != nil {
+				return nil, err
+			}
+
+			targetValue, err := r.wordRepository.Extract(targetWord)
+			if err != nil {
+				return nil, err
+			}
+
+			if wordValue == targetValue {
+				phrase = targetPhrase
+				break out
+			}
+		}
+
+		// create new
+		class, err := r.classRepository.ProvideEntity()
+		if err != nil {
+			return nil, err
+		}
+
+		word, err := r.wordRepository.Provide(wordValue)
+		if err != nil {
+			return nil, err
+		}
+
+		newPhrase, err := createEntity(r.storage, class)
+		if err != nil {
+			return nil, err
+		}
+
+		err = word.PointToPhrase(newPhrase.GetWord())
+		if err != nil {
+			return nil, err
+		}
+
+		err = phrase.PointToPhrase(newPhrase.GetPhrase())
+		if err != nil {
+			return nil, err
+		}
+
+		phrase = newPhrase
 	}
 
-	return entity, nil
+	return phrase, nil
 }
 
-func (r *Repository) Extract(entity abstractPhrase.Entity) (string, error) {
+func (r *Repository) Extract(phrase abstractPhrase.Entity) (string, error) {
 
-	wordValue, err := entity.WordValue()
+	word, err := r.wordRepository.Fetch(phrase.GetTarget())
+	if err != nil {
+		return "", err
+	}
+
+	wordValue, err := word.
 	if err != nil {
 		return "", err
 	}
@@ -72,13 +121,13 @@ func (r *Repository) Extract(entity abstractPhrase.Entity) (string, error) {
 
 	for {
 		var isRoot bool
-		entity, isRoot, err = entity.FindPrevious(r.entities)
+		phrase, isRoot, err = phrase.FindPrevious(r.entities)
 
 		if isRoot {
 			break
 		}
 
-		wordValue, err = entity.WordValue()
+		wordValue, err = phrase.WordValue()
 		if err != nil {
 			return "", err
 		}
