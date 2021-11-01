@@ -2,31 +2,180 @@ package phrase
 
 import (
 	"fmt"
+	"github.com/mem-memov/semnet/internal/abstract"
+	abstractClass "github.com/mem-memov/semnet/internal/abstract/class"
 	abstractPhrase "github.com/mem-memov/semnet/internal/abstract/phrase"
 	abstractNode "github.com/mem-memov/semnet/internal/abstract/phrase/node"
 )
 
 type Entity struct {
-	classNode  abstractNode.Class
-	wordNode   abstractNode.Word
-	phraseNode abstractNode.Phrase
-	detailNode abstractNode.Detail
+	class uint
+	word uint
+	phrase uint
+	detail uint
+	storage abstract.Storage
 }
 
 var _ abstractPhrase.Entity = Entity{}
 
-func newEntity(
-	classNode abstractNode.Class,
-	wordNode abstractNode.Word,
-	phraseNode abstractNode.Phrase,
-	detailNode abstractNode.Detail,
-) Entity {
-	return Entity{
-		classNode:  classNode,
-		wordNode:   wordNode,
-		phraseNode: phraseNode,
-		detailNode: detailNode,
+func createEntity(storage abstract.Storage, classEntity abstractClass.Entity) (Entity, error) {
+
+	class, err := classEntity.CreatePhrase()
+	if err != nil {
+		return Entity{}, err
 	}
+
+	word, err := storage.Create()
+	if err != nil {
+		return Entity{}, err
+	}
+
+	phrase, err := storage.Create()
+	if err != nil {
+		return Entity{}, err
+	}
+
+	detail, err := storage.Create()
+	if err != nil {
+		return Entity{}, err
+	}
+
+	err = storage.SetReference(class, phrase)
+	if err != nil {
+		return Entity{}, err
+	}
+
+	err = storage.SetReference(phrase, detail)
+	if err != nil {
+		return Entity{}, err
+	}
+
+	err = storage.SetReference(class, word)
+	if err != nil {
+		return Entity{}, err
+	}
+
+	return Entity{
+		class: class,
+		word: word,
+		phrase: phrase,
+		detail: detail,
+		storage: storage,
+	}, nil
+}
+
+func readEntityByClass(storage abstract.Storage, class uint) (Entity, error) {
+
+	_, word, err := storage.GetReference(class)
+	if err != nil {
+		return Entity{}, err
+	}
+
+	_, phrase, err := storage.GetReference(word)
+	if err != nil {
+		return Entity{}, err
+	}
+
+	_, detail, err := storage.GetReference(phrase)
+	if err != nil {
+		return Entity{}, err
+	}
+
+	return Entity{
+		class: class,
+		word: word,
+		phrase: phrase,
+		detail: detail,
+		storage: storage,
+	}, nil
+}
+
+func readEntityByWord(storage abstract.Storage, word uint) (Entity, error) {
+
+	class, phrase, err := storage.GetReference(word)
+	if err != nil {
+		return Entity{}, err
+	}
+
+	_, detail, err := storage.GetReference(phrase)
+	if err != nil {
+		return Entity{}, err
+	}
+
+	return Entity{
+		class: class,
+		word: word,
+		phrase: phrase,
+		detail: detail,
+		storage: storage,
+	}, nil
+}
+
+func readEntityByPhrase(storage abstract.Storage, phrase uint) (Entity, error) {
+
+	word, detail, err := storage.GetReference(phrase)
+	if err != nil {
+		return Entity{}, err
+	}
+
+	class, _, err := storage.GetReference(word)
+	if err != nil {
+		return Entity{}, err
+	}
+
+	return Entity{
+		class: class,
+		word: word,
+		phrase: phrase,
+		detail: detail,
+		storage: storage,
+	}, nil
+}
+
+func readEntityByDetail(storage abstract.Storage, detail uint) (Entity, error) {
+
+	phrase, _, err := storage.GetReference(detail)
+	if err != nil {
+		return Entity{}, err
+	}
+
+	word, _, err := storage.GetReference(phrase)
+	if err != nil {
+		return Entity{}, err
+	}
+
+	class, _, err := storage.GetReference(word)
+	if err != nil {
+		return Entity{}, err
+	}
+
+	return Entity{
+		class: class,
+		word: word,
+		phrase: phrase,
+		detail: detail,
+		storage: storage,
+	}, nil
+}
+
+func (e Entity) GetClass() uint {
+
+	return e.class
+}
+
+func (e Entity) GetWord() uint {
+
+	return e.word
+}
+
+func (e Entity) GetPhrase() uint {
+
+	return e.phrase
+}
+
+func (e Entity) GetDetail() uint {
+
+	return e.detail
 }
 
 func (e Entity) DetailIdentifier() uint {

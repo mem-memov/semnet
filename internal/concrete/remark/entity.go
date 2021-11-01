@@ -241,20 +241,18 @@ func (e Entity) HasNextRemark() (bool, error) {
 	return len(targets) != 0, nil
 }
 
-func (e Entity) GetNextRemark() (abstractRemark.Entity, error) {
+func (e Entity) GetNextRemark() (uint, error) {
 
 	targets, err := e.storage.ReadTargets(e.position)
 	if err != nil {
-		return nil, err
+		return 0, err
 	}
 
 	if len(targets) != 1 {
-		return nil, fmt.Errorf("wrong number of next remarks")
+		return 0, fmt.Errorf("wrong number of next remarks")
 	}
 
-	nextRemark, err := readEntityByPosition(e.storage, targets[0])
-
-	return nextRemark, nil
+	return targets[0], nil
 }
 
 func (e Entity) ToNextFact(fact uint) (abstractRemark.Entity, error) {

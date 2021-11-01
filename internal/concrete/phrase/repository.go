@@ -1,26 +1,33 @@
 package phrase
 
 import (
+	"github.com/mem-memov/semnet/internal/abstract"
+	abstractClass "github.com/mem-memov/semnet/internal/abstract/class"
 	abstractPhrase "github.com/mem-memov/semnet/internal/abstract/phrase"
-	"github.com/mem-memov/semnet/internal/concrete/class"
-	"github.com/mem-memov/semnet/internal/concrete/word"
+	abstractWord "github.com/mem-memov/semnet/internal/abstract/word"
 )
 
 type Repository struct {
+	storage abstract.Storage
+	classRepository abstractClass.Repository
+	wordRepository abstractWord.Repository
+
 	entities       *entities
-	wordRepository *word.Repository
 	tree           abstractPhrase.Tree
 	paths          *paths
 }
 
 var _ abstractPhrase.Repository = &Repository{}
 
-func NewRepository(storage storage, classRepository *class.Repository, wordRepository *word.Repository) *Repository {
+func NewRepository(storage abstract.Storage, classRepository abstractClass.Repository, wordRepository abstractWord.Repository) *Repository {
 	entities := newEntities(storage, classRepository, wordRepository)
 
 	return &Repository{
-		entities:       entities,
+		storage: storage,
+		classRepository: classRepository,
 		wordRepository: wordRepository,
+
+		entities:       entities,
 		tree:           newTree(storage, entities),
 		paths:          newPaths(),
 	}

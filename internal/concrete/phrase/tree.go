@@ -2,16 +2,17 @@ package phrase
 
 import (
 	"fmt"
+	"github.com/mem-memov/semnet/internal/abstract"
 	abstractPhrase "github.com/mem-memov/semnet/internal/abstract/phrase"
 	"github.com/mem-memov/semnet/internal/concrete/word"
 )
 
 type tree struct {
-	storage  storage
+	storage  abstract.Storage
 	entities abstractPhrase.Entities
 }
 
-func newTree(storage storage, entities abstractPhrase.Entities) abstractPhrase.Tree {
+func newTree(storage abstract.Storage, entities abstractPhrase.Entities) abstractPhrase.Tree {
 	return &tree{
 		storage:  storage,
 		entities: entities,
@@ -72,17 +73,7 @@ func (t *tree) ProvideRoot(wordEntity word.Entity) (abstractPhrase.Entity, error
 			return Entity{}, fmt.Errorf("wrong target %d in detail tree at word %d", wordTargets[0], wordIdentifier)
 		}
 
-		classIdentifier, wordIdentifier, err = t.storage.GetReference(wordIdentifier)
-		if err != nil {
-			return Entity{}, err
-		}
-
-		_, phraseIdentifier, err = t.storage.GetReference(wordIdentifier)
-		if err != nil {
-			return Entity{}, err
-		}
-
-		return t.entities.Create(classIdentifier, wordIdentifier, phraseIdentifier, detailIdentifier), nil
+		return readEntityByWord(t.storage, wordIdentifier)
 	default:
 		return Entity{}, fmt.Errorf("wrong number of targets %d in word tree at word %d", len(wordTargets), wordIdentifier)
 	}

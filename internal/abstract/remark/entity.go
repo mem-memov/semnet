@@ -15,6 +15,6 @@ type Entity interface {
 	GetSourceDetail() (uint, error)
 	CreateNextStoryFact(factRepository fact.Repository) (fact.Aggregate, error)
 	HasNextRemark() (bool, error)
-	GetNextRemark() (Entity, error)
+	GetNextRemark() (uint, error)
 	ToNextFact(fact uint) (Entity, error)
 }
