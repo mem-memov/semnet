@@ -24,23 +24,48 @@ func createEntity(
 	propertyPhrase abstractPhrase.Entity,
 ) (Entity, error) {
 
-	var class, phrase, remark uint
-
-	phrase, err := objectPhrase.ProvideDetailTarget(propertyPhrase)
+	objectTargetDetails, err := objectPhrase.GetTargetDetails()
 	if err != nil {
 		return Entity{}, err
 	}
 
-	class, remark, err = storage.GetReference(phrase)
+	propertySourceDetails, err := propertyPhrase.GetSourceDetails()
 
-	if class == 0 && remark == 0 {
+	commonDetailIdentifiers := make([]uint, 0, 1)
 
-		class, err = classEntity.CreateDetail()
+	// TODO: optimize (cut tails, use map, sort)
+	for _, objectTargetDetail := range objectTargetDetails {
+		for _, propertySourceDetail := range propertySourceDetails {
+			if propertySourceDetail == objectTargetDetail {
+				commonDetailIdentifiers = append(commonDetailIdentifiers, propertySourceDetail)
+			}
+		}
+	}
+
+	switch len(commonDetailIdentifiers) {
+
+	case 0:
+		phrase, err := storage.Create()
 		if err != nil {
 			return Entity{}, err
 		}
 
-		remark, err = storage.Create()
+		err = objectPhrase.AddTargetDetail(phrase)
+		if err != nil {
+			return Entity{}, err
+		}
+
+		err = propertyPhrase.AddSourceDetail(phrase)
+		if err != nil {
+			return Entity{}, err
+		}
+
+		class, err := classEntity.CreateDetail()
+		if err != nil {
+			return Entity{}, err
+		}
+
+		remark, err := storage.Create()
 		if err != nil {
 			return Entity{}, err
 		}
@@ -55,14 +80,18 @@ func createEntity(
 			return Entity{}, err
 		}
 
-	}
+		return Entity{
+			class:   class,
+			phrase:  phrase,
+			remark:  remark,
+			storage: storage,
+		}, nil
 
-	return Entity{
-		class:   class,
-		phrase:  phrase,
-		remark:  remark,
-		storage: storage,
-	}, nil
+	case 1:
+		return readEntityByPhrase(storage, commonDetailIdentifiers[0])
+	default:
+		return Entity{}, fmt.Errorf("phrases have too many common details")
+	}
 }
 
 func readEntityByClass(storage abstract.Storage, class uint) (Entity, error) {

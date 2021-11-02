@@ -23,7 +23,7 @@ func NewRepository(storage storage, classRepository *class.Repository, character
 	}
 }
 
-func (r *Repository) Provide(word string) (Entity, error) {
+func (r *Repository) Provide(word string) (interface{}, error) {
 
 	path, err := r.paths.collect(word)
 	if err != nil {
@@ -51,9 +51,12 @@ func (r *Repository) Provide(word string) (Entity, error) {
 	return entity, nil
 }
 
-func (r *Repository) Extract(entity Entity) (string, error) {
+func (r *Repository) Extract(entity interface{}) (string, error) {
 
-	characterValue, err := entity.characterValue()
+	// TODO: remove after rafactoring
+	entit := entity.(Entity)
+
+	characterValue, err := entit.characterValue()
 	if err != nil {
 		return "", err
 	}
@@ -62,13 +65,13 @@ func (r *Repository) Extract(entity Entity) (string, error) {
 
 	for {
 		var isRoot bool
-		entity, isRoot, err = entity.findPrevious(r.entities)
+		entity, isRoot, err = entit.findPrevious(r.entities)
 
 		if isRoot {
 			break
 		}
 
-		characterValue, err = entity.characterValue()
+		characterValue, err = entit.characterValue()
 		if err != nil {
 			return "", err
 		}
@@ -79,7 +82,7 @@ func (r *Repository) Extract(entity Entity) (string, error) {
 	return path.reverse().toString(), nil
 }
 
-func (r *Repository) Fetch(phraseIdentifier uint) (Entity, error) {
+func (r *Repository) Fetch(phraseIdentifier uint) (interface{}, error) {
 
 	return r.entities.createWithPhrase(phraseIdentifier)
 }

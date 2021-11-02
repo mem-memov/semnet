@@ -233,6 +233,7 @@ func (e Entity) CreateNextStoryFact(factRepository abstractFact.Repository) (abs
 
 func (e Entity) HasNextRemark() (bool, error) {
 
+	// TODO: get count from DB
 	targets, err := e.storage.ReadTargets(e.position)
 	if err != nil {
 		return false, err

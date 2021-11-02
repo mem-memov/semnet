@@ -1,7 +1,5 @@
 package phrase
 
-import "github.com/mem-memov/semnet/internal/abstract/phrase/node"
-
 type Entity interface {
 	GetClass() uint
 	GetWord() uint
@@ -9,13 +7,12 @@ type Entity interface {
 	GetDetail() uint
 	PointToPhrase(phrase uint) error
 	GetTargetPhrases() ([]Entity, error)
-	GetTargetWord() (uint, error)
-
-	GetDetailNode() node.Detail
-	HasWordValue(wordValue string) (bool, error)
-	WordValue() (string, error)
-	FindPrevious(entities Entities) (Entity, bool, error)
-	DetailIdentifier() uint
-	ProvideDetailTarget(another Entity) (uint, error)
+	GetSourceWord() (uint, error)
+	HasSourcePhrase() (bool, error)
+	GetSourcePhrase() (Entity, error)
+	GetSourceDetails() ([]uint, error)
+	GetTargetDetails() ([]uint, error)
+	AddSourceDetail(detail uint) error
+	AddTargetDetail(detail uint) error
 	Mark(sourceIdentifier uint) error
 }
