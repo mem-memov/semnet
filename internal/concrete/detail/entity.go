@@ -17,7 +17,7 @@ type Entity struct {
 
 var _ abstractDetail.Entity = Entity{}
 
-func createEntity(
+func provideEntity(
 	storage abstract.Storage,
 	classEntity abstractClass.Entity,
 	objectPhrase abstractPhrase.Entity,
@@ -45,6 +45,11 @@ func createEntity(
 	switch len(commonDetailIdentifiers) {
 
 	case 0:
+		class, err := classEntity.CreateDetail()
+		if err != nil {
+			return Entity{}, err
+		}
+
 		phrase, err := storage.Create()
 		if err != nil {
 			return Entity{}, err
@@ -56,11 +61,6 @@ func createEntity(
 		}
 
 		err = propertyPhrase.AddSourceDetail(phrase)
-		if err != nil {
-			return Entity{}, err
-		}
-
-		class, err := classEntity.CreateDetail()
 		if err != nil {
 			return Entity{}, err
 		}
@@ -92,6 +92,50 @@ func createEntity(
 	default:
 		return Entity{}, fmt.Errorf("phrases have too many common details")
 	}
+}
+
+func createEntity() (Entity, error) {
+	class, err := classEntity.CreateDetail()
+	if err != nil {
+		return Entity{}, err
+	}
+
+	phrase, err := storage.Create()
+	if err != nil {
+		return Entity{}, err
+	}
+
+	err = objectPhrase.AddTargetDetail(phrase)
+	if err != nil {
+		return Entity{}, err
+	}
+
+	err = propertyPhrase.AddSourceDetail(phrase)
+	if err != nil {
+		return Entity{}, err
+	}
+
+	remark, err := storage.Create()
+	if err != nil {
+		return Entity{}, err
+	}
+
+	err = storage.SetReference(class, phrase)
+	if err != nil {
+		return Entity{}, err
+	}
+
+	err = storage.SetReference(phrase, remark)
+	if err != nil {
+		return Entity{}, err
+	}
+
+	return Entity{
+		class:   class,
+		phrase:  phrase,
+		remark:  remark,
+		storage: storage,
+	}, nil
 }
 
 func readEntityByClass(storage abstract.Storage, class uint) (Entity, error) {

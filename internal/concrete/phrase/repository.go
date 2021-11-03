@@ -1,7 +1,6 @@
 package phrase
 
 import (
-	"fmt"
 	"github.com/mem-memov/semnet/internal/abstract"
 	abstractClass "github.com/mem-memov/semnet/internal/abstract/class"
 	abstractPhrase "github.com/mem-memov/semnet/internal/abstract/phrase"
@@ -42,47 +41,15 @@ func (r *Repository) Provide(words string) (abstractPhrase.Entity, error) {
 	// TODO: remove after refactoring word package
 	firstWord_ := firstWord.(abstractWord.Entity)
 
+	class, err := r.classRepository.ProvideEntity()
+	if err != nil {
+		return nil, err
+	}
+
 	// root
-	wordIdentifier, err := firstWord_.ProvideSingleTarget()
+	phrase, err := createEntity(r.storage, class, firstWord_)
 	if err != nil {
 		return nil, err
-	}
-
-	wordTargets, err := r.storage.ReadTargets(wordIdentifier)
-	if err != nil {
-		return nil, err
-	}
-
-	var phrase abstractPhrase.Entity
-	switch len(wordTargets) {
-	case 0:
-		err = firstWord_.Mark(wordIdentifier)
-		if err != nil {
-			return nil, err
-		}
-
-		class, err := r.classRepository.ProvideEntity()
-		if err != nil {
-			return nil, err
-		}
-
-		phrase, err = createEntity(r.storage, class)
-		if err != nil {
-			return nil, err
-		}
-
-	case 1:
-		if wordTargets[0] != firstWord_.PhraseIdentifier() {
-			return nil, fmt.Errorf("wrong target %d in detail tree at word %d", wordTargets[0], wordIdentifier)
-		}
-
-		phrase, err = readEntityByWord(r.storage, wordIdentifier)
-		if err != nil {
-			return nil, err
-		}
-
-	default:
-		return nil, fmt.Errorf("wrong number of targets %d in word tree at word %d", len(wordTargets), wordIdentifier)
 	}
 
 	// branches
@@ -107,7 +74,7 @@ out:
 			}
 
 			if wordValue == targetValue {
-				phrase = targetPhrase
+				phrase = targetPhrase.(Entity) // TODO: remove cast after word refactoring
 				break out
 			}
 		}
@@ -126,12 +93,7 @@ out:
 		// TODO: remove after refactoring word package
 		word_ := word.(abstractWord.Entity)
 
-		newPhrase, err := createEntity(r.storage, class)
-		if err != nil {
-			return nil, err
-		}
-
-		err = word_.PointToPhrase(newPhrase.GetWord())
+		newPhrase, err := createEntity(r.storage, class, word_)
 		if err != nil {
 			return nil, err
 		}

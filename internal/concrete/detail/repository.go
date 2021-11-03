@@ -45,7 +45,7 @@ func (r *Repository) Provide(object string, property string) (abstractDetail.Agg
 		return nil, err
 	}
 
-	detail, err := createEntity(r.storage, class, objectPhrase, propertyPhrase)
+	detail, err := provideEntity(r.storage, class, objectPhrase, propertyPhrase)
 	if err != nil {
 		return nil, err
 	}

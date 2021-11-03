@@ -19,7 +19,9 @@ func TestRepository(t *testing.T) {
 		{"no character", "", errors.New("no character in word cluster: "), nil},
 		{"one character", "a", nil, nil},
 		{"many letters", "house", nil, nil},
-		{"repeted letter", "pppp", nil, nil},
+		{"repeated letter", "pppp", nil, nil},
+		{"two words", "a cat", nil, nil},
+		{"repeated words", "in in in", nil, nil},
 	}
 
 	for _, d := range data {

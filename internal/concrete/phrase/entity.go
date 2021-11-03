@@ -5,6 +5,7 @@ import (
 	"github.com/mem-memov/semnet/internal/abstract"
 	abstractClass "github.com/mem-memov/semnet/internal/abstract/class"
 	abstractPhrase "github.com/mem-memov/semnet/internal/abstract/phrase"
+	abstractWord "github.com/mem-memov/semnet/internal/abstract/word"
 )
 
 type Entity struct {
@@ -17,50 +18,86 @@ type Entity struct {
 
 var _ abstractPhrase.Entity = Entity{}
 
-func createEntity(storage abstract.Storage, classEntity abstractClass.Entity) (Entity, error) {
+func createEntity(storage abstract.Storage, classEntity abstractClass.Entity, wordEntity abstractWord.Entity) (Entity, error) {
 
-	class, err := classEntity.CreatePhrase()
+	wordIdentifier, err := wordEntity.ProvideSingleTarget()
 	if err != nil {
 		return Entity{}, err
 	}
 
-	word, err := storage.Create()
+	wordTargets, err := storage.ReadTargets(wordIdentifier)
 	if err != nil {
 		return Entity{}, err
 	}
 
-	phrase, err := storage.Create()
-	if err != nil {
-		return Entity{}, err
-	}
+	switch len(wordTargets) {
 
-	detail, err := storage.Create()
-	if err != nil {
-		return Entity{}, err
-	}
+	case 0:
 
-	err = storage.SetReference(class, phrase)
-	if err != nil {
-		return Entity{}, err
-	}
+		err = wordEntity.Mark(wordIdentifier)
+		if err != nil {
+			return Entity{}, err
+		}
 
-	err = storage.SetReference(phrase, detail)
-	if err != nil {
-		return Entity{}, err
-	}
+		class, err := classEntity.CreatePhrase()
+		if err != nil {
+			return Entity{}, err
+		}
 
-	err = storage.SetReference(class, word)
-	if err != nil {
-		return Entity{}, err
-	}
+		word, err := storage.Create()
+		if err != nil {
+			return Entity{}, err
+		}
 
-	return Entity{
-		class:   class,
-		word:    word,
-		phrase:  phrase,
-		detail:  detail,
-		storage: storage,
-	}, nil
+		phrase, err := storage.Create()
+		if err != nil {
+			return Entity{}, err
+		}
+
+		detail, err := storage.Create()
+		if err != nil {
+			return Entity{}, err
+		}
+
+		err = storage.SetReference(class, word)
+		if err != nil {
+			return Entity{}, err
+		}
+
+		err = storage.SetReference(word, phrase)
+		if err != nil {
+			return Entity{}, err
+		}
+
+		err = storage.SetReference(phrase, detail)
+		if err != nil {
+			return Entity{}, err
+		}
+
+		err = wordEntity.PointToPhrase(word)
+		if err != nil {
+			return Entity{}, err
+		}
+
+		return Entity{
+			class:   class,
+			word:    word,
+			phrase:  phrase,
+			detail:  detail,
+			storage: storage,
+		}, nil
+
+	case 1:
+
+		if wordTargets[0] != wordEntity.PhraseIdentifier() {
+			return Entity{}, fmt.Errorf("wrong target %d in detail tree at word %d", wordTargets[0], wordIdentifier)
+		}
+
+		return readEntityByWord(storage, wordIdentifier)
+
+	default:
+		return Entity{}, fmt.Errorf("wrong number of targets %d in word tree at word %d", len(wordTargets), wordIdentifier)
+	}
 }
 
 func readEntityByClass(storage abstract.Storage, class uint) (Entity, error) {
