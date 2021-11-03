@@ -304,4 +304,3 @@ func (e Entity) Mark(sourceIdentifier uint) error {
 
 	return e.storage.Connect(sourceIdentifier, e.detail)
 }
-

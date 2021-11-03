@@ -1,7 +1,6 @@
 package detail
 
 import (
-	"github.com/mem-memov/semnet/internal/abstract"
 	abstractClass "github.com/mem-memov/semnet/internal/abstract/class"
 	abstractDetail "github.com/mem-memov/semnet/internal/abstract/detail"
 	abstractPhrase "github.com/mem-memov/semnet/internal/abstract/phrase"
@@ -9,7 +8,8 @@ import (
 
 type Aggregate struct {
 	detail           abstractDetail.Entity
-	storage          abstract.Storage
+	detailStorage    abstractDetail.Storage
+	detailFactory    abstractDetail.Factory
 	classRepository  abstractClass.Repository
 	phraseRepository abstractPhrase.Repository
 }

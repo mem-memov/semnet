@@ -8,7 +8,8 @@ import (
 )
 
 type Repository struct {
-	storage          abstract.Storage
+	detailStorage    abstractDetail.Storage
+	detailFactory    abstractDetail.Factory
 	classRepository  abstractClass.Repository
 	phraseRepository abstractPhrase.Repository
 }
@@ -21,8 +22,11 @@ func NewRepository(
 	phraseRepository abstractPhrase.Repository,
 ) *Repository {
 
+	detailStorage := NewStorage(storage)
+
 	return &Repository{
-		storage:          storage,
+		detailStorage:    detailStorage,
+		detailFactory:    NewFactory(detailStorage),
 		classRepository:  classRepository,
 		phraseRepository: phraseRepository,
 	}
@@ -45,14 +49,15 @@ func (r *Repository) Provide(object string, property string) (abstractDetail.Agg
 		return nil, err
 	}
 
-	detail, err := provideEntity(r.storage, class, objectPhrase, propertyPhrase)
+	detail, err := r.detailFactory.ProvideEntity(class, objectPhrase, propertyPhrase)
 	if err != nil {
 		return nil, err
 	}
 
 	return Aggregate{
 		detail:           detail,
-		storage:          r.storage,
+		detailStorage:    r.detailStorage,
+		detailFactory:    r.detailFactory,
 		classRepository:  r.classRepository,
 		phraseRepository: r.phraseRepository,
 	}, nil
@@ -60,14 +65,15 @@ func (r *Repository) Provide(object string, property string) (abstractDetail.Agg
 
 func (r *Repository) Fetch(remark uint) (abstractDetail.Aggregate, error) {
 
-	detail, err := readEntityByRemark(r.storage, remark)
+	detail, err := r.detailStorage.ReadEntityByRemark(remark)
 	if err != nil {
 		return nil, err
 	}
 
 	return Aggregate{
 		detail:           detail,
-		storage:          r.storage,
+		detailStorage:    r.detailStorage,
+		detailFactory:    r.detailFactory,
 		classRepository:  r.classRepository,
 		phraseRepository: r.phraseRepository,
 	}, nil

@@ -11,7 +11,7 @@ type Repository struct {
 	storage         abstract.Storage
 	classRepository abstractClass.Repository
 	wordRepository  abstractWord.Repository
-	paths *paths
+	paths           *paths
 }
 
 var _ abstractPhrase.Repository = &Repository{}
@@ -22,7 +22,7 @@ func NewRepository(storage abstract.Storage, classRepository abstractClass.Repos
 		storage:         storage,
 		classRepository: classRepository,
 		wordRepository:  wordRepository,
-		paths: newPaths(),
+		paths:           newPaths(),
 	}
 }
 
@@ -126,7 +126,6 @@ func (r *Repository) Extract(phrase abstractPhrase.Entity) (string, error) {
 		return "", err
 	}
 
-
 	path := r.paths.create(wordValue)
 
 	for {
@@ -158,7 +157,6 @@ func (r *Repository) Extract(phrase abstractPhrase.Entity) (string, error) {
 		if err != nil {
 			return "", err
 		}
-
 
 		path = append(path, wordValue)
 	}
