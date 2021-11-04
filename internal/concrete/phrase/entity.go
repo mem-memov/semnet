@@ -3,9 +3,7 @@ package phrase
 import (
 	"fmt"
 	"github.com/mem-memov/semnet/internal/abstract"
-	abstractClass "github.com/mem-memov/semnet/internal/abstract/class"
 	abstractPhrase "github.com/mem-memov/semnet/internal/abstract/phrase"
-	abstractWord "github.com/mem-memov/semnet/internal/abstract/word"
 )
 
 type Entity struct {
@@ -17,182 +15,6 @@ type Entity struct {
 }
 
 var _ abstractPhrase.Entity = Entity{}
-
-func createEntity(storage abstract.Storage, classEntity abstractClass.Entity, wordEntity abstractWord.Entity) (Entity, error) {
-
-	wordIdentifier, err := wordEntity.ProvideSingleTarget()
-	if err != nil {
-		return Entity{}, err
-	}
-
-	wordTargets, err := storage.ReadTargets(wordIdentifier)
-	if err != nil {
-		return Entity{}, err
-	}
-
-	switch len(wordTargets) {
-
-	case 0:
-
-		err = wordEntity.Mark(wordIdentifier)
-		if err != nil {
-			return Entity{}, err
-		}
-
-		class, err := classEntity.CreatePhrase()
-		if err != nil {
-			return Entity{}, err
-		}
-
-		word, err := storage.Create()
-		if err != nil {
-			return Entity{}, err
-		}
-
-		phrase, err := storage.Create()
-		if err != nil {
-			return Entity{}, err
-		}
-
-		detail, err := storage.Create()
-		if err != nil {
-			return Entity{}, err
-		}
-
-		err = storage.SetReference(class, word)
-		if err != nil {
-			return Entity{}, err
-		}
-
-		err = storage.SetReference(word, phrase)
-		if err != nil {
-			return Entity{}, err
-		}
-
-		err = storage.SetReference(phrase, detail)
-		if err != nil {
-			return Entity{}, err
-		}
-
-		err = wordEntity.PointToPhrase(word)
-		if err != nil {
-			return Entity{}, err
-		}
-
-		return Entity{
-			class:   class,
-			word:    word,
-			phrase:  phrase,
-			detail:  detail,
-			storage: storage,
-		}, nil
-
-	case 1:
-
-		if wordTargets[0] != wordEntity.PhraseIdentifier() {
-			return Entity{}, fmt.Errorf("wrong target %d in detail tree at word %d", wordTargets[0], wordIdentifier)
-		}
-
-		return readEntityByWord(storage, wordIdentifier)
-
-	default:
-		return Entity{}, fmt.Errorf("wrong number of targets %d in word tree at word %d", len(wordTargets), wordIdentifier)
-	}
-}
-
-func readEntityByClass(storage abstract.Storage, class uint) (Entity, error) {
-
-	_, word, err := storage.GetReference(class)
-	if err != nil {
-		return Entity{}, err
-	}
-
-	_, phrase, err := storage.GetReference(word)
-	if err != nil {
-		return Entity{}, err
-	}
-
-	_, detail, err := storage.GetReference(phrase)
-	if err != nil {
-		return Entity{}, err
-	}
-
-	return Entity{
-		class:   class,
-		word:    word,
-		phrase:  phrase,
-		detail:  detail,
-		storage: storage,
-	}, nil
-}
-
-func readEntityByWord(storage abstract.Storage, word uint) (Entity, error) {
-
-	class, phrase, err := storage.GetReference(word)
-	if err != nil {
-		return Entity{}, err
-	}
-
-	_, detail, err := storage.GetReference(phrase)
-	if err != nil {
-		return Entity{}, err
-	}
-
-	return Entity{
-		class:   class,
-		word:    word,
-		phrase:  phrase,
-		detail:  detail,
-		storage: storage,
-	}, nil
-}
-
-func readEntityByPhrase(storage abstract.Storage, phrase uint) (Entity, error) {
-
-	word, detail, err := storage.GetReference(phrase)
-	if err != nil {
-		return Entity{}, err
-	}
-
-	class, _, err := storage.GetReference(word)
-	if err != nil {
-		return Entity{}, err
-	}
-
-	return Entity{
-		class:   class,
-		word:    word,
-		phrase:  phrase,
-		detail:  detail,
-		storage: storage,
-	}, nil
-}
-
-func readEntityByDetail(storage abstract.Storage, detail uint) (Entity, error) {
-
-	phrase, _, err := storage.GetReference(detail)
-	if err != nil {
-		return Entity{}, err
-	}
-
-	word, _, err := storage.GetReference(phrase)
-	if err != nil {
-		return Entity{}, err
-	}
-
-	class, _, err := storage.GetReference(word)
-	if err != nil {
-		return Entity{}, err
-	}
-
-	return Entity{
-		class:   class,
-		word:    word,
-		phrase:  phrase,
-		detail:  detail,
-		storage: storage,
-	}, nil
-}
 
 func (e Entity) GetClass() uint {
 
@@ -219,26 +41,9 @@ func (e Entity) PointToPhrase(phrase uint) error {
 	return e.storage.Connect(e.phrase, phrase)
 }
 
-func (e Entity) GetTargetPhrases() ([]abstractPhrase.Entity, error) {
+func (e Entity) GetTargetPhrases() ([]uint, error) {
 
-	targetPhraseIdentifiers, err := e.storage.ReadTargets(e.phrase)
-	if err != nil {
-		return nil, err
-	}
-
-	var targetPhrases []abstractPhrase.Entity
-
-	for _, targetPhraseIdentifier := range targetPhraseIdentifiers {
-
-		targetPhrase, err := readEntityByPhrase(e.storage, targetPhraseIdentifier)
-		if err != nil {
-			return nil, err
-		}
-
-		targetPhrases = append(targetPhrases, targetPhrase)
-	}
-
-	return targetPhrases, nil
+	return e.storage.ReadTargets(e.phrase)
 }
 
 func (e Entity) GetSourceWord() (uint, error) {
@@ -266,18 +71,18 @@ func (e Entity) HasSourcePhrase() (bool, error) {
 	return len(sourcePhrases) != 0, nil
 }
 
-func (e Entity) GetSourcePhrase() (abstractPhrase.Entity, error) {
+func (e Entity) GetSourcePhrase() (uint, error) {
 
 	sourcePhrases, err := e.storage.ReadSources(e.phrase)
 	if err != nil {
-		return nil, err
+		return 0, err
 	}
 
 	if len(sourcePhrases) != 1 {
-		return nil, fmt.Errorf("too many sources in phrase tree: %d at %d", len(sourcePhrases), e.phrase)
+		return 0, fmt.Errorf("too many sources in phrase tree: %d at %d", len(sourcePhrases), e.phrase)
 	}
 
-	return readEntityByPhrase(e.storage, sourcePhrases[0])
+	return sourcePhrases[0], nil
 }
 
 func (e Entity) GetSourceDetails() ([]uint, error) {

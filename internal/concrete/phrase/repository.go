@@ -8,7 +8,8 @@ import (
 )
 
 type Repository struct {
-	storage         abstract.Storage
+	phraseStorage   abstractPhrase.Storage
+	phraseFactory abstractPhrase.Factory
 	classRepository abstractClass.Repository
 	wordRepository  abstractWord.Repository
 	paths           *paths
@@ -18,8 +19,11 @@ var _ abstractPhrase.Repository = &Repository{}
 
 func NewRepository(storage abstract.Storage, classRepository abstractClass.Repository, wordRepository abstractWord.Repository) *Repository {
 
+	phraseStorage := NewStorage(storage)
+
 	return &Repository{
-		storage:         storage,
+		phraseStorage:   phraseStorage,
+		phraseFactory: NewFactory(phraseStorage),
 		classRepository: classRepository,
 		wordRepository:  wordRepository,
 		paths:           newPaths(),
@@ -47,7 +51,7 @@ func (r *Repository) Provide(words string) (abstractPhrase.Entity, error) {
 	}
 
 	// root
-	phrase, err := createEntity(r.storage, class, firstWord_)
+	phrase, err := r.phraseFactory.ProvideEntity(class, firstWord_)
 	if err != nil {
 		return nil, err
 	}
@@ -56,9 +60,20 @@ func (r *Repository) Provide(words string) (abstractPhrase.Entity, error) {
 out:
 	for _, wordValue := range path[1:] {
 
-		targetPhrases, err := phrase.GetTargetPhrases()
+		targetPhraseIdentifiers, err := phrase.GetTargetPhrases()
 		if err != nil {
 			return nil, err
+		}
+
+		targetPhrases := make([]abstractPhrase.Entity, 0, len(targetPhraseIdentifiers))
+		for _, targetPhraseIdentifier := range targetPhraseIdentifiers {
+
+			targetPhrase, err := r.phraseStorage.ReadEntityByPhrase(targetPhraseIdentifier)
+			if err != nil {
+				return nil, err
+			}
+
+			targetPhrases = append(targetPhrases, targetPhrase)
 		}
 
 		// use existing
@@ -93,7 +108,7 @@ out:
 		// TODO: remove after refactoring word package
 		word_ := word.(abstractWord.Entity)
 
-		newPhrase, err := createEntity(r.storage, class, word_)
+		newPhrase, err := r.phraseFactory.ProvideEntity(class, word_)
 		if err != nil {
 			return nil, err
 		}
@@ -138,7 +153,12 @@ func (r *Repository) Extract(phrase abstractPhrase.Entity) (string, error) {
 			break
 		}
 
-		phrase, err = phrase.GetSourcePhrase()
+		phraseIdentifier, err := phrase.GetSourcePhrase()
+		if err != nil {
+			return "", err
+		}
+
+		phrase, err := r.phraseStorage.ReadEntityByPhrase(phraseIdentifier)
 		if err != nil {
 			return "", err
 		}
@@ -164,7 +184,7 @@ func (r *Repository) Extract(phrase abstractPhrase.Entity) (string, error) {
 	return path.reverse().toString(), nil
 }
 
-func (r *Repository) Fetch(detailIdentifier uint) (abstractPhrase.Entity, error) {
+func (r *Repository) Fetch(detail uint) (abstractPhrase.Entity, error) {
 
-	return readEntityByDetail(r.storage, detailIdentifier)
+	return r.phraseStorage.ReadEntityByDetail(detail)
 }

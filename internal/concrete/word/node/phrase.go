@@ -72,6 +72,35 @@ func (p Phrase) ProvideSingleTarget() (uint, error) {
 	}
 }
 
+func (p Phrase) HasSingleTargetSources() (bool, error) {
+
+	target, err := p.ProvideSingleTarget()
+	if err != nil {
+		return false, err
+	}
+
+	sources, err := p.storage.ReadSources(target)
+
+	switch len(sources) {
+
+	case 0:
+
+		return false, nil
+
+	case 1:
+
+		if sources[0] != p.identifier {
+			return false, fmt.Errorf("word not pointing to itself: %d", p.identifier)
+		}
+
+		return true, nil
+
+	default:
+
+		return false, fmt.Errorf("word not pointing to itself: %d", p.identifier)
+	}
+}
+
 func (p Phrase) GetWord() (uint, error) {
 
 	wordIdentifier, emptyReference, err := p.storage.GetReference(p.identifier)

@@ -42,6 +42,11 @@ func (e Entity) ProvideSingleTarget() (uint, error) {
 	return e.phraseNode.ProvideSingleTarget()
 }
 
+func (e Entity) HasSingleTargetSources() (bool, error) {
+
+	return e.phraseNode.HasSingleTargetSources()
+}
+
 func (e Entity) provideNext(characterValue rune, entities *entities) (Entity, error) {
 
 	targetWords, err := e.wordNode.ReadTargets()

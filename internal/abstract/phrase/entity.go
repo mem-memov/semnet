@@ -6,10 +6,10 @@ type Entity interface {
 	GetPhrase() uint
 	GetDetail() uint
 	PointToPhrase(phrase uint) error
-	GetTargetPhrases() ([]Entity, error)
+	GetTargetPhrases() ([]uint, error)
 	GetSourceWord() (uint, error)
 	HasSourcePhrase() (bool, error)
-	GetSourcePhrase() (Entity, error)
+	GetSourcePhrase() (uint, error)
 	GetSourceDetails() ([]uint, error)
 	GetTargetDetails() ([]uint, error)
 	AddSourceDetail(detail uint) error
