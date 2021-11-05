@@ -5,6 +5,6 @@ type Entity interface {
 
 	PhraseIdentifier() uint
 	ProvideSingleTarget() (uint, error)
-	HasSingleTargetSources() (bool, error)
+	HasSingleTargetOtherTargets() (bool, error)
 	Mark(sourceIdentifier uint) error
 }

@@ -72,16 +72,16 @@ func (p Phrase) ProvideSingleTarget() (uint, error) {
 	}
 }
 
-func (p Phrase) HasSingleTargetSources() (bool, error) {
+func (p Phrase) HasSingleTargetOtherTargets() (bool, error) {
 
 	target, err := p.ProvideSingleTarget()
 	if err != nil {
 		return false, err
 	}
 
-	sources, err := p.storage.ReadSources(target)
+	backTargets, err := p.storage.ReadTargets(target)
 
-	switch len(sources) {
+	switch len(backTargets) {
 
 	case 0:
 
@@ -89,7 +89,7 @@ func (p Phrase) HasSingleTargetSources() (bool, error) {
 
 	case 1:
 
-		if sources[0] != p.identifier {
+		if backTargets[0] != p.identifier {
 			return false, fmt.Errorf("word not pointing to itself: %d", p.identifier)
 		}
 

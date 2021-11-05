@@ -42,9 +42,9 @@ func (e Entity) ProvideSingleTarget() (uint, error) {
 	return e.phraseNode.ProvideSingleTarget()
 }
 
-func (e Entity) HasSingleTargetSources() (bool, error) {
+func (e Entity) HasSingleTargetOtherTargets() (bool, error) {
 
-	return e.phraseNode.HasSingleTargetSources()
+	return e.phraseNode.HasSingleTargetOtherTargets()
 }
 
 func (e Entity) provideNext(characterValue rune, entities *entities) (Entity, error) {

@@ -20,7 +20,7 @@ func NewFactory(storage abstractPhrase.Storage) *Factory {
 
 func (f *Factory) ProvideEntity(classEntity abstractClass.Entity, wordEntity abstractWord.Entity) (abstractPhrase.Entity, error) {
 
-	hasWordSources, err := wordEntity.HasSingleTargetSources()
+	hasWordSources, err := wordEntity.HasSingleTargetOtherTargets()
 	if err != nil {
 		return Entity{}, err
 	}
