@@ -64,11 +64,6 @@ func (s *Storage) CreateEntity(
 		return nil, err
 	}
 
-	err = wordEntity.PointToPhrase(word)
-	if err != nil {
-		return nil, err
-	}
-
 	return Entity{
 		class:   class,
 		word:    word,

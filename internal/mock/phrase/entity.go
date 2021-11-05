@@ -5,20 +5,20 @@ import (
 )
 
 type EntityMock struct {
-	GetClass_ func() uint
-	GetWord_ func() uint
-	GetPhrase_ func() uint
-	GetDetail_ func() uint
-	PointToPhrase_ func(uint) error
+	GetClass_         func() uint
+	GetWord_          func() uint
+	GetPhrase_        func() uint
+	GetDetail_        func() uint
+	PointToPhrase_    func(uint) error
 	GetTargetPhrases_ func() ([]abstractPhrase.Entity, error)
-	GetSourceWord_ func() (uint, error)
-	HasSourcePhrase_ func() (bool, error)
-	GetSourcePhrase_ func() (abstractPhrase.Entity, error)
+	GetSourceWord_    func() (uint, error)
+	HasSourcePhrase_  func() (bool, error)
+	GetSourcePhrase_  func() (abstractPhrase.Entity, error)
 	GetSourceDetails_ func() ([]uint, error)
 	GetTargetDetails_ func() ([]uint, error)
-	AddSourceDetail_ func(detail uint) error
-	AddTargetDetail_ func(detail uint) error
-	Mark_ func(sourceIdentifier uint) error
+	AddSourceDetail_  func(detail uint) error
+	AddTargetDetail_  func(detail uint) error
+	Mark_             func(sourceIdentifier uint) error
 }
 
 var _ abstractPhrase.Entity = EntityMock{}

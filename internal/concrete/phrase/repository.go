@@ -9,7 +9,7 @@ import (
 
 type Repository struct {
 	phraseStorage   abstractPhrase.Storage
-	phraseFactory abstractPhrase.Factory
+	phraseFactory   abstractPhrase.Factory
 	classRepository abstractClass.Repository
 	wordRepository  abstractWord.Repository
 	paths           *paths
@@ -23,7 +23,7 @@ func NewRepository(storage abstract.Storage, classRepository abstractClass.Repos
 
 	return &Repository{
 		phraseStorage:   phraseStorage,
-		phraseFactory: NewFactory(phraseStorage),
+		phraseFactory:   NewFactory(phraseStorage),
 		classRepository: classRepository,
 		wordRepository:  wordRepository,
 		paths:           newPaths(),
@@ -42,16 +42,13 @@ func (r *Repository) Provide(words string) (abstractPhrase.Entity, error) {
 		return nil, err
 	}
 
-	// TODO: remove after refactoring word package
-	firstWord_ := firstWord.(abstractWord.Entity)
-
 	class, err := r.classRepository.ProvideEntity()
 	if err != nil {
 		return nil, err
 	}
 
 	// root
-	phrase, err := r.phraseFactory.ProvideEntity(class, firstWord_)
+	phrase, err := r.phraseFactory.ProvideEntity(class, firstWord)
 	if err != nil {
 		return nil, err
 	}
@@ -89,7 +86,7 @@ out:
 			}
 
 			if wordValue == targetValue {
-				phrase = targetPhrase.(Entity) // TODO: remove cast after word refactoring
+				phrase = targetPhrase
 				break out
 			}
 		}
@@ -105,10 +102,7 @@ out:
 			return nil, err
 		}
 
-		// TODO: remove after refactoring word package
-		word_ := word.(abstractWord.Entity)
-
-		newPhrase, err := r.phraseFactory.ProvideEntity(class, word_)
+		newPhrase, err := r.phraseFactory.ProvideEntity(class, word)
 		if err != nil {
 			return nil, err
 		}
@@ -158,7 +152,7 @@ func (r *Repository) Extract(phrase abstractPhrase.Entity) (string, error) {
 			return "", err
 		}
 
-		phrase, err := r.phraseStorage.ReadEntityByPhrase(phraseIdentifier)
+		phrase, err = r.phraseStorage.ReadEntityByPhrase(phraseIdentifier)
 		if err != nil {
 			return "", err
 		}

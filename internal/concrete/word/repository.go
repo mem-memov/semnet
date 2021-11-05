@@ -1,6 +1,7 @@
 package word
 
 import (
+	abstractWord "github.com/mem-memov/semnet/internal/abstract/word"
 	"github.com/mem-memov/semnet/internal/concrete/character"
 	"github.com/mem-memov/semnet/internal/concrete/class"
 )
@@ -23,7 +24,7 @@ func NewRepository(storage storage, classRepository *class.Repository, character
 	}
 }
 
-func (r *Repository) Provide(word string) (interface{}, error) {
+func (r *Repository) Provide(word string) (abstractWord.Entity, error) {
 
 	path, err := r.paths.collect(word)
 	if err != nil {
@@ -42,7 +43,7 @@ func (r *Repository) Provide(word string) (interface{}, error) {
 
 	for _, characterValue := range path[1:] {
 
-		entity, err = entity.provideNext(characterValue, r.entities)
+		entity, err = entity.ProvideNext(characterValue, r.entities)
 		if err != nil {
 			return Entity{}, err
 		}
@@ -51,12 +52,12 @@ func (r *Repository) Provide(word string) (interface{}, error) {
 	return entity, nil
 }
 
-func (r *Repository) Extract(entity interface{}) (string, error) {
+func (r *Repository) Extract(entity abstractWord.Entity) (string, error) {
 
 	// TODO: remove after rafactoring
 	entit := entity.(Entity)
 
-	characterValue, err := entit.characterValue()
+	characterValue, err := entit.CharacterValue()
 	if err != nil {
 		return "", err
 	}
@@ -65,13 +66,13 @@ func (r *Repository) Extract(entity interface{}) (string, error) {
 
 	for {
 		var isRoot bool
-		entity, isRoot, err = entit.findPrevious(r.entities)
+		entity, isRoot, err = entit.FindPrevious(r.entities)
 
 		if isRoot {
 			break
 		}
 
-		characterValue, err = entit.characterValue()
+		characterValue, err = entit.CharacterValue()
 		if err != nil {
 			return "", err
 		}
