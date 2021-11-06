@@ -80,7 +80,7 @@ func (e Element) ProvideNextElement(characterValue rune) (abstractWord.Element, 
 		return nil, err
 	}
 
-	err = e.word.PointToPhrase(newWord.GetWord())
+	err = e.word.PointToWord(newWord.GetWord())
 	if err != nil {
 		return nil, err
 	}

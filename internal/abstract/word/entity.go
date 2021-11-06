@@ -13,6 +13,7 @@ type Entity interface {
 
 	HasSourceWord() (bool, error)
 	GetSourceWord() (uint, error)
+	PointToWord(word uint) error
 	GetTargetWords() ([]uint, error)
 
 	ProvideSingleTarget() (uint, error)

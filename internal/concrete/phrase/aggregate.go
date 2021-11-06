@@ -51,7 +51,7 @@ func (a Aggregate) Extract() (string, error) {
 			break
 		}
 
-		phraseElement, err := phraseElement.GetPreviousElement()
+		phraseElement, err = phraseElement.GetPreviousElement()
 
 		wordValue, err := phraseElement.ExtractWordValue()
 		if err != nil {

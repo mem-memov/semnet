@@ -162,3 +162,8 @@ func (e Entity) GetSourceWord() (uint, error) {
 
 	return sourceWords[0], nil
 }
+
+func (e Entity) PointToWord(word uint) error {
+
+	return e.storage.Connect(e.word, word)
+}

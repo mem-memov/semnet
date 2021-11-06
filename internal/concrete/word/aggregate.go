@@ -33,7 +33,7 @@ func (a Aggregate) Extract() (string, error) {
 			break
 		}
 
-		wordElement, err := wordElement.GetPreviousElement()
+		wordElement, err = wordElement.GetPreviousElement()
 
 		characterValue, err := wordElement.ExtractCharacterValue()
 		if err != nil {
