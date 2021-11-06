@@ -41,7 +41,7 @@ func (a Aggregate) GetObjectAndProperty() (string, string, error) {
 		return "", "", err
 	}
 
-	objectPhraseValue, err := a.phraseRepository.Extract(objectPhrase)
+	objectPhraseValue, err := objectPhrase.Extract()
 	if err != nil {
 		return "", "", err
 	}
@@ -51,7 +51,7 @@ func (a Aggregate) GetObjectAndProperty() (string, string, error) {
 		return "", "", err
 	}
 
-	propertyPhraseValue, err := a.phraseRepository.Extract(propertyPhrase)
+	propertyPhraseValue, err := propertyPhrase.Extract()
 	if err != nil {
 		return "", "", err
 	}

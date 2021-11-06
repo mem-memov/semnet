@@ -54,10 +54,7 @@ func (r *Repository) Provide(word string) (abstractWord.Entity, error) {
 
 func (r *Repository) Extract(entity abstractWord.Entity) (string, error) {
 
-	// TODO: remove after rafactoring
-	entit := entity.(Entity)
-
-	characterValue, err := entit.CharacterValue()
+	characterValue, err := entity.CharacterValue()
 	if err != nil {
 		return "", err
 	}
@@ -66,13 +63,13 @@ func (r *Repository) Extract(entity abstractWord.Entity) (string, error) {
 
 	for {
 		var isRoot bool
-		entity, isRoot, err = entit.FindPrevious(r.entities)
+		entity, isRoot, err = entity.FindPrevious(r.entities)
 
 		if isRoot {
 			break
 		}
 
-		characterValue, err = entit.CharacterValue()
+		characterValue, err = entity.CharacterValue()
 		if err != nil {
 			return "", err
 		}

@@ -21,8 +21,8 @@ func NewFactory(storage abstractDetail.Storage) *Factory {
 
 func (f *Factory) ProvideEntity(
 	classEntity abstractClass.Entity,
-	objectPhrase abstractPhrase.Entity,
-	propertyPhrase abstractPhrase.Entity,
+	objectPhrase abstractPhrase.Aggregate,
+	propertyPhrase abstractPhrase.Aggregate,
 ) (abstractDetail.Entity, error) {
 
 	objectTargetDetails, err := objectPhrase.GetTargetDetails()

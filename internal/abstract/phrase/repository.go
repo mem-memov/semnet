@@ -1,7 +1,6 @@
 package phrase
 
 type Repository interface {
-	Provide(words string) (Entity, error)
-	Extract(entity Entity) (string, error)
-	Fetch(detail uint) (Entity, error)
+	Provide(words string) (Aggregate, error)
+	Fetch(detail uint) (Aggregate, error)
 }

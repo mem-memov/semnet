@@ -7,14 +7,21 @@ import (
 )
 
 type Element struct {
-	phrase        abstractPhrase.Entity
-	phraseStorage abstractPhrase.Storage
+	phrase          abstractPhrase.Entity
+	phraseStorage   abstractPhrase.Storage
 	phraseFactory   abstractPhrase.Factory
 	classRepository abstractClass.Repository
 	wordRepository  abstractWord.Repository
 }
 
-func (e Element) GetNextElement(wordValue string) (abstractPhrase.Element, error) {
+var _ abstractPhrase.Element = Element{}
+
+func (e Element) GetEntity() abstractPhrase.Entity {
+
+	return e.phrase
+}
+
+func (e Element) ProvideNextElement(wordValue string) (abstractPhrase.Element, error) {
 
 	targetPhraseIdentifiers, err := e.phrase.GetTargetPhrases()
 	if err != nil {
@@ -46,11 +53,11 @@ func (e Element) GetNextElement(wordValue string) (abstractPhrase.Element, error
 
 		if wordValue == targetValue {
 			return Element{
-				phrase: targetPhrase,
-				phraseStorage: e.phraseStorage,
-				phraseFactory: e.phraseFactory,
+				phrase:          targetPhrase,
+				phraseStorage:   e.phraseStorage,
+				phraseFactory:   e.phraseFactory,
 				classRepository: e.classRepository,
-				wordRepository: e.wordRepository,
+				wordRepository:  e.wordRepository,
 			}, nil
 		}
 	}
@@ -77,10 +84,51 @@ func (e Element) GetNextElement(wordValue string) (abstractPhrase.Element, error
 	}
 
 	return Element{
-		phrase: newPhrase,
-		phraseStorage: e.phraseStorage,
-		phraseFactory: e.phraseFactory,
+		phrase:          newPhrase,
+		phraseStorage:   e.phraseStorage,
+		phraseFactory:   e.phraseFactory,
 		classRepository: e.classRepository,
-		wordRepository: e.wordRepository,
+		wordRepository:  e.wordRepository,
+	}, nil
+}
+
+func (e Element) ExtractWordValue() (string, error) {
+
+	sourceWordIdentifier, err := e.phrase.GetSourceWord()
+	if err != nil {
+		return "", err
+	}
+
+	word, err := e.wordRepository.Fetch(sourceWordIdentifier)
+	if err != nil {
+		return "", err
+	}
+
+	return e.wordRepository.Extract(word)
+}
+
+func (e Element) HasPreviousElement() (bool, error) {
+
+	return e.phrase.HasSourcePhrase()
+}
+
+func (e Element) GetPreviousElement() (abstractPhrase.Element, error) {
+
+	phraseIdentifier, err := e.phrase.GetSourcePhrase()
+	if err != nil {
+		return nil, err
+	}
+
+	phrase, err := e.phraseStorage.ReadEntityByPhrase(phraseIdentifier)
+	if err != nil {
+		return nil, err
+	}
+
+	return Element{
+		phrase:          phrase,
+		phraseStorage:   e.phraseStorage,
+		phraseFactory:   e.phraseFactory,
+		classRepository: e.classRepository,
+		wordRepository:  e.wordRepository,
 	}, nil
 }

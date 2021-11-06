@@ -21,8 +21,8 @@ func NewStorage(storage abstract.Storage) *Storage {
 
 func (s *Storage) CreateEntity(
 	classEntity abstractClass.Entity,
-	objectPhrase abstractPhrase.Entity,
-	propertyPhrase abstractPhrase.Entity,
+	objectPhrase abstractPhrase.Aggregate,
+	propertyPhrase abstractPhrase.Aggregate,
 ) (abstractDetail.Entity, error) {
 
 	class, err := classEntity.CreateDetail()
