@@ -29,6 +29,11 @@ func (e Entity) Mark(sourceIdentifier uint) error {
 	return e.wordNode.Mark(sourceIdentifier)
 }
 
+func (e Entity) IsBeginningOfWords() (bool, error) {
+
+	return e.wordNode.IsBeginningOfWords()
+}
+
 func (e Entity) ProvideSingleTarget() (uint, error) {
 
 	return e.wordNode.ProvideSingleTarget()

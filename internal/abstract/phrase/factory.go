@@ -6,5 +6,5 @@ import (
 )
 
 type Factory interface {
-	ProvideEntity(classEntity class.Entity, wordEntity word.Entity) (Entity, error)
+	ProvideFirstEntity(classEntity class.Entity, wordEntity word.Aggregate) (Entity, error)
 }

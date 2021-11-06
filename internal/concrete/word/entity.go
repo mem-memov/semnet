@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/mem-memov/semnet/internal/abstract"
 	abstractWord "github.com/mem-memov/semnet/internal/abstract/word"
-	"github.com/mem-memov/semnet/internal/concrete/word/node"
 )
 
 type Entity struct {
@@ -17,14 +16,43 @@ type Entity struct {
 
 var _ abstractWord.Entity = Entity{}
 
+func (e Entity) GetClass() uint {
+
+	return e.class
+}
+
+func (e Entity) GetCharacter() uint {
+
+	return e.character
+}
+
+func (e Entity) GetWord() uint {
+
+	return e.word
+}
+
+func (e Entity) GetPhrase() uint {
+
+	return e.phrase
+}
+
+func (e Entity) GetSourceCharacter() (uint, error) {
+
+	sourceCharacters, err := e.storage.ReadSources(e.character)
+	if err != nil {
+		return 0, err
+	}
+
+	if len(sourceCharacters) != 1 {
+		return 0, fmt.Errorf("word has wrong number of source characters: %d at %d", len(sourceCharacters), e.character)
+	}
+
+	return sourceCharacters[0], nil
+}
+
 func (e Entity) PointToPhrase(phrase uint) error {
 
 	return e.storage.Connect(e.phrase, phrase)
-}
-
-func (e Entity) PhraseIdentifier() uint {
-
-	return e.phrase
 }
 
 func (e Entity) Mark(sourceIdentifier uint) error {
@@ -58,11 +86,11 @@ func (e Entity) ProvideSingleTarget() (uint, error) {
 		return targets[0], nil
 
 	default:
-		return 0, fmt.Errorf("cluster %d has too many targets: %d", e.phrase, len(targets))
+		return 0, fmt.Errorf("word has wrong number of target phrases: %d at %d", len(targets), e.phrase)
 	}
 }
 
-func (e Entity) HasSingleTargetOtherTargets() (bool, error) {
+func (e Entity) IsBeginningOfPhrases() (bool, error) {
 
 	target, err := e.ProvideSingleTarget()
 	if err != nil {
@@ -91,91 +119,46 @@ func (e Entity) HasSingleTargetOtherTargets() (bool, error) {
 	}
 }
 
-func (e Entity) ProvideNext(characterValue rune, entities *entities) (Entity, error) {
+func (e Entity) GetTargetWords() ([]uint, error) {
 
-	targetWords, err := e.storage.ReadTargets(e.word)
-	if err != nil {
-		return Entity{}, nil
-	}
-
-	// search existing
-	for _, targetWord := range targetWords {
-		classIdentifier, characterIdentifier, phraseIdentifier, err := targetWord.GetClassAndCharacterAndPhrase()
-		if err != nil {
-			return Entity{}, nil
-		}
-
-		entity := entities.create(classIdentifier, characterIdentifier, targetWord.Identifier(), phraseIdentifier)
-
-		hasBitValue, err := entity.HasCharacterValue(characterValue)
-		if err != nil {
-			return Entity{}, nil
-		}
-
-		if hasBitValue {
-			return entity, nil
-		}
-	}
-
-	// Provide new
-	newClassNode, err := e.classNode.NewClass()
-	if err != nil {
-		return Entity{}, nil
-	}
-
-	newCharacterNode, err := e.characterNode.NewCharacter(characterValue)
-	if err != nil {
-		return Entity{}, nil
-	}
-
-	newWordNode, err := e.wordNode.NewWord(newCharacterNode)
-	if err != nil {
-		return Entity{}, nil
-	}
-
-	newPhraseNode, err := e.phraseNode.NewPhrase(newWordNode)
-	if err != nil {
-		return Entity{}, nil
-	}
-
-	return newEntity(newClassNode, newCharacterNode, newWordNode, newPhraseNode), nil
+	return e.storage.ReadTargets(e.word)
 }
 
-func (e Entity) HasCharacterValue(characterValue rune) (bool, error) {
+func (e Entity) GetTargetCharacter() (uint, error) {
 
-	hasCharacterValue, err := e.characterNode.HasCharacterValue(characterValue)
+	targetCharacters, err := e.storage.ReadTargets(e.character)
+	if err != nil {
+		return 0, err
+	}
+
+	if len(targetCharacters) != 1 {
+		return 0, fmt.Errorf("word has wrong number of target charcters: %d at %d", len(targetCharacters), e.word)
+	}
+
+	return targetCharacters[0], nil
+}
+
+func (e Entity) HasSourceWord() (bool, error) {
+
+	// TODO: read count from DB
+	sourceWords, err := e.storage.ReadSources(e.word)
 	if err != nil {
 		return false, err
 	}
 
-	return hasCharacterValue, nil
+	return len(sourceWords) != 0, nil
 }
 
-func (e Entity) CharacterValue() (rune, error) {
-
-	return e.characterNode.CharacterValue()
-}
-
-func (e Entity) FindPrevious(entities *entities) (Entity, bool, error) {
+func (e Entity) GetSourceWord() (uint, error) {
 
 	sourceWords, err := e.storage.ReadSources(e.word)
 	if err != nil {
-		return Entity{}, false, nil
+		return 0, err
 	}
 
-	switch len(sourceWords) {
-	case 0:
-		return e, true, nil
-	case 1:
-		parentWord := sourceWords[0]
-
-		class, character, phrase, err := parentWord.GetClassAndCharacterAndPhrase()
-		if err != nil {
-			return Entity{}, false, nil
-		}
-
-		return entities.create(class, character, parentWord, phrase), false, nil
-	default:
-		return Entity{}, false, fmt.Errorf("too many sources in word tree")
+	if len(sourceWords) != 1 {
+		return 0, fmt.Errorf("too many sources in word tree: %d at %d", len(sourceWords), e.phrase)
 	}
+
+	return sourceWords[0], nil
 }

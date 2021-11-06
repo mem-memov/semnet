@@ -46,7 +46,7 @@ func (e Element) ProvideNextElement(wordValue string) (abstractPhrase.Element, e
 			return nil, err
 		}
 
-		targetValue, err := e.wordRepository.Extract(targetWord)
+		targetValue, err := targetWord.Extract()
 		if err != nil {
 			return nil, err
 		}
@@ -73,7 +73,7 @@ func (e Element) ProvideNextElement(wordValue string) (abstractPhrase.Element, e
 		return nil, err
 	}
 
-	newPhrase, err := e.phraseFactory.ProvideEntity(class, word)
+	newPhrase, err := e.phraseFactory.ProvideFirstEntity(class, word)
 	if err != nil {
 		return nil, err
 	}
@@ -94,17 +94,17 @@ func (e Element) ProvideNextElement(wordValue string) (abstractPhrase.Element, e
 
 func (e Element) ExtractWordValue() (string, error) {
 
-	sourceWordIdentifier, err := e.phrase.GetSourceWord()
+	targetWordIdentifier, err := e.phrase.GetTargetWord()
 	if err != nil {
 		return "", err
 	}
 
-	word, err := e.wordRepository.Fetch(sourceWordIdentifier)
+	word, err := e.wordRepository.Fetch(targetWordIdentifier)
 	if err != nil {
 		return "", err
 	}
 
-	return e.wordRepository.Extract(word)
+	return word.Extract()
 }
 
 func (e Element) HasPreviousElement() (bool, error) {

@@ -22,6 +22,35 @@ func (w Word) Mark(sourceIdentifier uint) error {
 	return w.storage.Connect(sourceIdentifier, w.identifier)
 }
 
+func (w Word) IsBeginningOfWords() (bool, error) {
+
+	target, err := w.ProvideSingleTarget()
+	if err != nil {
+		return false, err
+	}
+
+	backTargets, err := w.storage.ReadTargets(target)
+
+	switch len(backTargets) {
+
+	case 0:
+
+		return false, nil
+
+	case 1:
+
+		if backTargets[0] != w.identifier {
+			return false, fmt.Errorf("character not pointing to itself: %d", w.identifier)
+		}
+
+		return true, nil
+
+	default:
+
+		return false, fmt.Errorf("character not pointing to itself: %d", w.identifier)
+	}
+}
+
 func (w Word) ProvideSingleTarget() (uint, error) {
 
 	targets, err := w.storage.ReadTargets(w.identifier)

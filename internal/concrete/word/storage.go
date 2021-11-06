@@ -69,6 +69,7 @@ func (s *Storage) CreateEntity(
 		character: character,
 		word:      word,
 		phrase:    phrase,
+		storage:   s.storage,
 	}, nil
 }
 
@@ -94,6 +95,7 @@ func (s *Storage) ReadEntityByClass(class uint) (abstractWord.Entity, error) {
 		character: character,
 		word:      word,
 		phrase:    phrase,
+		storage:   s.storage,
 	}, nil
 }
 
@@ -114,6 +116,7 @@ func (s *Storage) ReadEntityByCharacter(character uint) (abstractWord.Entity, er
 		character: character,
 		word:      word,
 		phrase:    phrase,
+		storage:   s.storage,
 	}, nil
 }
 
@@ -134,6 +137,7 @@ func (s *Storage) ReadEntityByWord(word uint) (abstractWord.Entity, error) {
 		character: character,
 		word:      word,
 		phrase:    phrase,
+		storage:   s.storage,
 	}, nil
 }
 
@@ -159,5 +163,6 @@ func (s *Storage) ReadEntityByPhrase(phrase uint) (abstractWord.Entity, error) {
 		character: character,
 		word:      word,
 		phrase:    phrase,
+		storage:   s.storage,
 	}, nil
 }

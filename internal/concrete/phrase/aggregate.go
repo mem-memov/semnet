@@ -3,9 +3,9 @@ package phrase
 import abstractPhrase "github.com/mem-memov/semnet/internal/abstract/phrase"
 
 type Aggregate struct {
-	phrase          abstractPhrase.Entity
-	phraseElements  abstractPhrase.Elements
-	paths           *paths
+	phrase         abstractPhrase.Entity
+	phraseElements abstractPhrase.Elements
+	paths          *paths
 }
 
 var _ abstractPhrase.Aggregate = Aggregate{}

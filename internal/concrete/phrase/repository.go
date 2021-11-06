@@ -8,9 +8,9 @@ import (
 )
 
 type Repository struct {
-	phraseStorage   abstractPhrase.Storage
-	phraseElements  abstractPhrase.Elements
-	paths           *paths
+	phraseStorage  abstractPhrase.Storage
+	phraseElements abstractPhrase.Elements
+	paths          *paths
 }
 
 var _ abstractPhrase.Repository = &Repository{}
@@ -21,9 +21,9 @@ func NewRepository(storage abstract.Storage, classRepository abstractClass.Repos
 	phraseFactory := NewFactory(phraseStorage)
 
 	return &Repository{
-		phraseStorage:   phraseStorage,
-		phraseElements:  NewElements(phraseStorage, phraseFactory, classRepository, wordRepository),
-		paths:           newPaths(),
+		phraseStorage:  phraseStorage,
+		phraseElements: NewElements(phraseStorage, phraseFactory, classRepository, wordRepository),
+		paths:          newPaths(),
 	}
 }
 
@@ -45,9 +45,9 @@ func (r *Repository) Provide(words string) (abstractPhrase.Aggregate, error) {
 	}
 
 	return Aggregate{
-		phrase: phraseElement.GetEntity(),
+		phrase:         phraseElement.GetEntity(),
 		phraseElements: r.phraseElements,
-		paths: r.paths,
+		paths:          r.paths,
 	}, nil
 }
 
@@ -59,8 +59,8 @@ func (r *Repository) Fetch(detail uint) (abstractPhrase.Aggregate, error) {
 	}
 
 	return Aggregate{
-		phrase: phrase,
+		phrase:         phrase,
 		phraseElements: r.phraseElements,
-		paths: r.paths,
+		paths:          r.paths,
 	}, nil
 }

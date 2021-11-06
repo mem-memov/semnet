@@ -60,6 +60,20 @@ func (e Entity) GetSourceWord() (uint, error) {
 	return sourceWords[0], nil
 }
 
+func (e Entity) GetTargetWord() (uint, error) {
+
+	targetWords, err := e.storage.ReadTargets(e.word)
+	if err != nil {
+		return 0, err
+	}
+
+	if len(targetWords) != 1 {
+		return 0, fmt.Errorf("phrase has wrong number of target words: %d at %d", len(targetWords), e.word)
+	}
+
+	return targetWords[0], nil
+}
+
 func (e Entity) HasSourcePhrase() (bool, error) {
 
 	// TODO: read count from DB

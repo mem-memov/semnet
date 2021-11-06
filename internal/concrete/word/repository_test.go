@@ -31,16 +31,16 @@ func TestRepository(t *testing.T) {
 			classRepository := class.NewRepository(storage)
 			bitRepository := bit.NewRepository(storage, classRepository)
 			characterRepository := character.NewRepository(storage, classRepository, bitRepository)
-			r := NewRepository(storage, classRepository, characterRepository)
+			wordRepository := NewRepository(storage, classRepository, characterRepository)
 
-			entity, err := r.Provide(d.word)
+			aggregate, err := wordRepository.Provide(d.word)
 			if err != nil && err.Error() != d.provideErr.Error() {
 				t.Fail()
 			} else {
 				return
 			}
 
-			word, err := r.Extract(entity)
+			word, err := aggregate.Extract()
 			if err != nil && err.Error() != d.extractErr.Error() {
 				t.Fail()
 			} else {

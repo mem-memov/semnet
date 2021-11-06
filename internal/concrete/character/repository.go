@@ -23,7 +23,7 @@ func NewRepository(storage storage, classRepository *class.Repository, bitReposi
 	}
 }
 
-func (r *Repository) Provide(integer rune) (Entity, error) {
+func (r *Repository) Provide(integer rune) (interface{}, error) {
 
 	path, err := r.paths.collect(integer)
 	if err != nil {
@@ -51,9 +51,11 @@ func (r *Repository) Provide(integer rune) (Entity, error) {
 	return entity, nil
 }
 
-func (r *Repository) Extract(entity Entity) (rune, error) {
+func (r *Repository) Extract(entity interface{}) (rune, error) {
 
-	bitValue, err := entity.bitValue()
+	entity_ := entity.(Entity) // TODO: remove
+
+	bitValue, err := entity_.bitValue()
 	if err != nil {
 		return 0, err
 	}
@@ -62,13 +64,13 @@ func (r *Repository) Extract(entity Entity) (rune, error) {
 
 	for {
 		var isRoot bool
-		entity, isRoot, err = entity.findPrevious(r.entities)
+		entity_, isRoot, err = entity_.findPrevious(r.entities)
 
 		if isRoot {
 			break
 		}
 
-		bitValue, err = entity.bitValue()
+		bitValue, err = entity_.bitValue()
 		if err != nil {
 			return 0, err
 		}
@@ -88,7 +90,7 @@ func (r *Repository) Extract(entity Entity) (rune, error) {
 	return integer, nil
 }
 
-func (r *Repository) Fetch(wordIdentifier uint) (Entity, error) {
+func (r *Repository) Fetch(wordIdentifier uint) (interface{}, error) {
 
 	return r.entities.createWithWord(wordIdentifier)
 }

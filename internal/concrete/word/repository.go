@@ -1,86 +1,70 @@
 package word
 
 import (
+	"github.com/mem-memov/semnet/internal/abstract"
+	abstractCharacter "github.com/mem-memov/semnet/internal/abstract/character"
+	abstractClass "github.com/mem-memov/semnet/internal/abstract/class"
 	abstractWord "github.com/mem-memov/semnet/internal/abstract/word"
-	"github.com/mem-memov/semnet/internal/concrete/character"
-	"github.com/mem-memov/semnet/internal/concrete/class"
 )
 
 type Repository struct {
-	entities            *entities
-	characterRepository *character.Repository
-	tree                *tree
-	paths               *paths
+	wordStorage  abstractWord.Storage
+	wordFactory  abstractWord.Factory
+	wordElements abstractWord.Elements
+	paths        *paths
 }
 
-func NewRepository(storage storage, classRepository *class.Repository, characterRepository *character.Repository) *Repository {
-	entities := newEntities(storage, classRepository, characterRepository)
+func NewRepository(
+	storage abstract.Storage,
+	classRepository abstractClass.Repository,
+	characterRepository abstractCharacter.Repository,
+) *Repository {
+
+	wordStorage := NewStorage(storage)
+	wordFactory := NewFactory(wordStorage)
 
 	return &Repository{
-		entities:            entities,
-		characterRepository: characterRepository,
-		tree:                newTree(storage, entities),
-		paths:               newPaths(),
+		wordStorage:  wordStorage,
+		wordFactory:  wordFactory,
+		wordElements: NewElements(wordStorage, wordFactory, classRepository, characterRepository),
+		paths:        newPaths(),
 	}
 }
 
-func (r *Repository) Provide(word string) (abstractWord.Entity, error) {
+func (r *Repository) Provide(word string) (abstractWord.Aggregate, error) {
 
 	path, err := r.paths.collect(word)
 	if err != nil {
-		return Entity{}, err
+		return nil, err
 	}
 
-	firstCharacter, err := r.characterRepository.Provide(path[0])
+	wordElement, err := r.wordElements.ProvideFirstElement(path[0])
 	if err != nil {
-		return Entity{}, err
-	}
-
-	entity, err := r.tree.provideRoot(firstCharacter)
-	if err != nil {
-		return Entity{}, err
+		return nil, err
 	}
 
 	for _, characterValue := range path[1:] {
 
-		entity, err = entity.ProvideNext(characterValue, r.entities)
-		if err != nil {
-			return Entity{}, err
-		}
+		wordElement, err = wordElement.ProvideNextElement(characterValue)
 	}
 
-	return entity, nil
+	return Aggregate{
+		word:         wordElement.GetEntity(),
+		wordElements: r.wordElements,
+		paths:        r.paths,
+	}, nil
 }
 
-func (r *Repository) Extract(entity abstractWord.Entity) (string, error) {
+func (r *Repository) Fetch(phrase uint) (abstractWord.Aggregate, error) {
 
-	characterValue, err := entity.CharacterValue()
+	word, err := r.wordStorage.ReadEntityByPhrase(phrase)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	path := r.paths.create(characterValue)
-
-	for {
-		var isRoot bool
-		entity, isRoot, err = entity.FindPrevious(r.entities)
-
-		if isRoot {
-			break
-		}
-
-		characterValue, err = entity.CharacterValue()
-		if err != nil {
-			return "", err
-		}
-
-		path = append(path, characterValue)
-	}
-
-	return path.reverse().toString(), nil
-}
-
-func (r *Repository) Fetch(phraseIdentifier uint) (interface{}, error) {
-
-	return r.entities.createWithPhrase(phraseIdentifier)
+	return Aggregate{
+		word:         word,
+		wordElements: r.wordElements,
+		paths:        r.paths,
+	}, nil
 }

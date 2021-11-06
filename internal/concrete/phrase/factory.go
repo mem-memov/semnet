@@ -7,26 +7,27 @@ import (
 )
 
 type Factory struct {
-	storage abstractPhrase.Storage
+	phraseStorage abstractPhrase.Storage
 }
 
 var _ abstractPhrase.Factory = &Factory{}
 
-func NewFactory(storage abstractPhrase.Storage) *Factory {
+func NewFactory(phraseStorage abstractPhrase.Storage) *Factory {
+
 	return &Factory{
-		storage: storage,
+		phraseStorage: phraseStorage,
 	}
 }
 
-func (f *Factory) ProvideEntity(classEntity abstractClass.Entity, wordEntity abstractWord.Entity) (abstractPhrase.Entity, error) {
+func (f *Factory) ProvideFirstEntity(classEntity abstractClass.Entity, wordEntity abstractWord.Aggregate) (abstractPhrase.Entity, error) {
 
-	hasWordSources, err := wordEntity.HasSingleTargetOtherTargets()
+	isBeginningOfPhrases, err := wordEntity.IsBeginningOfPhrases()
 	if err != nil {
 		return Entity{}, err
 	}
 
-	if !hasWordSources {
-		return f.storage.CreateEntity(classEntity, wordEntity)
+	if !isBeginningOfPhrases {
+		return f.phraseStorage.CreateEntity(classEntity, wordEntity)
 	}
 
 	word, err := wordEntity.ProvideSingleTarget()
@@ -34,5 +35,5 @@ func (f *Factory) ProvideEntity(classEntity abstractClass.Entity, wordEntity abs
 		return nil, err
 	}
 
-	return f.storage.ReadEntityByWord(word)
+	return f.phraseStorage.ReadEntityByWord(word)
 }

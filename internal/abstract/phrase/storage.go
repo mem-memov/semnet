@@ -6,7 +6,7 @@ import (
 )
 
 type Storage interface {
-	CreateEntity(classEntity class.Entity, wordEntity word.Entity) (Entity, error)
+	CreateEntity(classEntity class.Entity, wordEntity word.Aggregate) (Entity, error)
 	ReadEntityByClass(class uint) (Entity, error)
 	ReadEntityByWord(word uint) (Entity, error)
 	ReadEntityByPhrase(phrase uint) (Entity, error)

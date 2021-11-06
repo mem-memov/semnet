@@ -21,7 +21,7 @@ func NewStorage(storage abstract.Storage) *Storage {
 
 func (s *Storage) CreateEntity(
 	classEntity abstractClass.Entity,
-	wordEntity abstractWord.Entity,
+	wordEntity abstractWord.Aggregate,
 ) (abstractPhrase.Entity, error) {
 
 	word, err := wordEntity.ProvideSingleTarget()
