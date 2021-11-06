@@ -31,7 +31,7 @@ func (e Element) ProvideNextElement(characterValue rune) (abstractWord.Element, 
 	targetWords := make([]abstractWord.Entity, 0, len(targetWordIdentifiers))
 	for _, targetWordIdentifier := range targetWordIdentifiers {
 
-		targetWord, err := e.wordStorage.ReadEntityByPhrase(targetWordIdentifier)
+		targetWord, err := e.wordStorage.ReadEntityByWord(targetWordIdentifier)
 		if err != nil {
 			return nil, err
 		}

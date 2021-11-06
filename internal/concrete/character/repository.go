@@ -1,6 +1,7 @@
 package character
 
 import (
+	abstractCharacter "github.com/mem-memov/semnet/internal/abstract/character"
 	"github.com/mem-memov/semnet/internal/concrete/bit"
 	"github.com/mem-memov/semnet/internal/concrete/class"
 )
@@ -53,9 +54,9 @@ func (r *Repository) Provide(integer rune) (interface{}, error) {
 
 func (r *Repository) Extract(entity interface{}) (rune, error) {
 
-	entity_ := entity.(Entity) // TODO: remove
+	entity_ := entity.(abstractCharacter.Entity) // TODO: remove
 
-	bitValue, err := entity_.bitValue()
+	bitValue, err := entity_.BitValue()
 	if err != nil {
 		return 0, err
 	}
@@ -64,13 +65,13 @@ func (r *Repository) Extract(entity interface{}) (rune, error) {
 
 	for {
 		var isRoot bool
-		entity_, isRoot, err = entity_.findPrevious(r.entities)
+		entity_, isRoot, err = entity_.FindPrevious(r.entities)
 
 		if isRoot {
 			break
 		}
 
-		bitValue, err = entity_.bitValue()
+		bitValue, err = entity_.BitValue()
 		if err != nil {
 			return 0, err
 		}

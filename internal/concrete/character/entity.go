@@ -39,7 +39,7 @@ func (e Entity) ProvideSingleTarget() (uint, error) {
 	return e.wordNode.ProvideSingleTarget()
 }
 
-func (e Entity) provideNext(bitValue bool, entities *entities) (Entity, error) {
+func (e Entity) ProvideNext(bitValue bool, entities *entities) (Entity, error) {
 
 	targetCharacters, err := e.characterNode.ReadTargets()
 	if err != nil {
@@ -55,7 +55,7 @@ func (e Entity) provideNext(bitValue bool, entities *entities) (Entity, error) {
 
 		entity := entities.create(classIdentifier, bitIdentifier, targetCharacter.Identifier(), wordIdentifier)
 
-		hasBitValue, err := entity.hasBitValue(bitValue)
+		hasBitValue, err := entity.HasBitValue(bitValue)
 		if err != nil {
 			return Entity{}, nil
 		}
@@ -89,7 +89,7 @@ func (e Entity) provideNext(bitValue bool, entities *entities) (Entity, error) {
 	return newEntity(newClassNode, newBitNode, newCharacterNode, newWordNode), nil
 }
 
-func (e Entity) hasBitValue(bit bool) (bool, error) {
+func (e Entity) HasBitValue(bit bool) (bool, error) {
 
 	hasBitValue, err := e.bitNode.HasBitValue(bit)
 	if err != nil {
@@ -99,7 +99,7 @@ func (e Entity) hasBitValue(bit bool) (bool, error) {
 	return hasBitValue, nil
 }
 
-func (e Entity) findPrevious(entities *entities) (Entity, bool, error) {
+func (e Entity) FindPrevious(entities *entities) (Entity, bool, error) {
 
 	sourceCharacters, err := e.characterNode.ReadSources()
 	if err != nil {
@@ -123,7 +123,7 @@ func (e Entity) findPrevious(entities *entities) (Entity, bool, error) {
 	}
 }
 
-func (e Entity) bitValue() (bool, error) {
+func (e Entity) BitValue() (bool, error) {
 
 	return e.bitNode.BitValue()
 }

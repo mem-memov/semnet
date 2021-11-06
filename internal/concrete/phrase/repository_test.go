@@ -21,6 +21,7 @@ func TestRepository(t *testing.T) {
 		{"one word", "hello", nil, nil},
 		{"many words", "this practical guide", nil, nil},
 		{"short words", "a b c", nil, nil},
+		{"words with the same beginning", "cat cab", nil, nil},
 	}
 
 	for _, d := range data {
