@@ -29,11 +29,6 @@ func (s *Storage) CreateEntity(
 		return Entity{}, err
 	}
 
-	err = characterEntity.Mark(character)
-	if err != nil {
-		return nil, err
-	}
-
 	class, err := classEntity.CreateWord()
 	if err != nil {
 		return nil, err

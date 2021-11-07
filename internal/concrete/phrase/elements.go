@@ -47,6 +47,12 @@ func (e *Elements) ProvideFirstElement(wordValue string) (abstractPhrase.Element
 		return nil, err
 	}
 
+	err = firstWord.Mark(phrase.GetWord())
+	if err != nil {
+		return nil, err
+	}
+
+
 	return Element{
 		phrase:          phrase,
 		phraseStorage:   e.phraseStorage,
