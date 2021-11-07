@@ -1,21 +1,29 @@
 package bit
 
 import (
-	node2 "github.com/mem-memov/semnet/internal/concrete/bit/node"
+	abstractBit "github.com/mem-memov/semnet/internal/abstract/bit"
+	"github.com/mem-memov/semnet/internal/concrete/bit/node"
 )
 
 type Entity struct {
 	value         bool
-	classNode     node2.Class
-	characterNode node2.Character
+	classNode     node.Class
+	characterNode node.Character
 }
 
-func newEntity(value bool, classNode node2.Class, characterNode node2.Character) Entity {
+var _ abstractBit.Entity = Entity{}
+
+func newEntity(value bool, classNode node.Class, characterNode node.Character) Entity {
 	return Entity{
 		value:         value,
 		classNode:     classNode,
 		characterNode: characterNode,
 	}
+}
+
+func (e Entity) IsBeginningOfCharacters() (bool, error) {
+
+	return e.characterNode.IsBeginningOfCharacters()
 }
 
 func (e Entity) Identifier() uint {

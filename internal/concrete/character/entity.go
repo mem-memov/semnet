@@ -2,132 +2,149 @@ package character
 
 import (
 	"fmt"
-	node2 "github.com/mem-memov/semnet/internal/concrete/character/node"
+	"github.com/mem-memov/semnet/internal/abstract"
+	abstractCharacter "github.com/mem-memov/semnet/internal/abstract/character"
 )
 
 type Entity struct {
-	classNode     node2.Class
-	bitNode       node2.Bit
-	characterNode node2.Character
-	wordNode      node2.Word
+	class     uint
+	bit       uint
+	character uint
+	word      uint
+	storage   abstract.Storage
 }
 
-func newEntity(classNode node2.Class, bitNode node2.Bit, characterNode node2.Character, wordNode node2.Word) Entity {
-	return Entity{
-		classNode:     classNode,
-		bitNode:       bitNode,
-		characterNode: characterNode,
-		wordNode:      wordNode,
-	}
+var _ abstractCharacter.Entity = Entity{}
+
+func (e Entity) GetClass() uint {
+
+	return e.class
 }
 
-func (e Entity) WordIdentifier() uint {
-	return e.wordNode.Identifier()
+func (e Entity) GetBit() uint {
+
+	return e.bit
 }
 
-func (e Entity) Mark(sourceIdentifier uint) error {
-	return e.wordNode.Mark(sourceIdentifier)
+func (e Entity) GetCharacter() uint {
+
+	return e.character
 }
 
-func (e Entity) IsBeginningOfWords() (bool, error) {
+func (e Entity) GetWord() uint {
 
-	return e.wordNode.IsBeginningOfWords()
+	return e.word
 }
 
-func (e Entity) ProvideSingleTarget() (uint, error) {
+func (e Entity) GetTargetBit() (uint, error) {
 
-	return e.wordNode.ProvideSingleTarget()
-}
-
-func (e Entity) ProvideNext(bitValue bool, entities *entities) (Entity, error) {
-
-	targetCharacters, err := e.characterNode.ReadTargets()
+	targetBits, err := e.storage.ReadTargets(e.bit)
 	if err != nil {
-		return Entity{}, nil
+		return 0, err
 	}
 
-	// search existing
-	for _, targetCharacter := range targetCharacters {
-		classIdentifier, bitIdentifier, wordIdentifier, err := targetCharacter.GetClassAndBitAndWord()
-		if err != nil {
-			return Entity{}, nil
-		}
-
-		entity := entities.create(classIdentifier, bitIdentifier, targetCharacter.Identifier(), wordIdentifier)
-
-		hasBitValue, err := entity.HasBitValue(bitValue)
-		if err != nil {
-			return Entity{}, nil
-		}
-
-		if hasBitValue {
-			return entity, nil
-		}
+	if len(targetBits) != 1 {
+		return 0, fmt.Errorf("character has wrong number of target bits: %d at %d", len(targetBits), e.bit)
 	}
 
-	// Provide new
-	newClassNode, err := e.classNode.NewClass()
-	if err != nil {
-		return Entity{}, nil
-	}
-
-	newBitNode, err := e.bitNode.NewBit(bitValue)
-	if err != nil {
-		return Entity{}, nil
-	}
-
-	newCharacterNode, err := e.characterNode.NewCharacter(newBitNode)
-	if err != nil {
-		return Entity{}, nil
-	}
-
-	newWordNode, err := e.wordNode.NewWord(newCharacterNode)
-	if err != nil {
-		return Entity{}, nil
-	}
-
-	return newEntity(newClassNode, newBitNode, newCharacterNode, newWordNode), nil
+	return targetBits[0], nil
 }
 
-func (e Entity) HasBitValue(bit bool) (bool, error) {
+func (e Entity) GetTargetCharacters() ([]uint, error) {
 
-	hasBitValue, err := e.bitNode.HasBitValue(bit)
+	return e.storage.ReadTargets(e.character)
+}
+
+func (e Entity) HasSourceCharacter() (bool, error) {
+
+	// TODO: read count from DB
+	sourceCharacters, err := e.storage.ReadSources(e.character)
 	if err != nil {
 		return false, err
 	}
 
-	return hasBitValue, nil
+	return len(sourceCharacters) != 0, nil
 }
 
-func (e Entity) FindPrevious(entities *entities) (Entity, bool, error) {
+func (e Entity) GetSourceCharacter() (uint, error) {
 
-	sourceCharacters, err := e.characterNode.ReadSources()
+	sourceCharacters, err := e.storage.ReadSources(e.character)
 	if err != nil {
-		return Entity{}, false, nil
+		return 0, err
 	}
 
-	switch len(sourceCharacters) {
-	case 0:
-		return e, true, nil
-	case 1:
-		parentCharacter := sourceCharacters[0]
+	if len(sourceCharacters) != 1 {
+		return 0, fmt.Errorf("character has wrong number of source characters: %d at %d", len(sourceCharacters), e.character)
+	}
 
-		classIdentifier, bitIdentifier, wordIdentifier, err := parentCharacter.GetClassAndBitAndWord()
-		if err != nil {
-			return Entity{}, false, nil
+	return sourceCharacters[0], nil
+}
+
+func (e Entity) PointToCharacter(character uint) error {
+
+	return e.storage.Connect(e.character, character)
+}
+
+func (e Entity) Mark(sourceIdentifier uint) error {
+
+	return e.storage.Connect(sourceIdentifier, e.word)
+}
+
+func (e Entity) IsBeginningOfWords() (bool, error) {
+
+	target, err := e.ProvideSingleTarget()
+	if err != nil {
+		return false, err
+	}
+
+	backTargets, err := e.storage.ReadTargets(target)
+
+	switch len(backTargets) {
+
+	case 0:
+
+		return false, nil
+
+	case 1:
+
+		if backTargets[0] != e.word {
+			return false, fmt.Errorf("character not pointing to itself: %d", e.word)
 		}
 
-		return entities.create(classIdentifier, bitIdentifier, parentCharacter.Identifier(), wordIdentifier), false, nil
+		return true, nil
+
 	default:
-		return Entity{}, false, fmt.Errorf("too many sources in character tree")
+
+		return false, fmt.Errorf("character not pointing to itself: %d", e.word)
 	}
 }
 
-func (e Entity) BitValue() (bool, error) {
+func (e Entity) ProvideSingleTarget() (uint, error) {
 
-	return e.bitNode.BitValue()
-}
+	targets, err := e.storage.ReadTargets(e.word)
+	if err != nil {
+		return 0, err
+	}
 
-func (e Entity) String() string {
-	return fmt.Sprintf("Character: %s %s %s\n", e.bitNode, e.characterNode, e.wordNode)
+	switch len(targets) {
+
+	case 0:
+		target, err := e.storage.Create()
+		if err != nil {
+			return 0, err
+		}
+
+		err = e.storage.Connect(e.word, target)
+		if err != nil {
+			return 0, err
+		}
+
+		return target, nil
+
+	case 1:
+		return targets[0], nil
+
+	default:
+		return 0, fmt.Errorf("character has wrong number of target words: %d at %d", len(targets), e.word)
+	}
 }

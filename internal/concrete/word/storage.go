@@ -24,14 +24,14 @@ func (s *Storage) CreateEntity(
 	characterEntity abstractCharacter.Entity,
 ) (abstractWord.Entity, error) {
 
-	character, err := characterEntity.ProvideSingleTarget()
-	if err != nil {
-		return Entity{}, err
-	}
-
 	class, err := classEntity.CreateWord()
 	if err != nil {
 		return nil, err
+	}
+
+	character, err := characterEntity.ProvideSingleTarget()
+	if err != nil {
+		return Entity{}, err
 	}
 
 	word, err := s.storage.Create()

@@ -2,6 +2,7 @@ package bit
 
 import (
 	"fmt"
+	abstractBit "github.com/mem-memov/semnet/internal/abstract/bit"
 	"github.com/mem-memov/semnet/internal/concrete/class"
 )
 
@@ -9,6 +10,8 @@ type Repository struct {
 	storage storage
 	layer   *layer
 }
+
+var _ abstractBit.Repository = &Repository{}
 
 func NewRepository(storage storage, classRepository *class.Repository) *Repository {
 	entities := newEntities(storage, classRepository)
@@ -19,7 +22,7 @@ func NewRepository(storage storage, classRepository *class.Repository) *Reposito
 	}
 }
 
-func (r *Repository) Provide(value bool) (Entity, error) {
+func (r *Repository) Provide(value bool) (abstractBit.Entity, error) {
 
 	zeroEntity, oneEntity, err := r.layer.initialize()
 	if err != nil {
@@ -33,7 +36,7 @@ func (r *Repository) Provide(value bool) (Entity, error) {
 	}
 }
 
-func (r *Repository) Fetch(identifier uint) (Entity, error) {
+func (r *Repository) Fetch(identifier uint) (abstractBit.Entity, error) {
 
 	zeroEntity, oneEntity, err := r.layer.initialize()
 	if err != nil {

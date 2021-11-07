@@ -157,7 +157,7 @@ func (e Entity) GetSourceWord() (uint, error) {
 	}
 
 	if len(sourceWords) != 1 {
-		return 0, fmt.Errorf("too many sources in word tree: %d at %d", len(sourceWords), e.phrase)
+		return 0, fmt.Errorf("word has wrong number of source words: %d at %d", len(sourceWords), e.phrase)
 	}
 
 	return sourceWords[0], nil

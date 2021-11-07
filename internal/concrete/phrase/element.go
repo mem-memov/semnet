@@ -41,7 +41,12 @@ func (e Element) ProvideNextElement(wordValue string) (abstractPhrase.Element, e
 
 	// use existing
 	for _, targetPhrase := range targetPhrases {
-		targetWord, err := e.wordRepository.Fetch(targetPhrase.GetWord())
+		targetWordIdentifier, err := targetPhrase.GetTargetWord()
+		if err != nil {
+			return nil, err
+		}
+
+		targetWord, err := e.wordRepository.Fetch(targetWordIdentifier)
 		if err != nil {
 			return nil, err
 		}

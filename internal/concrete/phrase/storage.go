@@ -24,14 +24,14 @@ func (s *Storage) CreateEntity(
 	wordEntity abstractWord.Aggregate,
 ) (abstractPhrase.Entity, error) {
 
-	word, err := wordEntity.ProvideSingleTarget()
-	if err != nil {
-		return Entity{}, err
-	}
-
 	class, err := classEntity.CreatePhrase()
 	if err != nil {
 		return nil, err
+	}
+
+	word, err := wordEntity.ProvideSingleTarget()
+	if err != nil {
+		return Entity{}, err
 	}
 
 	phrase, err := s.storage.Create()

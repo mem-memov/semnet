@@ -14,6 +14,35 @@ func newCharacter(identifier uint, storage storage) Character {
 	}
 }
 
+func (c Character) IsBeginningOfCharacters() (bool, error) {
+
+	target, err := c.ProvideSingleTarget()
+	if err != nil {
+		return false, err
+	}
+
+	backTargets, err := c.storage.ReadTargets(target)
+
+	switch len(backTargets) {
+
+	case 0:
+
+		return false, nil
+
+	case 1:
+
+		if backTargets[0] != c.identifier {
+			return false, fmt.Errorf("character not pointing to itself: %d", c.identifier)
+		}
+
+		return true, nil
+
+	default:
+
+		return false, fmt.Errorf("character not pointing to itself: %d", c.identifier)
+	}
+}
+
 func (c Character) Identifier() uint {
 	return c.identifier
 }

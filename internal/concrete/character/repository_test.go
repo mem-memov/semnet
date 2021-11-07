@@ -30,20 +30,20 @@ func TestRepository(t *testing.T) {
 			bitRepository := bit.NewRepository(storage, classRepository)
 			r := NewRepository(storage, classRepository, bitRepository)
 
-			entity, err := r.Provide(d.integer)
+			aggregate, err := r.Provide(d.integer)
 
 			if err != d.provideErr {
 				t.Fail()
 			}
 
-			integer, err := r.Extract(entity)
+			integer, err := aggregate.Extract()
 
 			if err != d.extractErr {
 				t.Fail()
 			}
 
 			if integer != d.integer {
-				t.Error(entity, slices)
+				t.Error(aggregate, slices)
 			}
 		})
 	}

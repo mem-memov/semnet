@@ -41,12 +41,17 @@ func (e Element) ProvideNextElement(characterValue rune) (abstractWord.Element, 
 
 	// use existing
 	for _, targetWord := range targetWords {
-		targetCharacter, err := e.characterRepository.Fetch(targetWord.GetCharacter())
+		targetCharacterIdentifier, err := targetWord.GetTargetCharacter()
 		if err != nil {
 			return nil, err
 		}
 
-		targetValue, err := e.characterRepository.Extract(targetCharacter)
+		targetCharacter, err := e.characterRepository.Fetch(targetCharacterIdentifier)
+		if err != nil {
+			return nil, err
+		}
+
+		targetValue, err := targetCharacter.Extract()
 		if err != nil {
 			return nil, err
 		}
@@ -106,7 +111,7 @@ func (e Element) ExtractCharacterValue() (rune, error) {
 		return 0, err
 	}
 
-	return e.characterRepository.Extract(word)
+	return word.Extract()
 }
 
 func (e Element) HasPreviousElement() (bool, error) {
