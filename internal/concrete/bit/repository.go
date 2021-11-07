@@ -15,11 +15,10 @@ type Repository struct {
 var _ abstractBit.Repository = &Repository{}
 
 func NewRepository(storage abstract.Storage, classRepository *class.Repository) *Repository {
-	entities := newEntities(storage, classRepository)
 
 	return &Repository{
 		storage: storage,
-		layer:   newLayer(storage, entities, classRepository),
+		layer:   newLayer(storage, classRepository),
 	}
 }
 

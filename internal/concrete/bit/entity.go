@@ -1,47 +1,104 @@
 package bit
 
 import (
+	"fmt"
+	"github.com/mem-memov/semnet/internal/abstract"
 	abstractBit "github.com/mem-memov/semnet/internal/abstract/bit"
-	"github.com/mem-memov/semnet/internal/concrete/bit/node"
 )
 
 type Entity struct {
 	value         bool
-	classNode     node.Class
-	characterNode node.Character
+	class     uint
+	character uint
+	storage abstract.Storage
 }
 
 var _ abstractBit.Entity = Entity{}
 
-func newEntity(value bool, classNode node.Class, characterNode node.Character) Entity {
+func newEntity(value bool, class uint, character uint, storage abstract.Storage) Entity {
 	return Entity{
 		value:         value,
-		classNode:     classNode,
-		characterNode: characterNode,
+		class:     class,
+		character: character,
+		storage: storage,
 	}
 }
 
 func (e Entity) IsBeginningOfCharacters() (bool, error) {
 
-	return e.characterNode.IsBeginningOfCharacters()
+	target, err := e.ProvideSingleTarget()
+	if err != nil {
+		return false, err
+	}
+
+	backTargets, err := e.storage.ReadTargets(target)
+
+	switch len(backTargets) {
+
+	case 0:
+
+		return false, nil
+
+	case 1:
+
+		if backTargets[0] != e.character {
+			return false, fmt.Errorf("bit not pointing to itself: %d", e.character)
+		}
+
+		return true, nil
+
+	default:
+
+		return false, fmt.Errorf("bit not pointing to itself: %d", e.character)
+	}
 }
 
 func (e Entity) Identifier() uint {
-	return e.characterNode.Identifier()
+
+	return e.character
 }
 
 func (e Entity) Is(bit bool) bool {
+
 	return e.value == bit
 }
 
 func (e Entity) Bit() bool {
+
 	return e.value
 }
 
 func (e Entity) Mark(sourceIdentifier uint) error {
-	return e.characterNode.Mark(sourceIdentifier)
+
+	return e.storage.Connect(sourceIdentifier, e.character)
 }
 
 func (e Entity) ProvideSingleTarget() (uint, error) {
-	return e.characterNode.ProvideSingleTarget()
+
+	targets, err := e.storage.ReadTargets(e.character)
+	if err != nil {
+		return 0, err
+	}
+
+	switch len(targets) {
+
+	case 0:
+		target, err := e.storage.Create()
+		if err != nil {
+			return 0, err
+		}
+
+		err = e.storage.Connect(e.character, target)
+		if err != nil {
+			return 0, err
+		}
+
+		return target, nil
+
+	case 1:
+		return targets[0], nil
+
+	default:
+		return 0, fmt.Errorf("bit has wrong number of target characters: %d at %d", len(targets), e.character)
+	}
 }

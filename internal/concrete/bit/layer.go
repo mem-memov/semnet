@@ -8,17 +8,15 @@ import (
 
 type layer struct {
 	storage         abstract.Storage
-	entities        *entities
 	classRepository *class.Repository
 	isInitialized   bool
 	zeroEntity      Entity
 	oneEntity       Entity
 }
 
-func newLayer(storage abstract.Storage, entities *entities, classRepository *class.Repository) *layer {
+func newLayer(storage abstract.Storage, classRepository *class.Repository) *layer {
 	return &layer{
 		storage:         storage,
-		entities:        entities,
 		classRepository: classRepository,
 		isInitialized:   false,
 	}
@@ -73,7 +71,12 @@ func (l *layer) initialize() (Entity, Entity, error) {
 				return Entity{}, Entity{}, err
 			}
 
-			l.zeroEntity = l.entities.create(false, zeroClassIdentifier, zeroCharacterIdentifier)
+			l.zeroEntity = Entity{
+				value:     false,
+				class:     zeroClassIdentifier,
+				character: zeroCharacterIdentifier,
+				storage:   l.storage,
+			}
 
 			// one
 
@@ -87,7 +90,12 @@ func (l *layer) initialize() (Entity, Entity, error) {
 				return Entity{}, Entity{}, err
 			}
 
-			l.oneEntity = l.entities.create(true, oneClassIdentifier, oneCharacterIdentifier)
+			l.oneEntity = Entity{
+				value:     true,
+				class:     oneClassIdentifier,
+				character: oneCharacterIdentifier,
+				storage:   l.storage,
+			}
 
 		case 2:
 			var zeroClassIdentifier uint
@@ -108,7 +116,12 @@ func (l *layer) initialize() (Entity, Entity, error) {
 				return Entity{}, Entity{}, err
 			}
 
-			l.zeroEntity = l.entities.create(false, zeroClassIdentifier, zeroCharacterIdentifier)
+			l.zeroEntity = Entity{
+				value:     false,
+				class:     zeroClassIdentifier,
+				character: zeroCharacterIdentifier,
+				storage:   l.storage,
+			}
 
 			// one
 
@@ -117,7 +130,12 @@ func (l *layer) initialize() (Entity, Entity, error) {
 				return Entity{}, Entity{}, err
 			}
 
-			l.oneEntity = l.entities.create(true, oneClassIdentifier, oneCharacterIdentifier)
+			l.oneEntity = Entity{
+				value:     true,
+				class:     oneClassIdentifier,
+				character: oneCharacterIdentifier,
+				storage:   l.storage,
+			}
 		default:
 			return Entity{}, Entity{}, fmt.Errorf("wrong number of bit nodes in class %d", len(classIdentifiers))
 		}
