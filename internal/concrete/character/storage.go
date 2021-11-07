@@ -64,6 +64,7 @@ func (s *Storage) CreateEntity(
 		bit:       bit,
 		character: character,
 		word:      word,
+		storage:   s.storage,
 	}, nil
 }
 
@@ -109,6 +110,7 @@ func (s *Storage) ReadEntityByBit(bit uint) (abstractCharacter.Entity, error) {
 		bit:       bit,
 		character: character,
 		word:      word,
+		storage:   s.storage,
 	}, nil
 }
 
@@ -129,6 +131,7 @@ func (s *Storage) ReadEntityByCharacter(character uint) (abstractCharacter.Entit
 		bit:       bit,
 		character: character,
 		word:      word,
+		storage:   s.storage,
 	}, nil
 }
 
@@ -154,5 +157,6 @@ func (s *Storage) ReadEntityByWord(word uint) (abstractCharacter.Entity, error) 
 		bit:       bit,
 		character: character,
 		word:      word,
+		storage:   s.storage,
 	}, nil
 }

@@ -7,33 +7,31 @@ import (
 )
 
 type Entity struct {
-	value         bool
+	value     bool
 	class     uint
 	character uint
-	storage abstract.Storage
+	storage   abstract.Storage
 }
 
 var _ abstractBit.Entity = Entity{}
 
 func newEntity(value bool, class uint, character uint, storage abstract.Storage) Entity {
 	return Entity{
-		value:         value,
+		value:     value,
 		class:     class,
 		character: character,
-		storage: storage,
+		storage:   storage,
 	}
 }
 
 func (e Entity) IsBeginningOfCharacters() (bool, error) {
 
-	target, err := e.ProvideSingleTarget()
+	targets, err := e.storage.ReadTargets(e.character)
 	if err != nil {
 		return false, err
 	}
 
-	backTargets, err := e.storage.ReadTargets(target)
-
-	switch len(backTargets) {
+	switch len(targets) {
 
 	case 0:
 
@@ -41,15 +39,32 @@ func (e Entity) IsBeginningOfCharacters() (bool, error) {
 
 	case 1:
 
-		if backTargets[0] != e.character {
+		backTargets, err := e.storage.ReadTargets(targets[0])
+		if err != nil {
+			return false, err
+		}
+
+		switch len(backTargets) {
+
+		case 0:
+
+			return false, nil
+
+		case 1:
+
+			if backTargets[0] != e.character {
+				return false, fmt.Errorf("bit not pointing to itself: %d", e.character)
+			}
+
+			return true, nil
+
+		default:
+
 			return false, fmt.Errorf("bit not pointing to itself: %d", e.character)
 		}
 
-		return true, nil
-
 	default:
-
-		return false, fmt.Errorf("bit not pointing to itself: %d", e.character)
+		return false, fmt.Errorf("bit has wrong number of target charactersf: %d at %d", len(targets), e.character)
 	}
 }
 
