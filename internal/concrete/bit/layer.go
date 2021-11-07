@@ -2,11 +2,12 @@ package bit
 
 import (
 	"fmt"
+	"github.com/mem-memov/semnet/internal/abstract"
 	"github.com/mem-memov/semnet/internal/concrete/class"
 )
 
 type layer struct {
-	storage         storage
+	storage         abstract.Storage
 	entities        *entities
 	classRepository *class.Repository
 	isInitialized   bool
@@ -14,7 +15,7 @@ type layer struct {
 	oneEntity       Entity
 }
 
-func newLayer(storage storage, entities *entities, classRepository *class.Repository) *layer {
+func newLayer(storage abstract.Storage, entities *entities, classRepository *class.Repository) *layer {
 	return &layer{
 		storage:         storage,
 		entities:        entities,

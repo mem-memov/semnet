@@ -1,10 +1,12 @@
 package node
 
+import "github.com/mem-memov/semnet/internal/abstract"
+
 type Characters struct {
-	storage storage
+	storage abstract.Storage
 }
 
-func NewCharacters(storage storage) *Characters {
+func NewCharacters(storage abstract.Storage) *Characters {
 	return &Characters{
 		storage: storage,
 	}

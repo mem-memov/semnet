@@ -2,18 +2,19 @@ package bit
 
 import (
 	"fmt"
+	"github.com/mem-memov/semnet/internal/abstract"
 	abstractBit "github.com/mem-memov/semnet/internal/abstract/bit"
 	"github.com/mem-memov/semnet/internal/concrete/class"
 )
 
 type Repository struct {
-	storage storage
+	storage abstract.Storage
 	layer   *layer
 }
 
 var _ abstractBit.Repository = &Repository{}
 
-func NewRepository(storage storage, classRepository *class.Repository) *Repository {
+func NewRepository(storage abstract.Storage, classRepository *class.Repository) *Repository {
 	entities := newEntities(storage, classRepository)
 
 	return &Repository{

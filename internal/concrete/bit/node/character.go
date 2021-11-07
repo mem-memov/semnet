@@ -1,13 +1,16 @@
 package node
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/mem-memov/semnet/internal/abstract"
+)
 
 type Character struct {
 	identifier uint
-	storage    storage
+	storage    abstract.Storage
 }
 
-func newCharacter(identifier uint, storage storage) Character {
+func newCharacter(identifier uint, storage abstract.Storage) Character {
 	return Character{
 		identifier: identifier,
 		storage:    storage,

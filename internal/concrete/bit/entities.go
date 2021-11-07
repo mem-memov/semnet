@@ -1,19 +1,20 @@
 package bit
 
 import (
-	node2 "github.com/mem-memov/semnet/internal/concrete/bit/node"
+	"github.com/mem-memov/semnet/internal/abstract"
+	"github.com/mem-memov/semnet/internal/concrete/bit/node"
 	"github.com/mem-memov/semnet/internal/concrete/class"
 )
 
 type entities struct {
-	classes    *node2.Classes
-	characters *node2.Characters
+	classes    *node.Classes
+	characters *node.Characters
 }
 
-func newEntities(storage storage, classRepository *class.Repository) *entities {
+func newEntities(storage abstract.Storage, classRepository *class.Repository) *entities {
 	return &entities{
-		classes:    node2.NewClasses(storage, classRepository),
-		characters: node2.NewCharacters(storage),
+		classes:    node.NewClasses(storage, classRepository),
+		characters: node.NewCharacters(storage),
 	}
 }
 
