@@ -2,8 +2,6 @@ package word
 
 import (
 	"github.com/mem-memov/semnet/internal/abstract"
-	abstractCharacter "github.com/mem-memov/semnet/internal/abstract/character"
-	abstractClass "github.com/mem-memov/semnet/internal/abstract/class"
 	abstractWord "github.com/mem-memov/semnet/internal/abstract/word"
 )
 
@@ -19,17 +17,9 @@ func NewStorage(storage abstract.Storage) *Storage {
 	}
 }
 
-func (s *Storage) CreateEntity(
-	classEntity abstractClass.Entity,
-	characterEntity abstractCharacter.Entity,
-) (abstractWord.Entity, error) {
+func (s *Storage) CreateEntity(class uint) (abstractWord.Entity, error) {
 
-	class, err := classEntity.CreateWord()
-	if err != nil {
-		return nil, err
-	}
-
-	character, err := characterEntity.ProvideSingleTarget()
+	character, err := s.storage.Create()
 	if err != nil {
 		return Entity{}, err
 	}

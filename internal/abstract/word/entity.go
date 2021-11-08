@@ -7,16 +7,16 @@ type Entity interface {
 	GetPhrase() uint
 
 	GetSourceCharacter() (uint, error)
+	PointToCharacter(character uint) error
 	GetTargetCharacter() (uint, error)
-
-	PointToPhrase(phrase uint) error
 
 	HasSourceWord() (bool, error)
 	GetSourceWord() (uint, error)
 	PointToWord(word uint) error
 	GetTargetWords() ([]uint, error)
 
-	ProvideSingleTarget() (uint, error)
-	IsBeginningOfPhrases() (bool, error)
+	PointToPhrase(phrase uint) error
+	GetTargetPhrase() (uint, error)
+	HasTargetPhrase() (bool, error)
 	MarkPhrase(sourceIdentifier uint) error
 }

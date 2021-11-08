@@ -14,7 +14,7 @@ type Entity interface {
 	GetSourceCharacter() (uint, error)
 	PointToCharacter(character uint) error
 
-	MarkWord(sourceIdentifier uint) error
-	IsBeginningOfWords() (bool, error)
-	ProvideSingleTarget() (uint, error)
+	PointToWord(word uint) error
+	HasTargetWord() (bool, error)
+	GetTargetWord() (uint, error)
 }

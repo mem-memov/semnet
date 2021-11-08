@@ -6,5 +6,6 @@ import (
 )
 
 type Factory interface {
-	ProvideFirstEntity(classEntity class.Entity, characterEntity character.Entity) (Entity, error)
+	ProvideHeadEntity(classEntity class.Entity, characterEntity character.Aggregate) (Entity, error)
+	CreateTailEntity(classEntity class.Entity, bitEntity character.Aggregate, previousWordEntity Entity) (Entity, error)
 }

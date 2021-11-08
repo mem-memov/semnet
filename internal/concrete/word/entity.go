@@ -50,9 +50,9 @@ func (e Entity) GetSourceCharacter() (uint, error) {
 	return sourceCharacters[0], nil
 }
 
-func (e Entity) PointToPhrase(phrase uint) error {
+func (e Entity) PointToCharacter(character uint) error {
 
-	return e.storage.Connect(e.phrase, phrase)
+	return e.storage.Connect(e.character, character)
 }
 
 func (e Entity) MarkPhrase(sourceIdentifier uint) error {
@@ -60,7 +60,12 @@ func (e Entity) MarkPhrase(sourceIdentifier uint) error {
 	return e.storage.Connect(sourceIdentifier, e.phrase)
 }
 
-func (e Entity) ProvideSingleTarget() (uint, error) {
+func (e Entity) PointToPhrase(phrase uint) error {
+
+	return e.storage.Connect(e.phrase, phrase)
+}
+
+func (e Entity) GetTargetPhrase() (uint, error) {
 
 	targets, err := e.storage.ReadTargets(e.phrase)
 	if err != nil {
@@ -90,32 +95,20 @@ func (e Entity) ProvideSingleTarget() (uint, error) {
 	}
 }
 
-func (e Entity) IsBeginningOfPhrases() (bool, error) {
+func (e Entity) HasTargetPhrase() (bool, error) {
 
-	target, err := e.ProvideSingleTarget()
+	targets, err := e.storage.ReadTargets(e.phrase)
 	if err != nil {
 		return false, err
 	}
 
-	backTargets, err := e.storage.ReadTargets(target)
-
-	switch len(backTargets) {
-
+	switch len(targets) {
 	case 0:
-
 		return false, nil
-
 	case 1:
-
-		if backTargets[0] != e.phrase {
-			return false, fmt.Errorf("word not pointing to itself: %d", e.phrase)
-		}
-
 		return true, nil
-
 	default:
-
-		return false, fmt.Errorf("word not pointing to itself: %d", e.phrase)
+		return false, fmt.Errorf("word has wrong number of target phrases: %d at %d", len(targets), e.character)
 	}
 }
 

@@ -78,9 +78,7 @@ func (e Element) ProvideNextElement(characterValue rune) (abstractWord.Element, 
 		return nil, err
 	}
 
-	character_ := character.(abstractCharacter.Entity) // TODO: remove
-
-	newWord, err := e.wordFactory.ProvideFirstEntity(class, character_)
+	newWord, err := e.wordFactory.CreateTailEntity(class, character, e.word)
 	if err != nil {
 		return nil, err
 	}

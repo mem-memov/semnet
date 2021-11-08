@@ -48,12 +48,12 @@ func (a Aggregate) Extract() (string, error) {
 
 func (a Aggregate) IsBeginningOfPhrases() (bool, error) {
 
-	return a.word.IsBeginningOfPhrases()
+	return a.word.HasTargetPhrase()
 }
 
 func (a Aggregate) ProvideSingleTarget() (uint, error) {
 
-	return a.word.ProvideSingleTarget()
+	return a.word.GetTargetPhrase()
 }
 
 func (a Aggregate) Mark(phrase uint) error {

@@ -1,6 +1,8 @@
 package character
 
-import abstractCharacter "github.com/mem-memov/semnet/internal/abstract/character"
+import (
+	abstractCharacter "github.com/mem-memov/semnet/internal/abstract/character"
+)
 
 type Aggregate struct {
 	character         abstractCharacter.Entity
@@ -9,6 +11,26 @@ type Aggregate struct {
 }
 
 var _ abstractCharacter.Aggregate = Aggregate{}
+
+func (a Aggregate) HasTargetWord() (bool, error) {
+
+	return a.character.HasTargetWord()
+}
+
+func (a Aggregate) PointToWord(word uint) error {
+
+	return a.character.PointToWord(word)
+}
+
+func (a Aggregate) GetWord() uint {
+
+	return a.character.GetWord()
+}
+
+func (a Aggregate) GetTargetWord() (uint, error) {
+
+	return a.character.GetTargetWord()
+}
 
 func (a Aggregate) Extract() (rune, error) {
 

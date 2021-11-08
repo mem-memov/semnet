@@ -42,11 +42,7 @@ func (e *Elements) ProvideFirstElement(characterValue rune) (abstractWord.Elemen
 		return nil, err
 	}
 
-	firstCharacter_ := firstCharacter.(abstractCharacter.Entity) // TODO: remove
-
-	word, err := e.wordFactory.ProvideFirstEntity(class, firstCharacter_)
-
-	err = firstCharacter_.MarkWord(word.GetCharacter())
+	word, err := e.wordFactory.ProvideHeadEntity(class, firstCharacter)
 	if err != nil {
 		return nil, err
 	}

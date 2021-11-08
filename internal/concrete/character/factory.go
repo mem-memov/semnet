@@ -26,12 +26,12 @@ func (f *Factory) ProvideHeadEntity(
 	bitEntity abstractBit.Entity,
 ) (abstractCharacter.Entity, error) {
 
-	hasSingleTargetCharacter, err := bitEntity.HasTargetCharacter()
+	hasTargetCharacter, err := bitEntity.HasTargetCharacter()
 	if err != nil {
 		return nil, err
 	}
 
-	if !hasSingleTargetCharacter {
+	if !hasTargetCharacter {
 		class, err := classEntity.CreateCharacter()
 		if err != nil {
 			return nil, err

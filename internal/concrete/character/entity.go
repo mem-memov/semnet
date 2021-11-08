@@ -90,41 +90,34 @@ func (e Entity) PointToCharacter(character uint) error {
 	return e.storage.Connect(e.character, character)
 }
 
+func (e Entity) PointToWord(word uint) error {
+
+	return e.storage.Connect(e.word, word)
+}
+
 func (e Entity) MarkWord(sourceIdentifier uint) error {
 
 	return e.storage.Connect(sourceIdentifier, e.word)
 }
 
-func (e Entity) IsBeginningOfWords() (bool, error) {
+func (e Entity) HasTargetWord() (bool, error) {
 
-	target, err := e.ProvideSingleTarget()
+	targets, err := e.storage.ReadTargets(e.character)
 	if err != nil {
 		return false, err
 	}
 
-	backTargets, err := e.storage.ReadTargets(target)
-
-	switch len(backTargets) {
-
+	switch len(targets) {
 	case 0:
-
 		return false, nil
-
 	case 1:
-
-		if backTargets[0] != e.word {
-			return false, fmt.Errorf("character not pointing to itself: %d", e.word)
-		}
-
 		return true, nil
-
 	default:
-
-		return false, fmt.Errorf("character not pointing to itself: %d", e.word)
+		return false, fmt.Errorf("character has wrong number of target words: %d at %d", len(targets), e.character)
 	}
 }
 
-func (e Entity) ProvideSingleTarget() (uint, error) {
+func (e Entity) GetTargetWord() (uint, error) {
 
 	targets, err := e.storage.ReadTargets(e.word)
 	if err != nil {
