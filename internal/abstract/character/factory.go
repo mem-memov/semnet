@@ -6,5 +6,6 @@ import (
 )
 
 type Factory interface {
-	ProvideFirstEntity(classEntity class.Entity, bitEntity bit.Entity) (Entity, error)
+	ProvideHeadEntity(classEntity class.Entity, bitEntity bit.Entity) (Entity, error)
+	CreateTailEntity(classEntity class.Entity, bitEntity bit.Entity, previousCharacterEntity Entity) (Entity, error)
 }

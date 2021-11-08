@@ -21,17 +21,17 @@ func NewFactory(
 	}
 }
 
-func (f *Factory) ProvideFirstEntity(
+func (f *Factory) ProvideHeadEntity(
 	classEntity abstractClass.Entity,
 	bitEntity abstractBit.Entity,
 ) (abstractCharacter.Entity, error) {
 
-	hasCharacterSources, err := bitEntity.IsBeginningOfCharacters()
+	hasSingleTargetCharacter, err := bitEntity.HasTargetCharacter()
 	if err != nil {
 		return nil, err
 	}
 
-	if !hasCharacterSources {
+	if !hasSingleTargetCharacter {
 		class, err := classEntity.CreateCharacter()
 		if err != nil {
 			return nil, err
@@ -47,13 +47,47 @@ func (f *Factory) ProvideFirstEntity(
 			return nil, err
 		}
 
+		err = bitEntity.PointToCharacter(characterEntity.GetBit())
+		if err != nil {
+			return nil, err
+		}
+
 		return characterEntity, nil
 	}
 
-	bit, err := bitEntity.ProvideSingleTarget()
+	bit, err := bitEntity.GetTargetCharacter()
 	if err != nil {
 		return nil, err
 	}
 
 	return f.characterStorage.ReadEntityByBit(bit)
+}
+
+func (f *Factory) CreateTailEntity(
+	classEntity abstractClass.Entity,
+	bitEntity abstractBit.Entity,
+	previousCharacterEntity abstractCharacter.Entity,
+) (abstractCharacter.Entity, error) {
+
+	class, err := classEntity.CreateCharacter()
+	if err != nil {
+		return nil, err
+	}
+
+	newCharacterEntity, err := f.characterStorage.CreateEntity(class)
+	if err != nil {
+		return nil, err
+	}
+
+	err = newCharacterEntity.PointToBit(bitEntity.GetCharacter())
+	if err != nil {
+		return nil, err
+	}
+
+	err = previousCharacterEntity.PointToCharacter(newCharacterEntity.GetCharacter())
+	if err != nil {
+		return nil, err
+	}
+
+	return newCharacterEntity, nil
 }

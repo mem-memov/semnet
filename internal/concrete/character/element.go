@@ -75,12 +75,7 @@ func (e Element) ProvideNextElement(bitValue bool) (abstractCharacter.Element, e
 		return nil, err
 	}
 
-	newCharacter, err := e.characterFactory.ProvideFirstEntity(class, bit)
-	if err != nil {
-		return nil, err
-	}
-
-	err = e.character.PointToCharacter(newCharacter.GetCharacter())
+	newCharacter, err := e.characterFactory.CreateTailEntity(class, bit, e.character)
 	if err != nil {
 		return nil, err
 	}

@@ -42,12 +42,7 @@ func (e *Elements) ProvideFirstElement(bitValue bool) (abstractCharacter.Element
 		return nil, err
 	}
 
-	character, err := e.characterFactory.ProvideFirstEntity(class, firstBit)
-
-	err = firstBit.MarkCharacter(character.GetBit())
-	if err != nil {
-		return nil, err
-	}
+	character, err := e.characterFactory.ProvideHeadEntity(class, firstBit)
 
 	return Element{
 		character:        character,
