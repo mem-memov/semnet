@@ -55,7 +55,7 @@ func (e Entity) PointToPhrase(phrase uint) error {
 	return e.storage.Connect(e.phrase, phrase)
 }
 
-func (e Entity) Mark(sourceIdentifier uint) error {
+func (e Entity) MarkPhrase(sourceIdentifier uint) error {
 
 	return e.storage.Connect(sourceIdentifier, e.phrase)
 }

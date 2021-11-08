@@ -36,6 +36,11 @@ func (e Entity) GetWord() uint {
 	return e.word
 }
 
+func (e Entity) PointToBit(bit uint) error {
+
+	return e.storage.Connect(e.bit, bit)
+}
+
 func (e Entity) GetTargetBit() (uint, error) {
 
 	targetBits, err := e.storage.ReadTargets(e.bit)
@@ -85,7 +90,7 @@ func (e Entity) PointToCharacter(character uint) error {
 	return e.storage.Connect(e.character, character)
 }
 
-func (e Entity) Mark(sourceIdentifier uint) error {
+func (e Entity) MarkWord(sourceIdentifier uint) error {
 
 	return e.storage.Connect(sourceIdentifier, e.word)
 }

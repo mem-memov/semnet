@@ -18,5 +18,5 @@ type Entity interface {
 
 	ProvideSingleTarget() (uint, error)
 	IsBeginningOfPhrases() (bool, error)
-	Mark(sourceIdentifier uint) error
+	MarkPhrase(sourceIdentifier uint) error
 }

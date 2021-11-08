@@ -46,7 +46,7 @@ func (e *Elements) ProvideFirstElement(characterValue rune) (abstractWord.Elemen
 
 	word, err := e.wordFactory.ProvideFirstEntity(class, firstCharacter_)
 
-	err = firstCharacter_.Mark(word.GetCharacter())
+	err = firstCharacter_.MarkWord(word.GetCharacter())
 	if err != nil {
 		return nil, err
 	}

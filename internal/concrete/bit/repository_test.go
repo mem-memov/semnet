@@ -17,8 +17,8 @@ func TestRepository_ProvideZero(t *testing.T) {
 		t.Fail()
 	}
 
-	if zeroEntity.Identifier() != 13 {
-		t.Errorf("wrong identifier %d", zeroEntity.Identifier())
+	if zeroEntity.GetCharacter() != 13 {
+		t.Errorf("wrong identifier %d", zeroEntity.GetCharacter())
 	}
 
 	// repeat
@@ -28,8 +28,8 @@ func TestRepository_ProvideZero(t *testing.T) {
 		t.Fail()
 	}
 
-	if zeroEntity.Identifier() != 13 {
-		t.Errorf("wrong identifier %d", zeroEntity.Identifier())
+	if zeroEntity.GetCharacter() != 13 {
+		t.Errorf("wrong identifier %d", zeroEntity.GetCharacter())
 	}
 }
 
@@ -44,8 +44,8 @@ func TestRepository_ProvideOne(t *testing.T) {
 		t.Fail()
 	}
 
-	if oneEntity.Identifier() != 14 {
-		t.Errorf("wrong identifier %d", oneEntity.Identifier())
+	if oneEntity.GetCharacter() != 14 {
+		t.Errorf("wrong identifier %d", oneEntity.GetCharacter())
 	}
 
 	// repeat
@@ -55,7 +55,7 @@ func TestRepository_ProvideOne(t *testing.T) {
 		t.Fail()
 	}
 
-	if oneEntity.Identifier() != 14 {
-		t.Errorf("wrong identifier %d", oneEntity.Identifier())
+	if oneEntity.GetCharacter() != 14 {
+		t.Errorf("wrong identifier %d", oneEntity.GetCharacter())
 	}
 }

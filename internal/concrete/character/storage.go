@@ -2,9 +2,7 @@ package character
 
 import (
 	"github.com/mem-memov/semnet/internal/abstract"
-	abstractBit "github.com/mem-memov/semnet/internal/abstract/bit"
 	abstractCharacter "github.com/mem-memov/semnet/internal/abstract/character"
-	abstractClass "github.com/mem-memov/semnet/internal/abstract/class"
 )
 
 type Storage struct {
@@ -19,19 +17,11 @@ func NewStorage(storage abstract.Storage) *Storage {
 	}
 }
 
-func (s *Storage) CreateEntity(
-	classEntity abstractClass.Entity,
-	bitEntity abstractBit.Entity,
-) (abstractCharacter.Entity, error) {
+func (s *Storage) CreateEntity(class uint) (abstractCharacter.Entity, error) {
 
-	class, err := classEntity.CreateCharacter()
+	bit, err := s.storage.Create()
 	if err != nil {
 		return nil, err
-	}
-
-	bit, err := bitEntity.ProvideSingleTarget()
-	if err != nil {
-		return Entity{}, err
 	}
 
 	character, err := s.storage.Create()

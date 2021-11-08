@@ -68,7 +68,7 @@ func (e Entity) IsBeginningOfCharacters() (bool, error) {
 	}
 }
 
-func (e Entity) Identifier() uint {
+func (e Entity) GetCharacter() uint {
 
 	return e.character
 }
@@ -83,7 +83,7 @@ func (e Entity) Bit() bool {
 	return e.value
 }
 
-func (e Entity) Mark(sourceIdentifier uint) error {
+func (e Entity) MarkCharacter(sourceIdentifier uint) error {
 
 	return e.storage.Connect(sourceIdentifier, e.character)
 }

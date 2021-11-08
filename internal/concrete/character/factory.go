@@ -28,11 +28,26 @@ func (f *Factory) ProvideFirstEntity(
 
 	hasCharacterSources, err := bitEntity.IsBeginningOfCharacters()
 	if err != nil {
-		return Entity{}, err
+		return nil, err
 	}
 
 	if !hasCharacterSources {
-		return f.characterStorage.CreateEntity(classEntity, bitEntity)
+		class, err := classEntity.CreateCharacter()
+		if err != nil {
+			return nil, err
+		}
+
+		characterEntity, err := f.characterStorage.CreateEntity(class)
+		if err != nil {
+			return nil, err
+		}
+
+		err = characterEntity.PointToBit(bitEntity.GetCharacter())
+		if err != nil {
+			return nil, err
+		}
+
+		return characterEntity, nil
 	}
 
 	bit, err := bitEntity.ProvideSingleTarget()

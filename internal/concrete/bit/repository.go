@@ -43,11 +43,11 @@ func (r *Repository) Fetch(identifier uint) (abstractBit.Entity, error) {
 		return Entity{}, err
 	}
 
-	if identifier == zeroEntity.Identifier() {
+	if identifier == zeroEntity.GetCharacter() {
 		return zeroEntity, nil
 	}
 
-	if identifier == oneEntity.Identifier() {
+	if identifier == oneEntity.GetCharacter() {
 		return oneEntity, nil
 	}
 

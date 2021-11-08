@@ -58,5 +58,5 @@ func (a Aggregate) ProvideSingleTarget() (uint, error) {
 
 func (a Aggregate) Mark(phrase uint) error {
 
-	return a.word.Mark(phrase)
+	return a.word.MarkPhrase(phrase)
 }

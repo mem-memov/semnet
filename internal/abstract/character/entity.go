@@ -6,6 +6,7 @@ type Entity interface {
 	GetCharacter() uint
 	GetWord() uint
 
+	PointToBit(bit uint) error
 	GetTargetBit() (uint, error)
 
 	GetTargetCharacters() ([]uint, error)
@@ -13,7 +14,7 @@ type Entity interface {
 	GetSourceCharacter() (uint, error)
 	PointToCharacter(character uint) error
 
-	Mark(sourceIdentifier uint) error
+	MarkWord(sourceIdentifier uint) error
 	IsBeginningOfWords() (bool, error)
 	ProvideSingleTarget() (uint, error)
 }
