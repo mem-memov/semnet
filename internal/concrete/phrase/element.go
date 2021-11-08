@@ -78,12 +78,7 @@ func (e Element) ProvideNextElement(wordValue string) (abstractPhrase.Element, e
 		return nil, err
 	}
 
-	newPhrase, err := e.phraseFactory.ProvideFirstEntity(class, word)
-	if err != nil {
-		return nil, err
-	}
-
-	err = e.phrase.PointToPhrase(newPhrase.GetPhrase())
+	newPhrase, err := e.phraseFactory.CreateTailEntity(class, word, e.phrase)
 	if err != nil {
 		return nil, err
 	}

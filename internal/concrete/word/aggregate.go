@@ -46,17 +46,22 @@ func (a Aggregate) Extract() (string, error) {
 	return path.reverse().toString(), nil
 }
 
-func (a Aggregate) IsBeginningOfPhrases() (bool, error) {
+func (a Aggregate) HasTargetPhrase() (bool, error) {
 
 	return a.word.HasTargetPhrase()
 }
 
-func (a Aggregate) ProvideSingleTarget() (uint, error) {
+func (a Aggregate) GetTargetPhrase() (uint, error) {
 
 	return a.word.GetTargetPhrase()
 }
 
-func (a Aggregate) Mark(phrase uint) error {
+func (a Aggregate) GetPhrase() uint {
 
-	return a.word.MarkPhrase(phrase)
+	return a.word.GetPhrase()
+}
+
+func (a Aggregate) PointToPhrase(phrase uint) error {
+
+	return a.word.PointToPhrase(phrase)
 }

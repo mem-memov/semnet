@@ -42,12 +42,7 @@ func (e *Elements) ProvideFirstElement(wordValue string) (abstractPhrase.Element
 		return nil, err
 	}
 
-	phrase, err := e.phraseFactory.ProvideFirstEntity(class, firstWord)
-	if err != nil {
-		return nil, err
-	}
-
-	err = firstWord.Mark(phrase.GetWord())
+	phrase, err := e.phraseFactory.ProvideHeadEntity(class, firstWord)
 	if err != nil {
 		return nil, err
 	}

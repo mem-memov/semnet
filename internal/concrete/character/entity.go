@@ -124,25 +124,9 @@ func (e Entity) GetTargetWord() (uint, error) {
 		return 0, err
 	}
 
-	switch len(targets) {
-
-	case 0:
-		target, err := e.storage.Create()
-		if err != nil {
-			return 0, err
-		}
-
-		err = e.storage.Connect(e.word, target)
-		if err != nil {
-			return 0, err
-		}
-
-		return target, nil
-
-	case 1:
-		return targets[0], nil
-
-	default:
+	if len(targets) != 1 {
 		return 0, fmt.Errorf("character has wrong number of target words: %d at %d", len(targets), e.word)
 	}
+
+	return targets[0], nil
 }

@@ -2,9 +2,7 @@ package phrase
 
 import (
 	"github.com/mem-memov/semnet/internal/abstract"
-	abstractClass "github.com/mem-memov/semnet/internal/abstract/class"
 	abstractPhrase "github.com/mem-memov/semnet/internal/abstract/phrase"
-	abstractWord "github.com/mem-memov/semnet/internal/abstract/word"
 )
 
 type Storage struct {
@@ -19,17 +17,9 @@ func NewStorage(storage abstract.Storage) *Storage {
 	}
 }
 
-func (s *Storage) CreateEntity(
-	classEntity abstractClass.Entity,
-	wordEntity abstractWord.Aggregate,
-) (abstractPhrase.Entity, error) {
+func (s *Storage) CreateEntity(class uint) (abstractPhrase.Entity, error) {
 
-	class, err := classEntity.CreatePhrase()
-	if err != nil {
-		return nil, err
-	}
-
-	word, err := wordEntity.ProvideSingleTarget()
+	word, err := s.storage.Create()
 	if err != nil {
 		return Entity{}, err
 	}

@@ -13,6 +13,7 @@ type Entity interface {
 
 	GetSourceWord() (uint, error)
 	GetTargetWord() (uint, error)
+	PointToWord(word uint) error
 
 	GetSourceDetails() ([]uint, error)
 	GetTargetDetails() ([]uint, error)

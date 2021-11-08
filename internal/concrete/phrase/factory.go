@@ -19,21 +19,71 @@ func NewFactory(phraseStorage abstractPhrase.Storage) *Factory {
 	}
 }
 
-func (f *Factory) ProvideFirstEntity(classEntity abstractClass.Entity, wordEntity abstractWord.Aggregate) (abstractPhrase.Entity, error) {
+func (f *Factory) ProvideHeadEntity(classEntity abstractClass.Entity, wordAggregate abstractWord.Aggregate) (abstractPhrase.Entity, error) {
 
-	isBeginningOfPhrases, err := wordEntity.IsBeginningOfPhrases()
+	hasTargetPhrase, err := wordAggregate.HasTargetPhrase()
 	if err != nil {
-		return Entity{}, err
+		return nil, err
 	}
 
-	if !isBeginningOfPhrases {
-		return f.phraseStorage.CreateEntity(classEntity, wordEntity)
+	if !hasTargetPhrase {
+
+		class, err := classEntity.CreatePhrase()
+		if err != nil {
+			return nil, err
+		}
+
+		phraseEntity, err := f.phraseStorage.CreateEntity(class)
+		if err != nil {
+			return nil, err
+		}
+
+		err = phraseEntity.PointToWord(wordAggregate.GetPhrase())
+		if err != nil {
+			return nil, err
+		}
+
+		err = wordAggregate.PointToPhrase(phraseEntity.GetWord())
+		if err != nil {
+			return nil, err
+		}
+
+		return phraseEntity, nil
 	}
 
-	word, err := wordEntity.ProvideSingleTarget()
+	word, err := wordAggregate.GetTargetPhrase()
 	if err != nil {
 		return nil, err
 	}
 
 	return f.phraseStorage.ReadEntityByWord(word)
+}
+
+func (f *Factory) CreateTailEntity(
+	classEntity abstractClass.Entity,
+	wordAggregate abstractWord.Aggregate,
+	previousPhraseEntity abstractPhrase.Entity,
+) (abstractPhrase.Entity, error) {
+
+	class, err := classEntity.CreatePhrase()
+	if err != nil {
+		return nil, err
+	}
+
+	newPhraseEntity, err := f.phraseStorage.CreateEntity(class)
+	if err != nil {
+		return nil, err
+	}
+
+	err = newPhraseEntity.PointToWord(wordAggregate.GetPhrase())
+	if err != nil {
+		return nil, err
+	}
+
+	err = previousPhraseEntity.PointToPhrase(newPhraseEntity.GetPhrase())
+	if err != nil {
+		return nil, err
+	}
+
+	return newPhraseEntity, nil
 }

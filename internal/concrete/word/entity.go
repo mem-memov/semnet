@@ -55,11 +55,6 @@ func (e Entity) PointToCharacter(character uint) error {
 	return e.storage.Connect(e.character, character)
 }
 
-func (e Entity) MarkPhrase(sourceIdentifier uint) error {
-
-	return e.storage.Connect(sourceIdentifier, e.phrase)
-}
-
 func (e Entity) PointToPhrase(phrase uint) error {
 
 	return e.storage.Connect(e.phrase, phrase)
@@ -72,27 +67,11 @@ func (e Entity) GetTargetPhrase() (uint, error) {
 		return 0, err
 	}
 
-	switch len(targets) {
-
-	case 0:
-		target, err := e.storage.Create()
-		if err != nil {
-			return 0, err
-		}
-
-		err = e.storage.Connect(e.phrase, target)
-		if err != nil {
-			return 0, err
-		}
-
-		return target, nil
-
-	case 1:
-		return targets[0], nil
-
-	default:
+	if len(targets) != 1 {
 		return 0, fmt.Errorf("word has wrong number of target phrases: %d at %d", len(targets), e.phrase)
 	}
+
+	return targets[0], nil
 }
 
 func (e Entity) HasTargetPhrase() (bool, error) {

@@ -18,5 +18,4 @@ type Entity interface {
 	PointToPhrase(phrase uint) error
 	GetTargetPhrase() (uint, error)
 	HasTargetPhrase() (bool, error)
-	MarkPhrase(sourceIdentifier uint) error
 }

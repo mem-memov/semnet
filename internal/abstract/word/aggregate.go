@@ -2,7 +2,8 @@ package word
 
 type Aggregate interface {
 	Extract() (string, error)
-	IsBeginningOfPhrases() (bool, error)
-	ProvideSingleTarget() (uint, error)
-	Mark(phrase uint) error
+	HasTargetPhrase() (bool, error)
+	GetTargetPhrase() (uint, error)
+	GetPhrase() uint
+	PointToPhrase(phrase uint) error
 }
