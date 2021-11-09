@@ -2,7 +2,6 @@ package remark
 
 import (
 	"fmt"
-	"github.com/mem-memov/semnet/internal/abstract"
 	abstractClass "github.com/mem-memov/semnet/internal/abstract/class"
 	abstractDetail "github.com/mem-memov/semnet/internal/abstract/detail"
 	abstractFact "github.com/mem-memov/semnet/internal/abstract/fact"
@@ -11,7 +10,7 @@ import (
 
 type Aggregate struct {
 	remark           abstractRemark.Entity
-	storage          abstract.Storage
+	remarkStorage   abstractRemark.Storage
 	classRepository  abstractClass.Repository
 	detailRepository abstractDetail.Repository
 	factRepository   abstractFact.Repository
@@ -33,7 +32,7 @@ func (a Aggregate) GetNextRemark() (Aggregate, error) {
 		return Aggregate{}, err
 	}
 
-	nextRemark, err := readEntityByPosition(a.storage, nextRemarkIdentifier)
+	nextRemark, err := a.remarkStorage.ReadEntityByPosition(nextRemarkIdentifier)
 
 	class, err := a.classRepository.ProvideEntity()
 	if err != nil {
@@ -51,7 +50,7 @@ func (a Aggregate) GetNextRemark() (Aggregate, error) {
 
 	return Aggregate{
 		remark:           nextRemark,
-		storage:          a.storage,
+		remarkStorage:          a.remarkStorage,
 		classRepository:  a.classRepository,
 		detailRepository: a.detailRepository,
 		factRepository:   a.factRepository,
@@ -85,14 +84,14 @@ func (a Aggregate) GetNextFact() (Aggregate, error) {
 		return Aggregate{}, err
 	}
 
-	remark, err := readEntityByFact(a.storage, remarkFact)
+	remark, err := a.remarkStorage.ReadEntityByFact(remarkFact)
 	if err != nil {
 		return Aggregate{}, err
 	}
 
 	return Aggregate{
 		remark:           remark,
-		storage:          a.storage,
+		remarkStorage:          a.remarkStorage,
 		classRepository:  a.classRepository,
 		detailRepository: a.detailRepository,
 		factRepository:   a.factRepository,
@@ -133,7 +132,7 @@ func (a Aggregate) GetNextStory() (Aggregate, error) {
 
 	return Aggregate{
 		remark:           nextRemark,
-		storage:          a.storage,
+		remarkStorage:          a.remarkStorage,
 		classRepository:  a.classRepository,
 		detailRepository: a.detailRepository,
 		factRepository:   a.factRepository,
@@ -162,7 +161,12 @@ func (a Aggregate) AddRemarkToFact(property string) (Aggregate, error) {
 		return Aggregate{}, err
 	}
 
-	remark, err := createEntity(a.storage, class)
+	classIdentifier, err := class.CreateRemark()
+	if err != nil {
+		return Aggregate{}, err
+	}
+
+	remark, err := a.remarkStorage.CreateEntity(classIdentifier)
 	if err != nil {
 		return Aggregate{}, err
 	}
@@ -213,7 +217,7 @@ func (a Aggregate) AddRemarkToFact(property string) (Aggregate, error) {
 
 	return Aggregate{
 		remark:           remark,
-		storage:          a.storage,
+		remarkStorage:          a.remarkStorage,
 		classRepository:  a.classRepository,
 		detailRepository: a.detailRepository,
 		factRepository:   a.factRepository,
@@ -227,7 +231,12 @@ func (a Aggregate) AddFactToStory(object string, property string) (Aggregate, er
 		return Aggregate{}, err
 	}
 
-	remark, err := createEntity(a.storage, class)
+	classIdentifier, err := class.CreateRemark()
+	if err != nil {
+		return Aggregate{}, err
+	}
+
+	remark, err := a.remarkStorage.CreateEntity(classIdentifier)
 	if err != nil {
 		return Aggregate{}, err
 	}
@@ -265,7 +274,7 @@ func (a Aggregate) AddFactToStory(object string, property string) (Aggregate, er
 
 	return Aggregate{
 		remark:           remark,
-		storage:          a.storage,
+		remarkStorage:          a.remarkStorage,
 		classRepository:  a.classRepository,
 		detailRepository: a.detailRepository,
 		factRepository:   a.factRepository,
