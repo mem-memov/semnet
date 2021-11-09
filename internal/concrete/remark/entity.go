@@ -116,7 +116,7 @@ func (e Entity) GetNextRemark() (uint, error) {
 	return targets[0], nil
 }
 
-func (e Entity) ToNextFact(fact uint) (abstractRemark.Entity, error) {
+func (e Entity) GetNextFact(fact uint) (abstractRemark.Entity, error) {
 
 	return readEntityByFact(e.storage, fact)
 }

@@ -125,7 +125,7 @@ func (a Aggregate) GetNextStory() (Aggregate, error) {
 		return Aggregate{}, err
 	}
 
-	nextRemark, err := a.remark.ToNextFact(nextIdentifier)
+	nextRemark, err := a.remark.GetNextFact(nextIdentifier)
 	if err != nil {
 		return Aggregate{}, err
 	}
