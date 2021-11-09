@@ -27,4 +27,22 @@ func TestNewGraph(t *testing.T) {
 	if aCat != "a cat" {
 		t.Fail()
 	}
+
+	goesToPlay, err := goesACat.AddRemarkToFact("to play")
+	if err != nil {
+		t.Fail()
+	}
+
+	goes, toPlay, err := goesToPlay.GetObjectAndProperty()
+	if err != nil {
+		t.Fail()
+	}
+
+	if goes != "goes" {
+		t.Fail()
+	}
+
+	if toPlay != "to play" {
+		t.Fail()
+	}
 }
