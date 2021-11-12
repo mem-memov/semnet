@@ -3,7 +3,6 @@ package remark
 import (
 	"fmt"
 	"github.com/mem-memov/semnet/internal/abstract"
-	abstractClass "github.com/mem-memov/semnet/internal/abstract/class"
 	abstractFact "github.com/mem-memov/semnet/internal/abstract/fact"
 	abstractRemark "github.com/mem-memov/semnet/internal/abstract/remark"
 )
@@ -38,14 +37,14 @@ func (e Entity) GetFact() uint {
 	return e.fact
 }
 
-func (e Entity) PointToPosition(remark abstractRemark.Entity) error {
+func (e Entity) PointToPosition(position uint) error {
 
-	return e.storage.Connect(e.position, remark.GetPosition())
+	return e.storage.Connect(e.position, position)
 }
 
-func (e Entity) PointToFact(fact abstractFact.Aggregate) error {
+func (e Entity) PointToFact(fact uint) error {
 
-	return e.storage.Connect(e.fact, fact.GetRemark())
+	return e.storage.Connect(e.fact, fact)
 }
 
 func (e Entity) GetTargetFact() (uint, error) {
@@ -114,9 +113,4 @@ func (e Entity) GetNextRemark() (uint, error) {
 	}
 
 	return targets[0], nil
-}
-
-func (e Entity) GetNextFact(fact uint) (abstractRemark.Entity, error) {
-
-	return readEntityByFact(e.storage, fact)
 }

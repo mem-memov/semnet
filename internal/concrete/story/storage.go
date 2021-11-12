@@ -152,4 +152,3 @@ func (s *Storage) ReadEntityByUser(user uint) (abstractStory.Entity, error) {
 		storage:  s.storage,
 	}, nil
 }
-

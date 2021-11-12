@@ -5,8 +5,9 @@ type Entity interface {
 	GetFact() uint
 	GetPosition() uint
 	GetUser() uint
+
 	PointToFact(fact uint) error
 	HasNextStory() (bool, error)
-	GetNextStory() (Entity, error)
+	GetTargetStory() (uint, error)
 	GetTargetFact() (uint, error)
 }

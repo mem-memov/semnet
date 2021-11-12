@@ -7,7 +7,7 @@ import (
 )
 
 type Repository struct {
-	storage         abstract.Storage
+	storyStorage    abstractStory.Storage
 	classRepository abstractClass.Repository
 }
 
@@ -16,7 +16,7 @@ var _ abstractStory.Repository = &Repository{}
 func NewRepository(storage abstract.Storage, classRepository abstractClass.Repository) *Repository {
 
 	return &Repository{
-		storage:         storage,
+		storyStorage:    NewStorage(storage),
 		classRepository: classRepository,
 	}
 }
@@ -28,7 +28,12 @@ func (r *Repository) CreateFirstUserStory() (abstractStory.Entity, error) {
 		return nil, err
 	}
 
-	story, err := createEntity(r.storage, class)
+	classIdentifier, err := class.CreateStory()
+	if err != nil {
+		return nil, err
+	}
+
+	story, err := r.storyStorage.CreateEntity(classIdentifier)
 	if err != nil {
 		return nil, err
 	}
@@ -38,5 +43,10 @@ func (r *Repository) CreateFirstUserStory() (abstractStory.Entity, error) {
 
 func (r *Repository) FetchByFact(factIdentifier uint) (abstractStory.Entity, error) {
 
-	return readEntityByFact(r.storage, factIdentifier)
+	return r.storyStorage.ReadEntityByFact(factIdentifier)
+}
+
+func (r *Repository) FetchByPosition(positionIdentifier uint) (abstractStory.Entity, error) {
+
+	return r.storyStorage.ReadEntityByPosition(positionIdentifier)
 }

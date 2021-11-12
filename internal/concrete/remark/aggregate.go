@@ -10,7 +10,7 @@ import (
 
 type Aggregate struct {
 	remark           abstractRemark.Entity
-	remarkStorage   abstractRemark.Storage
+	remarkStorage    abstractRemark.Storage
 	classRepository  abstractClass.Repository
 	detailRepository abstractDetail.Repository
 	factRepository   abstractFact.Repository
@@ -50,7 +50,7 @@ func (a Aggregate) GetNextRemark() (Aggregate, error) {
 
 	return Aggregate{
 		remark:           nextRemark,
-		remarkStorage:          a.remarkStorage,
+		remarkStorage:    a.remarkStorage,
 		classRepository:  a.classRepository,
 		detailRepository: a.detailRepository,
 		factRepository:   a.factRepository,
@@ -91,7 +91,7 @@ func (a Aggregate) GetNextFact() (Aggregate, error) {
 
 	return Aggregate{
 		remark:           remark,
-		remarkStorage:          a.remarkStorage,
+		remarkStorage:    a.remarkStorage,
 		classRepository:  a.classRepository,
 		detailRepository: a.detailRepository,
 		factRepository:   a.factRepository,
@@ -125,14 +125,14 @@ func (a Aggregate) GetNextStory() (Aggregate, error) {
 		return Aggregate{}, err
 	}
 
-	nextRemark, err := a.remark.GetNextFact(nextIdentifier)
+	nextRemark, err := a.remarkStorage.ReadEntityByFact(nextIdentifier)
 	if err != nil {
 		return Aggregate{}, err
 	}
 
 	return Aggregate{
 		remark:           nextRemark,
-		remarkStorage:          a.remarkStorage,
+		remarkStorage:    a.remarkStorage,
 		classRepository:  a.classRepository,
 		detailRepository: a.detailRepository,
 		factRepository:   a.factRepository,
@@ -210,14 +210,14 @@ func (a Aggregate) AddRemarkToFact(property string) (Aggregate, error) {
 		return Aggregate{}, err
 	}
 
-	err = remark.PointToFact(fact)
+	err = remark.PointToFact(fact.GetRemark())
 	if err != nil {
 		return Aggregate{}, err
 	}
 
 	return Aggregate{
 		remark:           remark,
-		remarkStorage:          a.remarkStorage,
+		remarkStorage:    a.remarkStorage,
 		classRepository:  a.classRepository,
 		detailRepository: a.detailRepository,
 		factRepository:   a.factRepository,
@@ -255,7 +255,7 @@ func (a Aggregate) AddFactToStory(object string, property string) (Aggregate, er
 
 	// position
 
-	err = a.remark.PointToPosition(remark)
+	err = a.remark.PointToPosition(remark.GetPosition())
 	if err != nil {
 		return Aggregate{}, err
 	}
@@ -267,14 +267,14 @@ func (a Aggregate) AddFactToStory(object string, property string) (Aggregate, er
 		return Aggregate{}, err
 	}
 
-	err = remark.PointToFact(fact)
+	err = remark.PointToFact(fact.GetRemark())
 	if err != nil {
 		return Aggregate{}, err
 	}
 
 	return Aggregate{
 		remark:           remark,
-		remarkStorage:          a.remarkStorage,
+		remarkStorage:    a.remarkStorage,
 		classRepository:  a.classRepository,
 		detailRepository: a.detailRepository,
 		factRepository:   a.factRepository,

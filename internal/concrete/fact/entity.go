@@ -3,9 +3,7 @@ package fact
 import (
 	"fmt"
 	"github.com/mem-memov/semnet/internal/abstract"
-	abstractClass "github.com/mem-memov/semnet/internal/abstract/class"
 	abstractFact "github.com/mem-memov/semnet/internal/abstract/fact"
-	abstractStory "github.com/mem-memov/semnet/internal/abstract/story"
 )
 
 type Entity struct {
@@ -17,146 +15,6 @@ type Entity struct {
 }
 
 var _ abstractFact.Entity = Entity{}
-
-func createEntity(storage abstract.Storage, classEntity abstractClass.Entity) (Entity, error) {
-
-	class, err := classEntity.CreateRemark()
-	if err != nil {
-		return Entity{}, err
-	}
-
-	remark, err := storage.Create()
-	if err != nil {
-		return Entity{}, err
-	}
-
-	position, err := storage.Create()
-	if err != nil {
-		return Entity{}, err
-	}
-
-	story, err := storage.Create()
-	if err != nil {
-		return Entity{}, err
-	}
-
-	err = storage.SetReference(class, remark)
-	if err != nil {
-		return Entity{}, err
-	}
-
-	err = storage.SetReference(remark, position)
-	if err != nil {
-		return Entity{}, err
-	}
-
-	err = storage.SetReference(position, story)
-	if err != nil {
-		return Entity{}, err
-	}
-
-	return Entity{
-		class:    class,
-		remark:   remark,
-		position: position,
-		story:    story,
-		storage:  storage,
-	}, nil
-}
-
-func readEntityByClass(storage abstract.Storage, class uint) (Entity, error) {
-
-	_, remark, err := storage.GetReference(class)
-	if err != nil {
-		return Entity{}, err
-	}
-
-	_, position, err := storage.GetReference(remark)
-	if err != nil {
-		return Entity{}, err
-	}
-
-	_, story, err := storage.GetReference(position)
-	if err != nil {
-		return Entity{}, err
-	}
-
-	return Entity{
-		class:    class,
-		remark:   remark,
-		position: position,
-		story:    story,
-		storage:  storage,
-	}, nil
-}
-
-func readEntityByRemark(storage abstract.Storage, remark uint) (Entity, error) {
-
-	class, position, err := storage.GetReference(remark)
-	if err != nil {
-		return Entity{}, err
-	}
-
-	_, story, err := storage.GetReference(position)
-	if err != nil {
-		return Entity{}, err
-	}
-
-	return Entity{
-		class:    class,
-		remark:   remark,
-		position: position,
-		story:    story,
-		storage:  storage,
-	}, nil
-}
-
-func readEntityByPosition(storage abstract.Storage, position uint) (Entity, error) {
-
-	remark, story, err := storage.GetReference(position)
-	if err != nil {
-		return Entity{}, err
-	}
-
-	class, _, err := storage.GetReference(remark)
-	if err != nil {
-		return Entity{}, err
-	}
-
-	return Entity{
-		class:    class,
-		remark:   remark,
-		position: position,
-		story:    story,
-		storage:  storage,
-	}, nil
-}
-
-func readEntityByStory(storage abstract.Storage, story uint) (Entity, error) {
-
-	position, _, err := storage.GetReference(story)
-	if err != nil {
-		return Entity{}, err
-	}
-
-	remark, _, err := storage.GetReference(position)
-	if err != nil {
-		return Entity{}, err
-	}
-
-	class, _, err := storage.GetReference(remark)
-	if err != nil {
-		return Entity{}, err
-	}
-
-	return Entity{
-		class:    class,
-		remark:   remark,
-		position: position,
-		story:    story,
-		storage:  storage,
-	}, nil
-}
 
 func (e Entity) GetClass() uint {
 
@@ -178,9 +36,9 @@ func (e Entity) GetStory() uint {
 	return e.story
 }
 
-func (e Entity) PointToStory(story abstractStory.Entity) error {
+func (e Entity) PointToStory(story uint) error {
 
-	return e.storage.Connect(e.story, story.GetFact())
+	return e.storage.Connect(e.story, story)
 }
 
 func (e Entity) PointToRemark(remark uint) error {
@@ -188,7 +46,7 @@ func (e Entity) PointToRemark(remark uint) error {
 	return e.storage.Connect(e.remark, remark)
 }
 
-func (e Entity) HasNextFact() (bool, error) {
+func (e Entity) HasTargetFact() (bool, error) {
 
 	targets, err := e.storage.ReadTargets(e.position)
 	if err != nil {
@@ -198,20 +56,18 @@ func (e Entity) HasNextFact() (bool, error) {
 	return len(targets) != 0, nil
 }
 
-func (e Entity) GetNextFact() (abstractFact.Entity, error) {
+func (e Entity) GetTargetFact() (uint, error) {
 
 	targets, err := e.storage.ReadTargets(e.position)
 	if err != nil {
-		return nil, err
+		return 0, err
 	}
 
 	if len(targets) != 1 {
-		return nil, fmt.Errorf("fact has wrong number of next facts")
+		return 0, fmt.Errorf("fact has wrong number of target facts: %d at %d", len(targets), e.position)
 	}
 
-	nextFact, err := readEntityByPosition(e.storage, targets[0])
-
-	return nextFact, nil
+	return targets[0], nil
 }
 
 func (e Entity) GetFirstRemark() (uint, error) {
@@ -240,9 +96,4 @@ func (e Entity) GetTargetStory() (uint, error) {
 	}
 
 	return targets[0], nil
-}
-
-func (e Entity) ToNextStory(nextFact uint) (abstractFact.Entity, error) {
-
-	return readEntityByStory(e.storage, nextFact)
 }

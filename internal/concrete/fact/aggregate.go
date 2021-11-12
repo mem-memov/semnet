@@ -6,7 +6,8 @@ import (
 )
 
 type Aggregate struct {
-	entity          abstractFact.Entity
+	fact            abstractFact.Entity
+	factStorage     abstractFact.Storage
 	storyRepository abstractStory.Repository
 }
 
@@ -14,45 +15,50 @@ var _ abstractFact.Aggregate = Aggregate{}
 
 func (a Aggregate) GetRemark() uint {
 
-	return a.entity.GetRemark()
+	return a.fact.GetRemark()
 }
 
 func (a Aggregate) GetStory() uint {
 
-	return a.entity.GetStory()
+	return a.fact.GetStory()
 }
 
 func (a Aggregate) PointToRemark(remark uint) error {
 
-	return a.entity.PointToRemark(remark)
+	return a.fact.PointToRemark(remark)
 }
 
 func (a Aggregate) HasNextFact() (bool, error) {
 
-	return a.entity.HasNextFact()
+	return a.fact.HasTargetFact()
 }
 
 func (a Aggregate) ToNextFact() (abstractFact.Aggregate, error) {
 
-	nextEntity, err := a.entity.GetNextFact()
+	nextFactIdentifier, err := a.fact.GetTargetFact()
+	if err != nil {
+		return nil, err
+	}
+
+	nextFact, err := a.factStorage.ReadEntityByPosition(nextFactIdentifier)
 	if err != nil {
 		return nil, err
 	}
 
 	return Aggregate{
-		entity:          nextEntity,
+		fact:            nextFact,
 		storyRepository: a.storyRepository,
 	}, nil
 }
 
 func (a Aggregate) GetFirstRemark() (uint, error) {
 
-	return a.entity.GetFirstRemark()
+	return a.fact.GetFirstRemark()
 }
 
 func (a Aggregate) HasNextStory() (bool, error) {
 
-	storyIdentifier, err := a.entity.GetTargetStory()
+	storyIdentifier, err := a.fact.GetTargetStory()
 
 	story, err := a.storyRepository.FetchByFact(storyIdentifier)
 	if err != nil {
@@ -64,14 +70,19 @@ func (a Aggregate) HasNextStory() (bool, error) {
 
 func (a Aggregate) ToNextStory() (abstractFact.Aggregate, error) {
 
-	storyIdentifier, err := a.entity.GetTargetStory()
+	storyIdentifier, err := a.fact.GetTargetStory()
 
 	story, err := a.storyRepository.FetchByFact(storyIdentifier)
 	if err != nil {
 		return nil, err
 	}
 
-	nextStory, err := story.GetNextStory()
+	nextStoryIdentifier, err := story.GetTargetStory()
+	if err != nil {
+		return nil, err
+	}
+
+	nextStory, err := a.storyRepository.FetchByPosition(nextStoryIdentifier)
 	if err != nil {
 		return nil, err
 	}
@@ -81,10 +92,13 @@ func (a Aggregate) ToNextStory() (abstractFact.Aggregate, error) {
 		return nil, err
 	}
 
-	nextFact, err := a.entity.ToNextStory(nextFactIdentifier)
+	nextFact, err := a.factStorage.ReadEntityByStory(nextFactIdentifier)
+	if err != nil {
+		return nil, err
+	}
 
 	return Aggregate{
-		entity:          nextFact,
+		fact:            nextFact,
 		storyRepository: a.storyRepository,
 	}, nil
 }

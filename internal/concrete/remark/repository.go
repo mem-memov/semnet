@@ -9,8 +9,8 @@ import (
 )
 
 type Repository struct {
-	remarkStorage   abstractRemark.Storage
-	classRepository abstractClass.Repository
+	remarkStorage    abstractRemark.Storage
+	classRepository  abstractClass.Repository
 	detailRepository abstractDetail.Repository
 	factRepository   abstractFact.Repository
 }
@@ -66,7 +66,7 @@ func (r *Repository) CreateFirstUserRemark(object string, property string) (Aggr
 		return Aggregate{}, err
 	}
 
-	err = remark.PointToFact(fact)
+	err = remark.PointToFact(fact.GetRemark())
 	if err != nil {
 		return Aggregate{}, err
 	}
@@ -78,7 +78,7 @@ func (r *Repository) CreateFirstUserRemark(object string, property string) (Aggr
 
 	return Aggregate{
 		remark:           remark,
-		remarkStorage:          r.remarkStorage,
+		remarkStorage:    r.remarkStorage,
 		classRepository:  r.classRepository,
 		detailRepository: r.detailRepository,
 		factRepository:   r.factRepository,

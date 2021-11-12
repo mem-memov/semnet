@@ -8,7 +8,7 @@ import (
 )
 
 type Repository struct {
-	storage         abstract.Storage
+	factStorage     abstractFact.Storage
 	classRepository abstractClass.Repository
 	storyRepository abstractStory.Repository
 }
@@ -21,7 +21,7 @@ func NewRepository(
 	storyRepository abstractStory.Repository,
 ) *Repository {
 	return &Repository{
-		storage:         storage,
+		factStorage:     NewStorage(storage),
 		classRepository: classRepository,
 		storyRepository: storyRepository,
 	}
@@ -34,7 +34,12 @@ func (r *Repository) CreateFirstUserStoryFact() (abstractFact.Aggregate, error) 
 		return nil, err
 	}
 
-	fact, err := createEntity(r.storage, class)
+	classIdentifier, err := class.CreateFact()
+	if err != nil {
+		return nil, err
+	}
+
+	fact, err := r.factStorage.CreateEntity(classIdentifier)
 	if err != nil {
 		return nil, err
 	}
@@ -44,7 +49,7 @@ func (r *Repository) CreateFirstUserStoryFact() (abstractFact.Aggregate, error) 
 		return nil, err
 	}
 
-	err = fact.PointToStory(story)
+	err = fact.PointToStory(story.GetFact())
 	if err != nil {
 		return nil, err
 	}
@@ -55,20 +60,22 @@ func (r *Repository) CreateFirstUserStoryFact() (abstractFact.Aggregate, error) 
 	}
 
 	return Aggregate{
-		entity:          fact,
+		fact:            fact,
+		factStorage:     r.factStorage,
 		storyRepository: r.storyRepository,
 	}, nil
 }
 
 func (r *Repository) FetchByRemark(remarkIdentifier uint) (abstractFact.Aggregate, error) {
 
-	fact, err := readEntityByRemark(r.storage, remarkIdentifier)
+	fact, err := r.factStorage.ReadEntityByRemark(remarkIdentifier)
 	if err != nil {
 		return nil, err
 	}
 
 	return Aggregate{
-		entity:          fact,
+		fact:            fact,
+		factStorage:     r.factStorage,
 		storyRepository: r.storyRepository,
 	}, nil
 }

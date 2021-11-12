@@ -7,5 +7,3 @@ type Storage interface {
 	ReadEntityByPosition(position uint) (Entity, error)
 	ReadEntityByUser(user uint) (Entity, error)
 }
-
-

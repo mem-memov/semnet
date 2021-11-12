@@ -152,4 +152,3 @@ func (s *Storage) ReadEntityByFact(fact uint) (abstractRemark.Entity, error) {
 		storage:  s.storage,
 	}, nil
 }
-
