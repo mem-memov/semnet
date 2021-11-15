@@ -79,3 +79,47 @@ func (r *Repository) FetchByRemark(remarkIdentifier uint) (abstractFact.Aggregat
 		storyRepository: r.storyRepository,
 	}, nil
 }
+
+func (r *Repository) CreateNextFact(remarkIdentifier uint) (abstractFact.Aggregate, error) {
+
+	fact, err := r.factStorage.ReadEntityByRemark(remarkIdentifier)
+	if err != nil {
+		return nil, err
+	}
+
+	story, err := r.storyRepository.FetchByFact(fact.GetStory())
+	if err != nil {
+		return nil, err
+	}
+
+	class, err := r.classRepository.ProvideEntity()
+	if err != nil {
+		return nil, err
+	}
+
+	classIdentifier, err := class.CreateFact()
+	if err != nil {
+		return nil, err
+	}
+
+	nextFact, err := r.factStorage.CreateEntity(classIdentifier)
+	if err != nil {
+		return nil, err
+	}
+
+	err = nextFact.PointToStory(story.GetFact())
+	if err != nil {
+		return nil, err
+	}
+
+	err = fact.PointToPosition(nextFact.GetPosition())
+	if err != nil {
+		return nil, err
+	}
+
+	return Aggregate{
+		fact:            nextFact,
+		factStorage:     r.factStorage,
+		storyRepository: r.storyRepository,
+	}, nil
+}

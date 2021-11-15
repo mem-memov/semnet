@@ -46,21 +46,21 @@ func TestNewGraph(t *testing.T) {
 		t.Fail()
 	}
 
-	//hidesTheMouse, err := goesACat.AddFactToStory("hides", "the mouse")
-	//if err != nil {
-	//	t.Fail()
-	//}
+	hidesTheMouse, err := goesACat.AddFactToStory("hides", "the mouse")
+	if err != nil {
+		t.Fail()
+	}
 
-	//hides, theMouse, err := hidesTheMouse.GetObjectAndProperty()
-	//if err != nil {
-	//	t.Fail()
-	//}
-	//
-	//if hides != "hides" {
-	//	t.Fail()
-	//}
-	//
-	//if theMouse != "the mouse" {
-	//	t.Fail()
-	//}
+	hides, theMouse, err := hidesTheMouse.GetObjectAndProperty()
+	if err != nil {
+		t.Fail()
+	}
+
+	if hides != "hides" {
+		t.Fail()
+	}
+
+	if theMouse != "the mouse" {
+		t.Fail()
+	}
 }

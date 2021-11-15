@@ -253,21 +253,14 @@ func (a Aggregate) AddFactToStory(object string, property string) (Aggregate, er
 		return Aggregate{}, err
 	}
 
-	// position
-
-	err = a.remark.PointToPosition(remark.GetPosition())
-	if err != nil {
-		return Aggregate{}, err
-	}
-
 	// fact
 
-	fact, err := a.remark.CreateNextStoryFact(a.factRepository)
+	nextFact, err := a.factRepository.CreateNextFact(a.remark.GetFact())
 	if err != nil {
 		return Aggregate{}, err
 	}
 
-	err = remark.PointToFact(fact.GetRemark())
+	err = remark.PointToFact(nextFact.GetRemark())
 	if err != nil {
 		return Aggregate{}, err
 	}

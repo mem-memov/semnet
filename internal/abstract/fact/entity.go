@@ -8,6 +8,7 @@ type Entity interface {
 
 	PointToStory(story uint) error
 	PointToRemark(remark uint) error
+	PointToPosition(position uint) error
 
 	HasTargetFact() (bool, error)
 	GetTargetFact() (uint, error)

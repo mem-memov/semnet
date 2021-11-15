@@ -46,6 +46,11 @@ func (e Entity) PointToRemark(remark uint) error {
 	return e.storage.Connect(e.remark, remark)
 }
 
+func (e Entity) PointToPosition(position uint) error {
+
+	return e.storage.Connect(e.position, position)
+}
+
 func (e Entity) HasTargetFact() (bool, error) {
 
 	targets, err := e.storage.ReadTargets(e.position)
