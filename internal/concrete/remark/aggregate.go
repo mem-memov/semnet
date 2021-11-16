@@ -98,6 +98,37 @@ func (a Aggregate) GetNextFact() (Aggregate, error) {
 	}, nil
 }
 
+func (a Aggregate) GetFirstFact() (Aggregate, error) {
+
+	fact, err := a.factRepository.FetchByRemark(a.remark.GetFact())
+	if err != nil {
+		return Aggregate{}, err
+	}
+
+	firstFact, err := fact.ToFirstFact()
+	if err != nil {
+		return Aggregate{}, err
+	}
+
+	remarkFact, err := firstFact.GetFirstRemark()
+	if err != nil {
+		return Aggregate{}, err
+	}
+
+	remark, err := a.remarkStorage.ReadEntityByFact(remarkFact)
+	if err != nil {
+		return Aggregate{}, err
+	}
+
+	return Aggregate{
+		remark:           remark,
+		remarkStorage:    a.remarkStorage,
+		classRepository:  a.classRepository,
+		detailRepository: a.detailRepository,
+		factRepository:   a.factRepository,
+	}, nil
+}
+
 func (a Aggregate) HasNextStory() (bool, error) {
 
 	fact, err := a.factRepository.FetchByRemark(a.remark.GetFact())

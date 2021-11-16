@@ -149,3 +149,28 @@ func (a Aggregate) ToParentStory() (abstractFact.Aggregate, error) {
 		storyRepository: a.storyRepository,
 	}, nil
 }
+
+func (a Aggregate) ToFirstFact() (abstractFact.Aggregate, error) {
+
+	storyIdentifier, err := a.fact.GetTargetStory()
+
+	story, err := a.storyRepository.FetchByFact(storyIdentifier)
+	if err != nil {
+		return nil, err
+	}
+
+	firstFactIdentifier, err := story.GetTargetFact()
+	if err != nil {
+		return nil, err
+	}
+
+	firstFact, err := a.factStorage.ReadEntityByStory(firstFactIdentifier)
+	if err != nil {
+		return nil, err
+	}
+
+	return Aggregate{
+		fact:            firstFact,
+		storyRepository: a.storyRepository,
+	}, nil
+}

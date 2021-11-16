@@ -13,4 +13,6 @@ type Aggregate interface {
 
 	HasParentStory() (bool, error)
 	ToParentStory() (Aggregate, error)
+
+	ToFirstFact() (Aggregate, error)
 }
