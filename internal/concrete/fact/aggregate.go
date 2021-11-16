@@ -65,7 +65,7 @@ func (a Aggregate) HasNextStory() (bool, error) {
 		return false, err
 	}
 
-	return story.HasNextStory()
+	return story.HasTargetPosition()
 }
 
 func (a Aggregate) ToNextStory() (abstractFact.Aggregate, error) {
@@ -77,7 +77,7 @@ func (a Aggregate) ToNextStory() (abstractFact.Aggregate, error) {
 		return nil, err
 	}
 
-	nextStoryIdentifier, err := story.GetTargetStory()
+	nextStoryIdentifier, err := story.GetTargetPosition()
 	if err != nil {
 		return nil, err
 	}
@@ -99,6 +99,53 @@ func (a Aggregate) ToNextStory() (abstractFact.Aggregate, error) {
 
 	return Aggregate{
 		fact:            nextFact,
+		storyRepository: a.storyRepository,
+	}, nil
+}
+
+func (a Aggregate) HasParentStory() (bool, error) {
+
+	storyIdentifier, err := a.fact.GetTargetStory()
+
+	story, err := a.storyRepository.FetchByFact(storyIdentifier)
+	if err != nil {
+		return false, err
+	}
+
+	return story.HasSourceTree()
+}
+
+func (a Aggregate) ToParentStory() (abstractFact.Aggregate, error) {
+
+	storyIdentifier, err := a.fact.GetTargetStory()
+
+	story, err := a.storyRepository.FetchByFact(storyIdentifier)
+	if err != nil {
+		return nil, err
+	}
+
+	parentStoryIdentifier, err := story.GetTargetTree()
+	if err != nil {
+		return nil, err
+	}
+
+	parentStory, err := a.storyRepository.FetchByTree(parentStoryIdentifier)
+	if err != nil {
+		return nil, err
+	}
+
+	parentFactIdentifier, err := parentStory.GetTargetFact()
+	if err != nil {
+		return nil, err
+	}
+
+	parentFact, err := a.factStorage.ReadEntityByStory(parentFactIdentifier)
+	if err != nil {
+		return nil, err
+	}
+
+	return Aggregate{
+		fact:            parentFact,
 		storyRepository: a.storyRepository,
 	}, nil
 }

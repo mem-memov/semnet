@@ -7,6 +7,10 @@ type Aggregate interface {
 	HasNextFact() (bool, error)
 	ToNextFact() (Aggregate, error)
 	GetFirstRemark() (uint, error)
+
 	HasNextStory() (bool, error)
 	ToNextStory() (Aggregate, error)
+
+	HasParentStory() (bool, error)
+	ToParentStory() (Aggregate, error)
 }

@@ -273,3 +273,58 @@ func (a Aggregate) AddFactToStory(object string, property string) (Aggregate, er
 		factRepository:   a.factRepository,
 	}, nil
 }
+
+func (a Aggregate) CreateChildStory(object string, property string) (Aggregate, error) {
+
+	class, err := a.classRepository.ProvideEntity()
+	if err != nil {
+		return Aggregate{}, err
+	}
+
+	classIdentifier, err := class.CreateRemark()
+	if err != nil {
+		return Aggregate{}, err
+	}
+
+	remark, err := a.remarkStorage.CreateEntity(classIdentifier)
+	if err != nil {
+		return Aggregate{}, err
+	}
+
+	// detail
+
+	detail, err := a.detailRepository.Provide(object, property)
+	if err != nil {
+		return Aggregate{}, err
+	}
+
+	err = detail.PointToRemark(remark.GetDetail())
+	if err != nil {
+		return Aggregate{}, err
+	}
+
+	// fact
+
+	firstFact, err := a.factRepository.CreateChildStoryFact(a.remark.GetFact())
+	if err != nil {
+		return Aggregate{}, err
+	}
+
+	err = remark.PointToFact(firstFact.GetRemark())
+	if err != nil {
+		return Aggregate{}, err
+	}
+
+	err = firstFact.PointToRemark(remark.GetFact())
+	if err != nil {
+		return Aggregate{}, err
+	}
+
+	return Aggregate{
+		remark:           remark,
+		remarkStorage:    a.remarkStorage,
+		classRepository:  a.classRepository,
+		detailRepository: a.detailRepository,
+		factRepository:   a.factRepository,
+	}, nil
+}

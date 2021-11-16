@@ -61,7 +61,7 @@ func (r *Repository) CreateFirstUserRemark(object string, property string) (Aggr
 
 	// fact
 
-	fact, err := r.factRepository.CreateFirstUserStoryFact()
+	fact, err := r.factRepository.CreateFirstStoryFact()
 	if err != nil {
 		return Aggregate{}, err
 	}

@@ -21,7 +21,7 @@ func NewRepository(storage abstract.Storage, classRepository abstractClass.Repos
 	}
 }
 
-func (r *Repository) CreateFirstUserStory() (abstractStory.Entity, error) {
+func (r *Repository) CreateStory() (abstractStory.Entity, error) {
 
 	class, err := r.classRepository.ProvideEntity()
 	if err != nil {
@@ -49,4 +49,9 @@ func (r *Repository) FetchByFact(factIdentifier uint) (abstractStory.Entity, err
 func (r *Repository) FetchByPosition(positionIdentifier uint) (abstractStory.Entity, error) {
 
 	return r.storyStorage.ReadEntityByPosition(positionIdentifier)
+}
+
+func (r *Repository) FetchByTree(treeIdentifier uint) (abstractStory.Entity, error) {
+
+	return r.storyStorage.ReadEntityByTree(treeIdentifier)
 }

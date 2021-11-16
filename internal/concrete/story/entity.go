@@ -10,7 +10,7 @@ type Entity struct {
 	class    uint
 	fact     uint
 	position uint
-	user     uint
+	tree     uint
 	storage  abstract.Storage
 }
 
@@ -31,9 +31,9 @@ func (e Entity) GetPosition() uint {
 	return e.position
 }
 
-func (e Entity) GetUser() uint {
+func (e Entity) GetTree() uint {
 
-	return e.user
+	return e.tree
 }
 
 func (e Entity) PointToFact(fact uint) error {
@@ -41,7 +41,17 @@ func (e Entity) PointToFact(fact uint) error {
 	return e.storage.Connect(e.fact, fact)
 }
 
-func (e Entity) HasNextStory() (bool, error) {
+func (e Entity) PointToPosition(position uint) error {
+
+	return e.storage.Connect(e.position, position)
+}
+
+func (e Entity) PointToTree(tree uint) error {
+
+	return e.storage.Connect(e.tree, tree)
+}
+
+func (e Entity) HasTargetPosition() (bool, error) {
 
 	targets, err := e.storage.ReadTargets(e.position)
 	if err != nil {
@@ -51,7 +61,7 @@ func (e Entity) HasNextStory() (bool, error) {
 	return len(targets) != 0, nil
 }
 
-func (e Entity) GetTargetStory() (uint, error) {
+func (e Entity) GetTargetPosition() (uint, error) {
 
 	targets, err := e.storage.ReadTargets(e.position)
 	if err != nil {
@@ -77,4 +87,52 @@ func (e Entity) GetTargetFact() (uint, error) {
 	}
 
 	return targets[0], nil
+}
+
+func (e Entity) HasTargetTree() (bool, error) {
+
+	targets, err := e.storage.ReadTargets(e.tree)
+	if err != nil {
+		return false, err
+	}
+
+	return len(targets) != 0, nil
+}
+
+func (e Entity) GetTargetTree() (uint, error) {
+
+	targets, err := e.storage.ReadTargets(e.tree)
+	if err != nil {
+		return 0, err
+	}
+
+	if len(targets) != 1 {
+		return 0, fmt.Errorf("story has wrong number of target trees")
+	}
+
+	return targets[0], nil
+}
+
+func (e Entity) HasSourceTree() (bool, error) {
+
+	sources, err := e.storage.ReadSources(e.tree)
+	if err != nil {
+		return false, err
+	}
+
+	return len(sources) != 0, nil
+}
+
+func (e Entity) GetSourceTree() (uint, error) {
+
+	sources, err := e.storage.ReadSources(e.tree)
+	if err != nil {
+		return 0, err
+	}
+
+	if len(sources) != 1 {
+		return 0, fmt.Errorf("story has wrong number of source trees")
+	}
+
+	return sources[0], nil
 }

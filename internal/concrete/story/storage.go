@@ -30,7 +30,7 @@ func (s *Storage) CreateEntity(class uint) (abstractStory.Entity, error) {
 		return Entity{}, err
 	}
 
-	user, err := s.storage.Create()
+	tree, err := s.storage.Create()
 	if err != nil {
 		return Entity{}, err
 	}
@@ -45,7 +45,7 @@ func (s *Storage) CreateEntity(class uint) (abstractStory.Entity, error) {
 		return Entity{}, err
 	}
 
-	err = s.storage.SetReference(position, user)
+	err = s.storage.SetReference(position, tree)
 	if err != nil {
 		return Entity{}, err
 	}
@@ -54,7 +54,7 @@ func (s *Storage) CreateEntity(class uint) (abstractStory.Entity, error) {
 		class:    class,
 		fact:     fact,
 		position: position,
-		user:     user,
+		tree:     tree,
 		storage:  s.storage,
 	}, nil
 }
@@ -71,7 +71,7 @@ func (s *Storage) ReadEntityByClass(class uint) (abstractStory.Entity, error) {
 		return Entity{}, err
 	}
 
-	_, user, err := s.storage.GetReference(position)
+	_, tree, err := s.storage.GetReference(position)
 	if err != nil {
 		return Entity{}, err
 	}
@@ -80,7 +80,7 @@ func (s *Storage) ReadEntityByClass(class uint) (abstractStory.Entity, error) {
 		class:    class,
 		fact:     fact,
 		position: position,
-		user:     user,
+		tree:     tree,
 		storage:  s.storage,
 	}, nil
 }
@@ -92,7 +92,7 @@ func (s *Storage) ReadEntityByFact(fact uint) (abstractStory.Entity, error) {
 		return Entity{}, err
 	}
 
-	_, user, err := s.storage.GetReference(position)
+	_, tree, err := s.storage.GetReference(position)
 	if err != nil {
 		return Entity{}, err
 	}
@@ -101,14 +101,14 @@ func (s *Storage) ReadEntityByFact(fact uint) (abstractStory.Entity, error) {
 		class:    class,
 		fact:     fact,
 		position: position,
-		user:     user,
+		tree:     tree,
 		storage:  s.storage,
 	}, nil
 }
 
 func (s *Storage) ReadEntityByPosition(position uint) (abstractStory.Entity, error) {
 
-	fact, user, err := s.storage.GetReference(position)
+	fact, tree, err := s.storage.GetReference(position)
 	if err != nil {
 		return Entity{}, err
 	}
@@ -122,14 +122,14 @@ func (s *Storage) ReadEntityByPosition(position uint) (abstractStory.Entity, err
 		class:    class,
 		fact:     fact,
 		position: position,
-		user:     user,
+		tree:     tree,
 		storage:  s.storage,
 	}, nil
 }
 
-func (s *Storage) ReadEntityByUser(user uint) (abstractStory.Entity, error) {
+func (s *Storage) ReadEntityByTree(tree uint) (abstractStory.Entity, error) {
 
-	position, _, err := s.storage.GetReference(user)
+	position, _, err := s.storage.GetReference(tree)
 	if err != nil {
 		return Entity{}, err
 	}
@@ -148,7 +148,7 @@ func (s *Storage) ReadEntityByUser(user uint) (abstractStory.Entity, error) {
 		class:    class,
 		fact:     fact,
 		position: position,
-		user:     user,
+		tree:     tree,
 		storage:  s.storage,
 	}, nil
 }
