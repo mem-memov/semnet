@@ -89,5 +89,16 @@ func (r *Repository) CreateFirstUserRemark(object string, property string) (abst
 
 func (r *Repository) GetRemark(remarkIdentifier uint) (abstractRemark.Aggregate, error) {
 
-	return Aggregate{}, nil
+	remark, err := r.remarkStorage.ReadEntityByClass(remarkIdentifier)
+	if err != nil {
+		return nil, err
+	}
+
+	return Aggregate{
+		remark:           remark,
+		remarkStorage:    r.remarkStorage,
+		classRepository:  r.classRepository,
+		detailRepository: r.detailRepository,
+		factRepository:   r.factRepository,
+	}, nil
 }

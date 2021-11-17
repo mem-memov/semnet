@@ -65,9 +65,9 @@ func TestNewGraph(t *testing.T) {
 		t.Fail()
 	}
 
-	remark, err := graph.GetRemark(hidesTheMouse)
+	remark, err := graph.GetRemark(hidesTheMouse.GetIdentifier())
 
-	story, err := output.GetStory(hidesTheMouse)
+	story, err := output.GetStory(remark)
 	if err != nil {
 		t.Fail()
 	}

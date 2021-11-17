@@ -1,7 +1,7 @@
 package remark
 
 type Aggregate interface {
-	GetFact() uint
+	GetIdentifier() uint
 	HasNextRemark() (bool, error)
 	GetNextRemark() (Aggregate, error)
 	HasNextFact() (bool, error)

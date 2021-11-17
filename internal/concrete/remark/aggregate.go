@@ -18,8 +18,8 @@ type Aggregate struct {
 
 var _ abstractRemark.Aggregate = Aggregate{}
 
-func (a Aggregate) GetFact() uint {
-	return a.remark.GetFact()
+func (a Aggregate) GetIdentifier() uint {
+	return a.remark.GetClass()
 }
 
 func (a Aggregate) HasNextRemark() (bool, error) {
