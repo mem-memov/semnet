@@ -65,14 +65,14 @@ func TestNewGraph(t *testing.T) {
 		t.Fail()
 	}
 
-	remark, err := graph.GetRemark(hidesTheMouse.GetIdentifier())
+	remark, err := graph.GetRemark(goesACat.GetIdentifier())
 
 	story, err := output.GetStory(remark)
 	if err != nil {
 		t.Fail()
 	}
 
-	if story != "" {
+	if story != "goes a cat " {
 		t.Errorf(story)
 	}
 }

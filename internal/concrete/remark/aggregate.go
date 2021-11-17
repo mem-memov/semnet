@@ -102,7 +102,13 @@ func (a Aggregate) GetNextFact() (abstractRemark.Aggregate, error) {
 
 func (a Aggregate) GetFirstFact() (abstractRemark.Aggregate, error) {
 
-	fact, err := a.factRepository.FetchByRemark(a.remark.GetFact())
+	factIdentifier, err := a.remark.GetTargetFact()
+	if err != nil {
+		return nil, err
+	}
+
+
+	fact, err := a.factRepository.FetchByRemark(factIdentifier)
 	if err != nil {
 		return nil, err
 	}

@@ -32,6 +32,20 @@ func (o *Output) GetStory(remark Remark) (string, error) {
 		buffer.WriteString(" ")
 		buffer.WriteString(property)
 		buffer.WriteString(" ")
+
+		hasNextRemark, err := factRemark.HasNextRemark()
+		if err != nil {
+			return "", err
+		}
+
+		if !hasNextRemark {
+			break
+		}
+
+		factRemark, err = factRemark.GetNextRemark()
+		if err != nil {
+			return "", err
+		}
 	}
 
 	return buffer.String(), nil
