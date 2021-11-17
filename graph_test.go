@@ -9,7 +9,7 @@ func TestNewGraph(t *testing.T) {
 	slices := clew.NewSliceStorage()
 	storage := clew.NewGraph(slices)
 	graph := NewGraph(storage)
-	//output := NewOutput(graph)
+	output := NewOutput(graph)
 
 	goesACat, err := graph.CreateStory("goes", "a cat")
 	if err != nil {
@@ -65,14 +65,14 @@ func TestNewGraph(t *testing.T) {
 		t.Fail()
 	}
 
-	//remark, err := graph.GetRemark(hidesTheMouse.)
-	//
-	//story, err := output.GetStory(hidesTheMouse)
-	//if err != nil {
-	//	t.Fail()
-	//}
-	//
-	//if story != "" {
-	//	t.Errorf(story)
-	//}
+	remark, err := graph.GetRemark(hidesTheMouse)
+
+	story, err := output.GetStory(hidesTheMouse)
+	if err != nil {
+		t.Fail()
+	}
+
+	if story != "" {
+		t.Errorf(story)
+	}
 }

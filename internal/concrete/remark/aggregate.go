@@ -16,6 +16,8 @@ type Aggregate struct {
 	factRepository   abstractFact.Repository
 }
 
+var _ abstractRemark.Aggregate = Aggregate{}
+
 func (a Aggregate) GetFact() uint {
 	return a.remark.GetFact()
 }
@@ -25,23 +27,23 @@ func (a Aggregate) HasNextRemark() (bool, error) {
 	return a.remark.HasNextRemark()
 }
 
-func (a Aggregate) GetNextRemark() (Aggregate, error) {
+func (a Aggregate) GetNextRemark() (abstractRemark.Aggregate, error) {
 
 	nextRemarkIdentifier, err := a.remark.GetNextRemark()
 	if err != nil {
-		return Aggregate{}, err
+		return nil, err
 	}
 
 	nextRemark, err := a.remarkStorage.ReadEntityByPosition(nextRemarkIdentifier)
 
 	class, err := a.classRepository.ProvideEntity()
 	if err != nil {
-		return Aggregate{}, err
+		return nil, err
 	}
 
 	isRemark, err := class.IsRemark(nextRemark.GetClass())
 	if err != nil {
-		return Aggregate{}, err
+		return nil, err
 	}
 
 	if !isRemark {
@@ -67,26 +69,26 @@ func (a Aggregate) HasNextFact() (bool, error) {
 	return fact.HasNextFact()
 }
 
-func (a Aggregate) GetNextFact() (Aggregate, error) {
+func (a Aggregate) GetNextFact() (abstractRemark.Aggregate, error) {
 
 	fact, err := a.factRepository.FetchByRemark(a.remark.GetFact())
 	if err != nil {
-		return Aggregate{}, err
+		return nil, err
 	}
 
 	nextFact, err := fact.ToNextFact()
 	if err != nil {
-		return Aggregate{}, err
+		return nil, err
 	}
 
 	remarkFact, err := nextFact.GetFirstRemark()
 	if err != nil {
-		return Aggregate{}, err
+		return nil, err
 	}
 
 	remark, err := a.remarkStorage.ReadEntityByFact(remarkFact)
 	if err != nil {
-		return Aggregate{}, err
+		return nil, err
 	}
 
 	return Aggregate{
@@ -98,26 +100,26 @@ func (a Aggregate) GetNextFact() (Aggregate, error) {
 	}, nil
 }
 
-func (a Aggregate) GetFirstFact() (Aggregate, error) {
+func (a Aggregate) GetFirstFact() (abstractRemark.Aggregate, error) {
 
 	fact, err := a.factRepository.FetchByRemark(a.remark.GetFact())
 	if err != nil {
-		return Aggregate{}, err
+		return nil, err
 	}
 
 	firstFact, err := fact.ToFirstFact()
 	if err != nil {
-		return Aggregate{}, err
+		return nil, err
 	}
 
 	remarkFact, err := firstFact.GetFirstRemark()
 	if err != nil {
-		return Aggregate{}, err
+		return nil, err
 	}
 
 	remark, err := a.remarkStorage.ReadEntityByFact(remarkFact)
 	if err != nil {
-		return Aggregate{}, err
+		return nil, err
 	}
 
 	return Aggregate{
@@ -139,26 +141,26 @@ func (a Aggregate) HasNextStory() (bool, error) {
 	return fact.HasNextStory()
 }
 
-func (a Aggregate) GetNextStory() (Aggregate, error) {
+func (a Aggregate) GetNextStory() (abstractRemark.Aggregate, error) {
 
 	fact, err := a.factRepository.FetchByRemark(a.remark.GetFact())
 	if err != nil {
-		return Aggregate{}, err
+		return nil, err
 	}
 
 	nextFact, err := fact.ToNextStory()
 	if err != nil {
-		return Aggregate{}, err
+		return nil, err
 	}
 
 	nextIdentifier, err := nextFact.GetFirstRemark()
 	if err != nil {
-		return Aggregate{}, err
+		return nil, err
 	}
 
 	nextRemark, err := a.remarkStorage.ReadEntityByFact(nextIdentifier)
 	if err != nil {
-		return Aggregate{}, err
+		return nil, err
 	}
 
 	return Aggregate{
@@ -185,65 +187,65 @@ func (a Aggregate) GetObjectAndProperty() (string, string, error) {
 	return detail.GetObjectAndProperty()
 }
 
-func (a Aggregate) AddRemarkToFact(property string) (Aggregate, error) {
+func (a Aggregate) AddRemarkToFact(property string) (abstractRemark.Aggregate, error) {
 
 	class, err := a.classRepository.ProvideEntity()
 	if err != nil {
-		return Aggregate{}, err
+		return nil, err
 	}
 
 	classIdentifier, err := class.CreateRemark()
 	if err != nil {
-		return Aggregate{}, err
+		return nil, err
 	}
 
 	remark, err := a.remarkStorage.CreateEntity(classIdentifier)
 	if err != nil {
-		return Aggregate{}, err
+		return nil, err
 	}
 
 	// detail
 
 	detailIdentifier, err := a.remark.GetSourceDetail()
 	if err != nil {
-		return Aggregate{}, err
+		return nil, err
 	}
 
 	aggregateDetail, err := a.detailRepository.Fetch(detailIdentifier)
 	if err != nil {
-		return Aggregate{}, err
+		return nil, err
 	}
 
 	aggregateObject, _, err := aggregateDetail.GetObjectAndProperty()
 	if err != nil {
-		return Aggregate{}, err
+		return nil, err
 	}
 
 	detail, err := a.detailRepository.Provide(aggregateObject, property)
 	if err != nil {
-		return Aggregate{}, err
+		return nil, err
 	}
 
 	err = detail.PointToRemark(remark.GetDetail())
 	if err != nil {
-		return Aggregate{}, err
+		return nil, err
 	}
 
 	// fact
 
 	factIdentifier, err := a.remark.GetTargetFact()
 	if err != nil {
-		return Aggregate{}, err
+		return nil, err
 	}
 
 	fact, err := a.factRepository.FetchByRemark(factIdentifier)
 	if err != nil {
-		return Aggregate{}, err
+		return nil, err
 	}
 
 	err = remark.PointToFact(fact.GetRemark())
 	if err != nil {
-		return Aggregate{}, err
+		return nil, err
 	}
 
 	return Aggregate{
@@ -255,45 +257,45 @@ func (a Aggregate) AddRemarkToFact(property string) (Aggregate, error) {
 	}, nil
 }
 
-func (a Aggregate) AddFactToStory(object string, property string) (Aggregate, error) {
+func (a Aggregate) AddFactToStory(object string, property string) (abstractRemark.Aggregate, error) {
 
 	class, err := a.classRepository.ProvideEntity()
 	if err != nil {
-		return Aggregate{}, err
+		return nil, err
 	}
 
 	classIdentifier, err := class.CreateRemark()
 	if err != nil {
-		return Aggregate{}, err
+		return nil, err
 	}
 
 	remark, err := a.remarkStorage.CreateEntity(classIdentifier)
 	if err != nil {
-		return Aggregate{}, err
+		return nil, err
 	}
 
 	// detail
 
 	detail, err := a.detailRepository.Provide(object, property)
 	if err != nil {
-		return Aggregate{}, err
+		return nil, err
 	}
 
 	err = detail.PointToRemark(remark.GetDetail())
 	if err != nil {
-		return Aggregate{}, err
+		return nil, err
 	}
 
 	// fact
 
 	nextFact, err := a.factRepository.CreateNextFact(a.remark.GetFact())
 	if err != nil {
-		return Aggregate{}, err
+		return nil, err
 	}
 
 	err = remark.PointToFact(nextFact.GetRemark())
 	if err != nil {
-		return Aggregate{}, err
+		return nil, err
 	}
 
 	return Aggregate{
@@ -305,50 +307,50 @@ func (a Aggregate) AddFactToStory(object string, property string) (Aggregate, er
 	}, nil
 }
 
-func (a Aggregate) CreateChildStory(object string, property string) (Aggregate, error) {
+func (a Aggregate) CreateChildStory(object string, property string) (abstractRemark.Aggregate, error) {
 
 	class, err := a.classRepository.ProvideEntity()
 	if err != nil {
-		return Aggregate{}, err
+		return nil, err
 	}
 
 	classIdentifier, err := class.CreateRemark()
 	if err != nil {
-		return Aggregate{}, err
+		return nil, err
 	}
 
 	remark, err := a.remarkStorage.CreateEntity(classIdentifier)
 	if err != nil {
-		return Aggregate{}, err
+		return nil, err
 	}
 
 	// detail
 
 	detail, err := a.detailRepository.Provide(object, property)
 	if err != nil {
-		return Aggregate{}, err
+		return nil, err
 	}
 
 	err = detail.PointToRemark(remark.GetDetail())
 	if err != nil {
-		return Aggregate{}, err
+		return nil, err
 	}
 
 	// fact
 
 	firstFact, err := a.factRepository.CreateChildStoryFact(a.remark.GetFact())
 	if err != nil {
-		return Aggregate{}, err
+		return nil, err
 	}
 
 	err = remark.PointToFact(firstFact.GetRemark())
 	if err != nil {
-		return Aggregate{}, err
+		return nil, err
 	}
 
 	err = firstFact.PointToRemark(remark.GetFact())
 	if err != nil {
-		return Aggregate{}, err
+		return nil, err
 	}
 
 	return Aggregate{

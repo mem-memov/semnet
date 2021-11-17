@@ -15,6 +15,8 @@ type Repository struct {
 	factRepository   abstractFact.Repository
 }
 
+var _ abstractRemark.Repository = &Repository{}
+
 func NewRepository(
 	storage abstract.Storage,
 	classRepository abstractClass.Repository,
@@ -30,50 +32,50 @@ func NewRepository(
 	}
 }
 
-func (r *Repository) CreateFirstUserRemark(object string, property string) (Aggregate, error) {
+func (r *Repository) CreateFirstUserRemark(object string, property string) (abstractRemark.Aggregate, error) {
 
 	class, err := r.classRepository.ProvideEntity()
 	if err != nil {
-		return Aggregate{}, err
+		return nil, err
 	}
 
 	classIdentifier, err := class.CreateRemark()
 	if err != nil {
-		return Aggregate{}, err
+		return nil, err
 	}
 
 	remark, err := r.remarkStorage.CreateEntity(classIdentifier)
 	if err != nil {
-		return Aggregate{}, err
+		return nil, err
 	}
 
 	// detail
 
 	detail, err := r.detailRepository.Provide(object, property)
 	if err != nil {
-		return Aggregate{}, err
+		return nil, err
 	}
 
 	err = detail.PointToRemark(remark.GetDetail())
 	if err != nil {
-		return Aggregate{}, err
+		return nil, err
 	}
 
 	// fact
 
 	fact, err := r.factRepository.CreateFirstStoryFact()
 	if err != nil {
-		return Aggregate{}, err
+		return nil, err
 	}
 
 	err = remark.PointToFact(fact.GetRemark())
 	if err != nil {
-		return Aggregate{}, err
+		return nil, err
 	}
 
 	err = fact.PointToRemark(remark.GetFact())
 	if err != nil {
-		return Aggregate{}, err
+		return nil, err
 	}
 
 	return Aggregate{
@@ -85,7 +87,7 @@ func (r *Repository) CreateFirstUserRemark(object string, property string) (Aggr
 	}, nil
 }
 
-func (r *Repository) GetRemark(remarkIdentifier uint) (Aggregate, error) {
+func (r *Repository) GetRemark(remarkIdentifier uint) (abstractRemark.Aggregate, error) {
 
 	return Aggregate{}, nil
 }
